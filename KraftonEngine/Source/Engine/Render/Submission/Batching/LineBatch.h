@@ -3,7 +3,7 @@
 #include "Core/CoreTypes.h"
 #include "Core/EngineTypes.h"
 #include "Math/Vector.h"
-#include "Render/Types/RenderTypes.h"
+#include "Render/RHI/D3D11/Common/D3D11API.h"
 #include "Render/Types/ViewTypes.h"
 #include "Render/Submission/Batching/BatchBuffer.h"
 

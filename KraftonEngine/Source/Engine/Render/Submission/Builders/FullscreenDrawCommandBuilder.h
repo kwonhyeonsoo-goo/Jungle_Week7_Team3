@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Render/Pipelines/ViewModePassConfig.h"
+#include "Render/Pipelines/RenderPassTypes.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
 
-struct FRenderPassContext;
+struct FRenderPipelineContext;
 class FDrawCommandList;
 
 class FFullscreenDrawCommandBuilder
@@ -10,7 +11,7 @@ class FFullscreenDrawCommandBuilder
 public:
     static void Build(
         ERenderPass Pass,
-        FRenderPassContext& Context,
+        FRenderPipelineContext& Context,
         FDrawCommandList& OutList,
         EViewModePostProcessVariant PostProcessVariant = EViewModePostProcessVariant::None);
 };

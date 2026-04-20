@@ -1,16 +1,16 @@
 #include "Render/Passes/Scene/BaseDrawPass.h"
-#include "Render/Passes/Common/RenderPassContext.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/MeshDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
-#include "Render/View/ViewModeSurfaceSet.h"
-#include "Render/Pipelines/ViewModePassConfig.h"
-#include "Render/Core/RenderConstants.h"
+#include "Render/Pipelines/Context/View/ViewModeSurfaceSet.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
+#include "Render/Resources/RenderResources.h"
 
-void FBaseDrawPass::PrepareInputs(FRenderPassContext& Context)
+void FBaseDrawPass::PrepareInputs(FRenderPipelineContext& Context)
 {
     ID3D11ShaderResourceView* NullSRVs[6] = {};
-    Context.Context->PSSetShaderResources(0, ARRAYSIZE(NullSRVs), NullSRVs);
+    Context.Context->PSSetShaderResources(0, ARRAY_SIZE(NullSRVs), NullSRVs);
 
     ID3D11ShaderResourceView* NullSystemSRV = nullptr;
     Context.Context->PSSetShaderResources(ESystemTexSlot::SceneDepth, 1, &NullSystemSRV);
@@ -27,7 +27,7 @@ void FBaseDrawPass::PrepareInputs(FRenderPassContext& Context)
     }
 }
 
-void FBaseDrawPass::PrepareTargets(FRenderPassContext& Context)
+void FBaseDrawPass::PrepareTargets(FRenderPipelineContext& Context)
 {
     if (Context.ActiveViewSurfaceSet && Context.ViewModePassRegistry && Context.ViewModePassRegistry->HasConfig(Context.ActiveViewMode))
     {
@@ -42,12 +42,12 @@ void FBaseDrawPass::PrepareTargets(FRenderPassContext& Context)
     }
 }
 
-void FBaseDrawPass::BuildDrawCommands(FRenderPassContext& Context, const FPrimitiveSceneProxy& Proxy)
+void FBaseDrawPass::BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy)
 {
     FMeshDrawCommandBuilder::Build(Proxy, ERenderPass::Opaque, Context, *Context.DrawCommandList);
 }
 
-void FBaseDrawPass::SubmitDrawCommands(FRenderPassContext& Context)
+void FBaseDrawPass::SubmitDrawCommands(FRenderPipelineContext& Context)
 {
     SubmitPassRange(Context, ERenderPass::Opaque);
 }

@@ -1,13 +1,13 @@
 #include "Render/Passes/Scene/FXAAPass.h"
-#include "Render/Passes/Common/RenderPassContext.h"
-#include "Render/View/SceneView.h"
-#include "Render/Core/RenderConstants.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
+#include "Render/Pipelines/Context/View/SceneView.h"
+#include "Render/Resources/RenderResources.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
-#include "Render/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/Context/View/ViewportRenderTargets.h"
 
-void FFXAAPass::PrepareInputs(FRenderPassContext& Context)
+void FFXAAPass::PrepareInputs(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!Targets || !Targets->SceneColorCopySRV)
@@ -27,12 +27,12 @@ void FFXAAPass::PrepareInputs(FRenderPassContext& Context)
     Context.Context->PSSetShaderResources(ESystemTexSlot::SceneColor, 1, &SceneColorSRV);
 }
 
-void FFXAAPass::PrepareTargets(FRenderPassContext& Context)
+void FFXAAPass::PrepareTargets(FRenderPipelineContext& Context)
 {
     BindViewportTarget(Context);
 }
 
-void FFXAAPass::BuildDrawCommands(FRenderPassContext& Context)
+void FFXAAPass::BuildDrawCommands(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!Context.Frame || !Context.Frame->ShowFlags.bFXAA)
@@ -55,7 +55,7 @@ void FFXAAPass::BuildDrawCommands(FRenderPassContext& Context)
     FFullscreenDrawCommandBuilder::Build(ERenderPass::FXAA, Context, *Context.DrawCommandList);
 }
 
-void FFXAAPass::SubmitDrawCommands(FRenderPassContext& Context)
+void FFXAAPass::SubmitDrawCommands(FRenderPipelineContext& Context)
 {
     SubmitPassRange(Context, ERenderPass::FXAA);
 }

@@ -1,15 +1,16 @@
+#include "Render/Pipelines/RenderPassTypes.h"
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
-#include "Render/Passes/Common/RenderPassContext.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Commands/DrawCommand.h"
-#include "Render/Resources/Managers/ShaderManager.h"
-#include "Render/Passes/Common/PassRenderState.h"
-#include "Render/Pipelines/ViewModePassConfig.h"
-#include "Render/View/SceneView.h"
-#include "Render/View/ViewModeSurfaceSet.h"
-#include "Render/View/ViewportRenderTargets.h"
+#include "Render/Resources/ShaderManager.h"
+#include "Render/Passes/Base/PassRenderState.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
+#include "Render/Pipelines/Context/View/SceneView.h"
+#include "Render/Pipelines/Context/View/ViewModeSurfaceSet.h"
+#include "Render/Pipelines/Context/View/ViewportRenderTargets.h"
 
-void FFullscreenDrawCommandBuilder::Build(ERenderPass Pass, FRenderPassContext& Context, FDrawCommandList& OutList, EViewModePostProcessVariant PostProcessVariant)
+void FFullscreenDrawCommandBuilder::Build(ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList, EViewModePostProcessVariant PostProcessVariant)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     FShader* Shader = nullptr;

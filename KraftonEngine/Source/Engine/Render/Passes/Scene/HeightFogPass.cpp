@@ -1,15 +1,15 @@
 #include "Render/Passes/Scene/HeightFogPass.h"
-#include "Render/Passes/Common/RenderPassContext.h"
-#include "Render/View/SceneView.h"
-#include "Render/Core/RenderConstants.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
+#include "Render/Pipelines/Context/View/SceneView.h"
+#include "Render/Resources/RenderResources.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
-#include "Render/View/ViewportRenderTargets.h"
-#include "Render/Pipelines/ViewModePassConfig.h"
+#include "Render/Pipelines/Context/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
 #include "Render/Scene/Scene.h"
 
-void FHeightFogPass::PrepareInputs(FRenderPassContext& Context)
+void FHeightFogPass::PrepareInputs(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!Context.Frame)
@@ -42,12 +42,12 @@ void FHeightFogPass::PrepareInputs(FRenderPassContext& Context)
     }
 }
 
-void FHeightFogPass::PrepareTargets(FRenderPassContext& Context)
+void FHeightFogPass::PrepareTargets(FRenderPipelineContext& Context)
 {
     BindViewportTarget(Context);
 }
 
-void FHeightFogPass::BuildDrawCommands(FRenderPassContext& Context)
+void FHeightFogPass::BuildDrawCommands(FRenderPipelineContext& Context)
 {
     if (!Context.Frame || !Context.Frame->ShowFlags.bFog)
     {
@@ -69,7 +69,7 @@ void FHeightFogPass::BuildDrawCommands(FRenderPassContext& Context)
     FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, EViewModePostProcessVariant::None);
 }
 
-void FHeightFogPass::SubmitDrawCommands(FRenderPassContext& Context)
+void FHeightFogPass::SubmitDrawCommands(FRenderPipelineContext& Context)
 {
     if (Context.DrawCommandList)
     {

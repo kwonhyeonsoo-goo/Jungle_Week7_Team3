@@ -1,17 +1,17 @@
 #include "Render/Passes/Scene/DecalPass.h"
-#include "Render/Passes/Common/RenderPassContext.h"
-#include "Render/View/SceneView.h"
-#include "Render/Pipelines/ViewModePassConfig.h"
-#include "Render/Core/RenderConstants.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
+#include "Render/Pipelines/Context/View/SceneView.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
+#include "Render/Resources/RenderResources.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/DecalDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
-#include "Render/View/ViewModeSurfaceSet.h"
-#include "Render/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/Context/View/ViewModeSurfaceSet.h"
+#include "Render/Pipelines/Context/View/ViewportRenderTargets.h"
 
 namespace
 {
-bool UsesDecalPass(const FRenderPassContext& Context)
+bool UsesDecalPass(const FRenderPipelineContext& Context)
 {
     return !Context.ViewModePassRegistry ||
            !Context.ViewModePassRegistry->HasConfig(Context.ActiveViewMode) ||
@@ -19,7 +19,7 @@ bool UsesDecalPass(const FRenderPassContext& Context)
 }
 } // namespace
 
-void FDecalPass::PrepareInputs(FRenderPassContext& Context)
+void FDecalPass::PrepareInputs(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!UsesDecalPass(Context))
@@ -36,7 +36,7 @@ void FDecalPass::PrepareInputs(FRenderPassContext& Context)
             Context.ActiveViewSurfaceSet->GetSRV(ESurfaceSlot::Surface1),
             Context.ActiveViewSurfaceSet->GetSRV(ESurfaceSlot::Surface2),
         };
-        Context.Context->PSSetShaderResources(1, ARRAYSIZE(BaseInputs), BaseInputs);
+        Context.Context->PSSetShaderResources(1, ARRAY_SIZE(BaseInputs), BaseInputs);
     }
 
     if (Targets && Targets->DepthTexture && Targets->DepthCopyTexture && Targets->DepthTexture != Targets->DepthCopyTexture)
@@ -58,7 +58,7 @@ void FDecalPass::PrepareInputs(FRenderPassContext& Context)
     }
 }
 
-void FDecalPass::PrepareTargets(FRenderPassContext& Context)
+void FDecalPass::PrepareTargets(FRenderPipelineContext& Context)
 {
     if (!UsesDecalPass(Context))
     {
@@ -128,12 +128,12 @@ void FDecalPass::PrepareTargets(FRenderPassContext& Context)
     Context.ActiveViewSurfaceSet->BindDecalTargets(Context.Context, ShadingModel, Context.GetViewportDSV());
 }
 
-void FDecalPass::BuildDrawCommands(FRenderPassContext& Context, const FPrimitiveSceneProxy& Proxy)
+void FDecalPass::BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy)
 {
     FDecalDrawCommandBuilder::Build(Proxy, Context, *Context.DrawCommandList);
 }
 
-void FDecalPass::SubmitDrawCommands(FRenderPassContext& Context)
+void FDecalPass::SubmitDrawCommands(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!Context.DrawCommandList || !UsesDecalPass(Context))

@@ -1,16 +1,16 @@
 #include "Render/Passes/Scene/LightingPass.h"
-#include "Render/Passes/Common/RenderPassContext.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
-#include "Render/View/ViewModeSurfaceSet.h"
-#include "Render/Pipelines/ViewModePassConfig.h"
-#include "Render/View/SceneView.h"
-#include "Render/Core/RenderConstants.h"
-#include "Render/View/ViewportRenderTargets.h"
-#include "Render/Resources/Frame/FrameSharedResources.h"
+#include "Render/Pipelines/Context/View/ViewModeSurfaceSet.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
+#include "Render/Pipelines/Context/View/SceneView.h"
+#include "Render/Resources/RenderResources.h"
+#include "Render/Pipelines/Context/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/Context/FrameSharedResources.h"
 
-void FLightingPass::PrepareInputs(FRenderPassContext& Context)
+void FLightingPass::PrepareInputs(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!Context.ActiveViewSurfaceSet || !Context.ViewModePassRegistry || !Context.ViewModePassRegistry->HasConfig(Context.ActiveViewMode))
@@ -41,7 +41,7 @@ void FLightingPass::PrepareInputs(FRenderPassContext& Context)
         Context.ActiveViewSurfaceSet->GetSRV(ESurfaceSlot::ModifiedSurface1),
         Context.ActiveViewSurfaceSet->GetSRV(ESurfaceSlot::ModifiedSurface2),
     };
-    Context.Context->PSSetShaderResources(0, ARRAYSIZE(SurfaceSRVs), SurfaceSRVs);
+    Context.Context->PSSetShaderResources(0, ARRAY_SIZE(SurfaceSRVs), SurfaceSRVs);
 
     if (Targets && Targets->DepthCopySRV)
     {
@@ -68,12 +68,12 @@ void FLightingPass::PrepareInputs(FRenderPassContext& Context)
     }
 }
 
-void FLightingPass::PrepareTargets(FRenderPassContext& Context)
+void FLightingPass::PrepareTargets(FRenderPipelineContext& Context)
 {
     BindViewportTarget(Context);
 }
 
-void FLightingPass::BuildDrawCommands(FRenderPassContext& Context)
+void FLightingPass::BuildDrawCommands(FRenderPipelineContext& Context)
 {
     if (!Context.ActiveViewSurfaceSet || !Context.ViewModePassRegistry || !Context.ViewModePassRegistry->HasConfig(Context.ActiveViewMode))
     {
@@ -88,7 +88,7 @@ void FLightingPass::BuildDrawCommands(FRenderPassContext& Context)
     FFullscreenDrawCommandBuilder::Build(ERenderPass::Lighting, Context, *Context.DrawCommandList);
 }
 
-void FLightingPass::SubmitDrawCommands(FRenderPassContext& Context)
+void FLightingPass::SubmitDrawCommands(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!Context.DrawCommandList)

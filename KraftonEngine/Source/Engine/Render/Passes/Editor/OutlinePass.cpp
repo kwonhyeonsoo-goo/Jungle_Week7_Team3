@@ -1,16 +1,16 @@
 #include "Render/Passes/Editor/OutlinePass.h"
-#include "Render/Passes/Common/RenderPassContext.h"
-#include "Render/View/SceneView.h"
-#include "Render/Core/RenderConstants.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
+#include "Render/Pipelines/Context/View/SceneView.h"
+#include "Render/Resources/RenderResources.h"
 #include "Render/Submission/Commands/DrawCommand.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
-#include "Render/Resources/Pools/ConstantBufferPool.h"
+#include "Render/Resources/ConstantBufferPool.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
-#include "Render/View/ViewportRenderTargets.h"
-#include "Render/Pipelines/ViewModePassConfig.h"
+#include "Render/Pipelines/Context/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
 
-void FOutlinePass::PrepareInputs(FRenderPassContext& Context)
+void FOutlinePass::PrepareInputs(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     if (!Context.Frame)
@@ -56,12 +56,12 @@ void FOutlinePass::PrepareInputs(FRenderPassContext& Context)
     }
 }
 
-void FOutlinePass::PrepareTargets(FRenderPassContext& Context)
+void FOutlinePass::PrepareTargets(FRenderPipelineContext& Context)
 {
     BindViewportTarget(Context);
 }
 
-void FOutlinePass::BuildDrawCommands(FRenderPassContext& Context)
+void FOutlinePass::BuildDrawCommands(FRenderPipelineContext& Context)
 {
     FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, EViewModePostProcessVariant::Outline);
 
@@ -84,7 +84,7 @@ void FOutlinePass::BuildDrawCommands(FRenderPassContext& Context)
     Context.DrawCommandList->GetCommands().back().PerShaderCB[0] = OutlineCB;
 }
 
-void FOutlinePass::SubmitDrawCommands(FRenderPassContext& Context)
+void FOutlinePass::SubmitDrawCommands(FRenderPipelineContext& Context)
 {
     if (Context.DrawCommandList)
     {

@@ -1,20 +1,20 @@
 #include "Render/Passes/Scene/ViewModeResolvePass.h"
-#include "Render/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/Context/View/ViewportRenderTargets.h"
 
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
 #include "Render/Submission/Commands/DrawCommand.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
-#include "Render/View/SceneView.h"
-#include "Render/Pipelines/ViewModePassConfig.h"
-#include "Render/Core/RenderConstants.h"
-#include "Render/Passes/Common/RenderPassContext.h"
-#include "Render/View/ViewModeSurfaceSet.h"
-#include "Render/Resources/Pools/ConstantBufferPool.h"
+#include "Render/Pipelines/Context/View/SceneView.h"
+#include "Render/Pipelines/Registry/ViewModePassConfig.h"
+#include "Render/Resources/RenderResources.h"
+#include "Render/Pipelines/Context/RenderPipelineContext.h"
+#include "Render/Pipelines/Context/View/ViewModeSurfaceSet.h"
+#include "Render/Resources/ConstantBufferPool.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 
 namespace
 {
-EViewModePostProcessVariant GetViewModePostProcessVariant(const FRenderPassContext& Context)
+EViewModePostProcessVariant GetViewModePostProcessVariant(const FRenderPipelineContext& Context)
 {
     if (!Context.ViewModePassRegistry || !Context.ViewModePassRegistry->HasConfig(Context.ActiveViewMode))
     {
@@ -26,7 +26,7 @@ EViewModePostProcessVariant GetViewModePostProcessVariant(const FRenderPassConte
 
 } // namespace
 
-void FViewModeResolvePass::PrepareInputs(FRenderPassContext& Context)
+void FViewModeResolvePass::PrepareInputs(FRenderPipelineContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
     const EViewModePostProcessVariant Variant = GetViewModePostProcessVariant(Context);
@@ -69,12 +69,12 @@ void FViewModeResolvePass::PrepareInputs(FRenderPassContext& Context)
     }
 }
 
-void FViewModeResolvePass::PrepareTargets(FRenderPassContext& Context)
+void FViewModeResolvePass::PrepareTargets(FRenderPipelineContext& Context)
 {
     BindViewportTarget(Context);
 }
 
-void FViewModeResolvePass::BuildDrawCommands(FRenderPassContext& Context)
+void FViewModeResolvePass::BuildDrawCommands(FRenderPipelineContext& Context)
 {
     const EViewModePostProcessVariant Variant = GetViewModePostProcessVariant(Context);
     if (Variant == EViewModePostProcessVariant::None)
@@ -141,7 +141,7 @@ void FViewModeResolvePass::BuildDrawCommands(FRenderPassContext& Context)
         ToPostProcessUserBits(Variant));
 }
 
-void FViewModeResolvePass::SubmitDrawCommands(FRenderPassContext& Context)
+void FViewModeResolvePass::SubmitDrawCommands(FRenderPipelineContext& Context)
 {
     if (!Context.DrawCommandList)
     {
