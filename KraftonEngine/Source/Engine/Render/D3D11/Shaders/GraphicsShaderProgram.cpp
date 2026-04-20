@@ -3,10 +3,12 @@
 
 #include "Materials/Material.h"
 #include "Profiling/MemoryStats.h"
+#include "Render/Resources/Shaders/ShaderIncludeLoader.h"
 
 #include <comdef.h>
 #include <iostream>
 #include <string>
+#include <unordered_set>
 
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -33,8 +35,7 @@ void FVertexShaderStage::Release()
     ByteSize = 0;
 }
 
-FVertexShaderStage::FVertexShaderStage(FVertexShaderStage&& Other) noexcept
-    : Shader(Other.Shader), ByteSize(Other.ByteSize)
+FVertexShaderStage::FVertexShaderStage(FVertexShaderStage&& Other) noexcept : Shader(Other.Shader), ByteSize(Other.ByteSize)
 {
     Other.Shader = nullptr;
     Other.ByteSize = 0;
@@ -75,8 +76,7 @@ void FPixelShaderStage::Release()
     ByteSize = 0;
 }
 
-FPixelShaderStage::FPixelShaderStage(FPixelShaderStage&& Other) noexcept
-    : Shader(Other.Shader), ByteSize(Other.ByteSize)
+FPixelShaderStage::FPixelShaderStage(FPixelShaderStage&& Other) noexcept : Shader(Other.Shader), ByteSize(Other.ByteSize)
 {
     Other.Shader = nullptr;
     Other.ByteSize = 0;
@@ -112,8 +112,7 @@ void FComputeShaderStage::Release()
     ByteSize = 0;
 }
 
-FComputeShaderStage::FComputeShaderStage(FComputeShaderStage&& Other) noexcept
-    : Shader(Other.Shader), ByteSize(Other.ByteSize)
+FComputeShaderStage::FComputeShaderStage(FComputeShaderStage&& Other) noexcept : Shader(Other.Shader), ByteSize(Other.ByteSize)
 {
     Other.Shader = nullptr;
     Other.ByteSize = 0;
@@ -136,6 +135,7 @@ FShader::FShader(FShader&& Other) noexcept
     : VertexShader(std::move(Other.VertexShader)), PixelShader(std::move(Other.PixelShader)), InputLayout(Other.InputLayout), ShaderParameterLayout(std::move(Other.ShaderParameterLayout))
 {
     Other.InputLayout = nullptr;
+    Other.ShaderParameterLayout.clear();
 }
 
 FShader& FShader::operator=(FShader&& Other) noexcept
@@ -148,71 +148,157 @@ FShader& FShader::operator=(FShader&& Other) noexcept
         InputLayout = Other.InputLayout;
         ShaderParameterLayout = std::move(Other.ShaderParameterLayout);
         Other.InputLayout = nullptr;
+        Other.ShaderParameterLayout.clear();
     }
     return *this;
 }
 
-void FShader::Create(ID3D11Device* InDevice, const wchar_t* InFilePath, const char* InVSEntryPoint, const char* InPSEntryPoint,
+bool FShader::CompileShaderStage(ID3DBlob** OutShaderBlob, const wchar_t* InFilePath, const char* InEntryPoint, const char* InTarget,
+                                 const D3D_SHADER_MACRO* InDefines, std::unordered_set<std::wstring>& OutDependencies, const char* InErrorTitle) const
+{
+    if (OutShaderBlob == nullptr || InFilePath == nullptr || InEntryPoint == nullptr || InTarget == nullptr)
+    {
+        return false;
+    }
+
+    *OutShaderBlob = nullptr;
+
+    ID3DBlob* ErrorBlob = nullptr;
+    UINT CompileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined(_DEBUG)
+    CompileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+    FShaderIncludeLoader IncludeLoader(std::filesystem::path(InFilePath), &OutDependencies);
+
+    const HRESULT Hr = D3DCompileFromFile(InFilePath, InDefines, &IncludeLoader, InEntryPoint, InTarget, CompileFlags, 0, OutShaderBlob, &ErrorBlob);
+    if (FAILED(Hr))
+    {
+        if (ErrorBlob)
+        {
+            MessageBoxA(nullptr, static_cast<const char*>(ErrorBlob->GetBufferPointer()), InErrorTitle, MB_OK | MB_ICONERROR);
+            ErrorBlob->Release();
+        }
+        return false;
+    }
+
+    if (ErrorBlob)
+    {
+        ErrorBlob->Release();
+    }
+
+    return true;
+}
+
+bool FShader::Create(ID3D11Device* InDevice, const wchar_t* InFilePath, const char* InVSEntryPoint, const char* InPSEntryPoint,
                      const D3D_SHADER_MACRO* InDefines)
 {
-    Release();
+    if (InDevice == nullptr || InFilePath == nullptr || InVSEntryPoint == nullptr || InPSEntryPoint == nullptr)
+    {
+        return false;
+    }
 
     ID3DBlob* VertexShaderCSO = nullptr;
     ID3DBlob* PixelShaderCSO = nullptr;
-    ID3DBlob* ErrorBlob = nullptr;
-
-    HRESULT hr = D3DCompileFromFile(InFilePath, InDefines, D3D_COMPILE_STANDARD_FILE_INCLUDE, InVSEntryPoint, "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorBlob);
-    if (FAILED(hr))
-    {
-        if (ErrorBlob)
-        {
-            MessageBoxA(nullptr, static_cast<char*>(ErrorBlob->GetBufferPointer()), "Vertex Shader Compile Error", MB_OK | MB_ICONERROR);
-            ErrorBlob->Release();
-        }
-        return;
-    }
-
-    hr = D3DCompileFromFile(InFilePath, InDefines, D3D_COMPILE_STANDARD_FILE_INCLUDE, InPSEntryPoint, "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorBlob);
-    if (FAILED(hr))
-    {
-        if (ErrorBlob)
-        {
-            MessageBoxA(nullptr, static_cast<char*>(ErrorBlob->GetBufferPointer()), "Pixel Shader Compile Error", MB_OK | MB_ICONERROR);
-            ErrorBlob->Release();
-        }
-        VertexShaderCSO->Release();
-        return;
-    }
-
     ID3D11VertexShader* VS = nullptr;
-    hr = InDevice->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &VS);
-    if (FAILED(hr))
-    {
-        std::cerr << "Failed to create Vertex Shader (HRESULT: " << hr << ")" << std::endl;
-        VertexShaderCSO->Release();
-        PixelShaderCSO->Release();
-        return;
-    }
-    VertexShader.Set(VS, VertexShaderCSO->GetBufferSize());
-
     ID3D11PixelShader* PS = nullptr;
-    hr = InDevice->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &PS);
-    if (FAILED(hr))
+    ID3D11InputLayout* NewInputLayout = nullptr;
+    TMap<FString, FMaterialParameterInfo*> NewShaderParameterLayout;
+    std::unordered_set<std::wstring> Dependencies;
+
+    auto CleanupTemps = [&]()
     {
-        std::cerr << "Failed to create Pixel Shader (HRESULT: " << hr << ")" << std::endl;
-        VertexShaderCSO->Release();
-        PixelShaderCSO->Release();
-        Release();
-        return;
+        if (NewInputLayout)
+        {
+            NewInputLayout->Release();
+            NewInputLayout = nullptr;
+        }
+        if (PS)
+        {
+            PS->Release();
+            PS = nullptr;
+        }
+        if (VS)
+        {
+            VS->Release();
+            VS = nullptr;
+        }
+        if (PixelShaderCSO)
+        {
+            PixelShaderCSO->Release();
+            PixelShaderCSO = nullptr;
+        }
+        if (VertexShaderCSO)
+        {
+            VertexShaderCSO->Release();
+            VertexShaderCSO = nullptr;
+        }
+        for (auto& Pair : NewShaderParameterLayout)
+        {
+            delete Pair.second;
+        }
+        NewShaderParameterLayout.clear();
+    };
+
+    if (!CompileShaderStage(&VertexShaderCSO, InFilePath, InVSEntryPoint, "vs_5_0", InDefines, Dependencies, "Vertex Shader Compile Error"))
+    {
+        CleanupTemps();
+        return false;
     }
+
+    if (!CompileShaderStage(&PixelShaderCSO, InFilePath, InPSEntryPoint, "ps_5_0", InDefines, Dependencies, "Pixel Shader Compile Error"))
+    {
+        CleanupTemps();
+        return false;
+    }
+
+    HRESULT Hr = InDevice->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &VS);
+    if (FAILED(Hr))
+    {
+        std::cerr << "Failed to create Vertex Shader (HRESULT: " << Hr << ")" << std::endl;
+        CleanupTemps();
+        return false;
+    }
+
+    Hr = InDevice->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &PS);
+    if (FAILED(Hr))
+    {
+        std::cerr << "Failed to create Pixel Shader (HRESULT: " << Hr << ")" << std::endl;
+        CleanupTemps();
+        return false;
+    }
+
+    if (!CreateInputLayoutFromReflection(InDevice, VertexShaderCSO, &NewInputLayout))
+    {
+        CleanupTemps();
+        return false;
+    }
+
+    ExtractCBufferInfo(VertexShaderCSO, NewShaderParameterLayout);
+    ExtractCBufferInfo(PixelShaderCSO, NewShaderParameterLayout);
+
+    Release();
+    VertexShader.Set(VS, VertexShaderCSO->GetBufferSize());
     PixelShader.Set(PS, PixelShaderCSO->GetBufferSize());
+    InputLayout = NewInputLayout;
+    ShaderParameterLayout = std::move(NewShaderParameterLayout);
 
-    CreateInputLayoutFromReflection(InDevice, VertexShaderCSO);
-    ExtractCBufferInfo(VertexShaderCSO, ShaderParameterLayout);
-    ExtractCBufferInfo(PixelShaderCSO, ShaderParameterLayout);
+    VS = nullptr;
+    PS = nullptr;
+    NewInputLayout = nullptr;
+    NewShaderParameterLayout.clear();
 
-    VertexShaderCSO->Release();
-    PixelShaderCSO->Release();
+    CleanupTemps();
+    return true;
+}
+
+void FShader::ReleaseParameterLayout()
+{
+    for (auto& Pair : ShaderParameterLayout)
+    {
+        delete Pair.second;
+    }
+    ShaderParameterLayout.clear();
 }
 
 void FShader::Release()
@@ -222,6 +308,7 @@ void FShader::Release()
         InputLayout->Release();
         InputLayout = nullptr;
     }
+    ReleaseParameterLayout();
     PixelShader.Release();
     VertexShader.Release();
 }
@@ -238,68 +325,59 @@ namespace
 DXGI_FORMAT MaskToFormat(D3D_REGISTER_COMPONENT_TYPE ComponentType, BYTE Mask)
 {
     int Count = 0;
-    if (Mask & 0x1)
-        ++Count;
-    if (Mask & 0x2)
-        ++Count;
-    if (Mask & 0x4)
-        ++Count;
-    if (Mask & 0x8)
-        ++Count;
+    if (Mask & 0x1) ++Count;
+    if (Mask & 0x2) ++Count;
+    if (Mask & 0x4) ++Count;
+    if (Mask & 0x8) ++Count;
 
     if (ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
     {
         switch (Count)
         {
-        case 1:
-            return DXGI_FORMAT_R32_FLOAT;
-        case 2:
-            return DXGI_FORMAT_R32G32_FLOAT;
-        case 3:
-            return DXGI_FORMAT_R32G32B32_FLOAT;
-        case 4:
-            return DXGI_FORMAT_R32G32B32A32_FLOAT;
+        case 1: return DXGI_FORMAT_R32_FLOAT;
+        case 2: return DXGI_FORMAT_R32G32_FLOAT;
+        case 3: return DXGI_FORMAT_R32G32B32_FLOAT;
+        case 4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
         }
     }
     else if (ComponentType == D3D_REGISTER_COMPONENT_UINT32)
     {
         switch (Count)
         {
-        case 1:
-            return DXGI_FORMAT_R32_UINT;
-        case 2:
-            return DXGI_FORMAT_R32G32_UINT;
-        case 3:
-            return DXGI_FORMAT_R32G32B32_UINT;
-        case 4:
-            return DXGI_FORMAT_R32G32B32A32_UINT;
+        case 1: return DXGI_FORMAT_R32_UINT;
+        case 2: return DXGI_FORMAT_R32G32_UINT;
+        case 3: return DXGI_FORMAT_R32G32B32_UINT;
+        case 4: return DXGI_FORMAT_R32G32B32A32_UINT;
         }
     }
     else if (ComponentType == D3D_REGISTER_COMPONENT_SINT32)
     {
         switch (Count)
         {
-        case 1:
-            return DXGI_FORMAT_R32_SINT;
-        case 2:
-            return DXGI_FORMAT_R32G32_SINT;
-        case 3:
-            return DXGI_FORMAT_R32G32B32_SINT;
-        case 4:
-            return DXGI_FORMAT_R32G32B32A32_SINT;
+        case 1: return DXGI_FORMAT_R32_SINT;
+        case 2: return DXGI_FORMAT_R32G32_SINT;
+        case 3: return DXGI_FORMAT_R32G32B32_SINT;
+        case 4: return DXGI_FORMAT_R32G32B32A32_SINT;
         }
     }
     return DXGI_FORMAT_UNKNOWN;
 }
-} // namespace
+}
 
-void FShader::CreateInputLayoutFromReflection(ID3D11Device* InDevice, ID3DBlob* VSBlob)
+bool FShader::CreateInputLayoutFromReflection(ID3D11Device* InDevice, ID3DBlob* VSBlob, ID3D11InputLayout** OutInputLayout) const
 {
-    ID3D11ShaderReflection* Reflector = nullptr;
-    HRESULT hr = D3DReflect(VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), IID_ID3D11ShaderReflection, reinterpret_cast<void**>(&Reflector));
-    if (FAILED(hr))
+    if (InDevice == nullptr || VSBlob == nullptr || OutInputLayout == nullptr)
     {
-        return;
+        return false;
+    }
+
+    *OutInputLayout = nullptr;
+
+    ID3D11ShaderReflection* Reflector = nullptr;
+    HRESULT Hr = D3DReflect(VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), IID_ID3D11ShaderReflection, reinterpret_cast<void**>(&Reflector));
+    if (FAILED(Hr))
+    {
+        return false;
     }
 
     D3D11_SHADER_DESC ShaderDesc;
@@ -330,23 +408,30 @@ void FShader::CreateInputLayoutFromReflection(ID3D11Device* InDevice, ID3DBlob* 
         Elements.push_back(Elem);
     }
 
+    bool bSuccess = true;
     if (!Elements.empty())
     {
-        hr = InDevice->CreateInputLayout(Elements.data(), static_cast<UINT>(Elements.size()), VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), &InputLayout);
-        if (FAILED(hr))
+        Hr = InDevice->CreateInputLayout(Elements.data(), static_cast<UINT>(Elements.size()), VSBlob->GetBufferPointer(), VSBlob->GetBufferSize(), OutInputLayout);
+        if (FAILED(Hr))
         {
-            _com_error Err(hr);
+            _com_error Err(Hr);
             OutputDebugStringW((L"CreateInputLayout failed: " + std::wstring(Err.ErrorMessage())).c_str());
+            bSuccess = false;
         }
     }
 
     Reflector->Release();
+    return bSuccess;
 }
 
-void FShader::ExtractCBufferInfo(ID3DBlob* ShaderBlob, TMap<FString, FMaterialParameterInfo*>& OutLayout)
+void FShader::ExtractCBufferInfo(ID3DBlob* ShaderBlob, TMap<FString, FMaterialParameterInfo*>& OutLayout) const
 {
     ID3D11ShaderReflection* Reflector = nullptr;
-    D3DReflect(ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, reinterpret_cast<void**>(&Reflector));
+    const HRESULT Hr = D3DReflect(ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize(), IID_ID3D11ShaderReflection, reinterpret_cast<void**>(&Reflector));
+    if (FAILED(Hr) || Reflector == nullptr)
+    {
+        return;
+    }
 
     D3D11_SHADER_DESC ShaderDesc;
     Reflector->GetDesc(&ShaderDesc);

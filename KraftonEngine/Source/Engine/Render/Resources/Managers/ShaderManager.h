@@ -43,6 +43,7 @@ class FShaderManager : public TSingleton<FShaderManager>
 public:
     void Initialize(ID3D11Device* InDevice);
     void Release();
+    void TickHotReload();
 
     FShader* GetShader(EShaderType InType);
     FShader* GetCustomShader(const FString& Key);
@@ -52,12 +53,12 @@ private:
     FShaderManager() = default;
 
     void RefreshBuiltInShader(EShaderType InType);
+    bool RefreshCustomShader(FCustomShaderCacheEntry& Entry, const FString& NormalizedKey);
     FString GetBuiltInShaderPath(EShaderType InType) const;
 
     FShader Shaders[(uint32)EShaderType::MAX];
     FShaderFileDependency BuiltInShaderFiles[(uint32)EShaderType::MAX];
     TMap<FString, FCustomShaderCacheEntry> CustomShaderCache;
-    TArray<std::unique_ptr<FShader>> RetiredCustomShaders;
 
     ID3D11Device* Device = nullptr;
     bool bIsInitialized = false;

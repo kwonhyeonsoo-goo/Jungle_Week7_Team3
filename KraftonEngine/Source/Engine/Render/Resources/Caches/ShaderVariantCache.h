@@ -5,7 +5,9 @@
 #include "Render/Resources/Shaders/ShaderDependencyUtils.h"
 
 #include <cstdlib>
+#include <filesystem>
 #include <memory>
+#include <system_error>
 
 struct FShaderMacroDefine
 {
@@ -37,6 +39,7 @@ struct FShaderVariantCacheEntry
 {
     std::unique_ptr<FShader> Shader;
     FShaderVariantFileDependency SourceFile;
+    FShaderVariantDesc Desc;
 };
 
 class FShaderVariantCache
@@ -58,15 +61,32 @@ public:
         }
         Cache.clear();
 
-        for (auto& Shader : RetiredShaders)
-        {
-            if (Shader)
-            {
-                Shader->Release();
-            }
-        }
-        RetiredShaders.clear();
         Device = nullptr;
+    }
+
+    void TickHotReload()
+    {
+        if (!Device)
+        {
+            return;
+        }
+
+        for (auto& Pair : Cache)
+        {
+            auto& Entry = Pair.second;
+            if (!Entry.Shader)
+            {
+                continue;
+            }
+
+            if (Entry.SourceFile.bExists && !ShaderDependencyUtils::HasDependencyChanged(Entry.SourceFile))
+            {
+                continue;
+            }
+
+            const bool bReloaded = RecompileEntry(Entry.Desc, Entry);
+            (void)bReloaded;
+        }
     }
 
     FShader* GetOrCreate(const FShaderVariantDesc& Desc)
@@ -80,27 +100,73 @@ public:
         auto It = Cache.find(Key);
         if (It != Cache.end())
         {
-            auto& Dependency = It->second.SourceFile;
-            if (!ShaderDependencyUtils::HasDependencyChanged(Dependency))
+            auto& Entry = It->second;
+            if (Entry.SourceFile.bExists && !ShaderDependencyUtils::HasDependencyChanged(Entry.SourceFile))
             {
-                return It->second.Shader.get();
+                return Entry.Shader.get();
             }
 
-            if (It->second.Shader)
-            {
-                RetiredShaders.push_back(std::move(It->second.Shader));
-            }
-            Cache.erase(It);
+            Entry.Desc = Desc;
+            RecompileEntry(Desc, Entry);
+            return Entry.Shader.get();
         }
 
-        auto NewShader = std::make_unique<FShader>();
+        FShaderVariantCacheEntry Entry;
+        Entry.Shader = std::make_unique<FShader>();
+        Entry.Desc = Desc;
+        if (!RecompileEntry(Desc, Entry))
+        {
+            return nullptr;
+        }
+
+        FShader* RawShader = Entry.Shader.get();
+        Cache.emplace(Key, std::move(Entry));
+        return RawShader;
+    }
+
+private:
+    bool RecompileEntry(const FShaderVariantDesc& Desc, FShaderVariantCacheEntry& Entry)
+    {
+        if (!Device)
+        {
+            return false;
+        }
+
+        if (!Entry.Shader)
+        {
+            Entry.Shader = std::make_unique<FShader>();
+        }
+
         TArray<D3D_SHADER_MACRO> D3DDefines;
         BuildD3DDefines(Desc.Defines, D3DDefines);
 
-        const std::wstring WidePath = FPaths::ToWide(Desc.FilePath);
-        NewShader->Create(Device, WidePath.c_str(), Desc.VSEntry.c_str(), Desc.PSEntry.c_str(), D3DDefines.empty() ? nullptr : D3DDefines.data());
+        std::filesystem::path AbsolutePath = FPaths::ToPath(FPaths::ToWide(Desc.FilePath));
+        if (!AbsolutePath.is_absolute())
+        {
+            AbsolutePath = FPaths::ToPath(FPaths::RootDir()) / AbsolutePath;
+        }
 
-        for (D3D_SHADER_MACRO& Macro : D3DDefines)
+        std::error_code EC;
+        AbsolutePath = std::filesystem::weakly_canonical(AbsolutePath, EC);
+        if (EC)
+        {
+            AbsolutePath = AbsolutePath.lexically_normal();
+        }
+
+        const bool bCompiled = Entry.Shader->Create(Device, AbsolutePath.wstring().c_str(), Desc.VSEntry.c_str(), Desc.PSEntry.c_str(), D3DDefines.empty() ? nullptr : D3DDefines.data());
+
+        ReleaseD3DDefines(D3DDefines);
+
+        if (bCompiled)
+        {
+            Entry.SourceFile = ShaderDependencyUtils::BuildFileDependency(Desc.FilePath);
+        }
+        return bCompiled;
+    }
+
+    void ReleaseD3DDefines(TArray<D3D_SHADER_MACRO>& InOutDefines) const
+    {
+        for (D3D_SHADER_MACRO& Macro : InOutDefines)
         {
             if (Macro.Name)
             {
@@ -111,16 +177,9 @@ public:
                 free(const_cast<char*>(Macro.Definition));
             }
         }
-
-        FShader* RawShader = NewShader.get();
-        FShaderVariantCacheEntry Entry;
-        Entry.SourceFile = ShaderDependencyUtils::BuildFileDependency(Desc.FilePath);
-        Entry.Shader = std::move(NewShader);
-        Cache.emplace(Key, std::move(Entry));
-        return RawShader;
+        InOutDefines.clear();
     }
 
-private:
     void BuildD3DDefines(const TArray<FShaderMacroDefine>& InDefines, TArray<D3D_SHADER_MACRO>& OutDefines) const
     {
         OutDefines.clear();
@@ -140,5 +199,4 @@ private:
 private:
     ID3D11Device* Device = nullptr;
     TMap<FString, FShaderVariantCacheEntry> Cache;
-    TArray<std::unique_ptr<FShader>> RetiredShaders;
 };

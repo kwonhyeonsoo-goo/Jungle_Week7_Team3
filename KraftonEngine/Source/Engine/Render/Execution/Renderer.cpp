@@ -157,6 +157,8 @@ void FRenderer::BeginCollect(const FFrameContext& Frame, uint32 MaxProxyCount)
 //	스왑체인 백버퍼 복귀 — ImGui 합성 직전에 호출
 void FRenderer::BeginFrame()
 {
+    FShaderManager::Get().TickHotReload();
+
     ID3D11DeviceContext* Context = Device.GetDeviceContext();
     ID3D11RenderTargetView* RTV = Device.GetFrameBufferRTV();
     ID3D11DepthStencilView* DSV = Device.GetDepthStencilView();
