@@ -1,6 +1,6 @@
-#include "CommonTypes.hlsli"
-#include "SurfaceData.hlsli"
-#include "LightingCommon.hlsli"
+#include "../../Common/Types/CommonTypes.hlsli"
+#include "../../Common/Types/SurfaceData.hlsli"
+#include "../../Common/Types/LightingCommon.hlsli"
 
 Texture2D g_txColor : register(t0);
 

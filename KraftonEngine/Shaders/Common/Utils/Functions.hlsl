@@ -1,8 +1,8 @@
 #ifndef FUNCTIONS_HLSL
 #define FUNCTIONS_HLSL
 
-#include "Common/ConstantBuffers.hlsl"
-#include "Common/VertexLayouts.hlsl"
+#include "../Resources/ConstantBuffers.hlsl"
+#include "../Geometry/VertexLayouts.hlsl"
 
 // Model -> View -> Projection 변환
 float4 ApplyMVP(float3 pos)

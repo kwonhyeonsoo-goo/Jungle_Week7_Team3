@@ -1,6 +1,6 @@
-#include "CommonTypes.hlsli"
-#include "SurfaceData.hlsli"
-#include "LightingCommon.hlsli"
+#include "../Common/Types/CommonTypes.hlsli"   // Functions.hlsl → ConstantBuffers.hlsl (b0/b1/b4, FLocalLightInfo)
+#include "../Common/Types/SurfaceData.hlsli"
+#include "../Common/Types/LightingCommon.hlsli" // t6 StructuredBuffer<FLocalLightInfo>, 조명 함수들
 
 Texture2D g_BaseColorTex : register(t0);
 Texture2D g_Surface1Tex : register(t1);
@@ -35,29 +35,26 @@ PS_Input_UV VS_Fullscreen(uint VertexID : SV_VertexID)
     return FullscreenTriangleVS(VertexID);
 }
 
-float4 PS_Lighting_Unlit(PS_Input_UV Input) : SV_TARGET0
+float4 PS_UberLit(PS_Input_UV Input) : SV_TARGET0
 {
-    return ResolveBaseColor(Input.uv);
-}
+    float2 UV = Input.uv;
+    float4 BaseColor = ResolveBaseColor(UV);
 
-float4 PS_Lighting_Gouraud(PS_Input_UV Input) : SV_TARGET0
-{
-    float4 BaseColor = ResolveBaseColor(Input.uv);
-    float Gouraud = g_Surface1Tex.Sample(LinearClampSampler, Input.uv).r;
-    return ComputeGouraudLighting(BaseColor, float4(Gouraud, Gouraud, Gouraud, 1.0f));
-}
-
-float4 PS_Lighting_Lambert(PS_Input_UV Input) : SV_TARGET0
-{
-    float4 BaseColor = ResolveBaseColor(Input.uv);
-    float3 Normal = DecodeNormal(ResolveSurface1(Input.uv));
+#if defined(LIGHTING_MODEL_GOURAUD)
+    // Gouraud는 Surface1에 인코딩되지 않은 라이팅 값이 들어있으므로 직접 사용
+    float4 GouraudL = ResolveSurface1(UV);
+    return ComputeGouraudLighting(BaseColor, GouraudL);
+#elif defined(LIGHTING_MODEL_LAMBERT)
+    float3 Normal = DecodeNormal(ResolveSurface1(UV));
     return ComputeLambertLighting(BaseColor, Normal);
-}
-
-float4 PS_Lighting_BlinnPhong(PS_Input_UV Input) : SV_TARGET0
-{
-    float4 BaseColor = ResolveBaseColor(Input.uv);
-    float3 Normal = DecodeNormal(ResolveSurface1(Input.uv));
-    float4 MaterialParam = DecodeMaterialParam(ResolveSurface2(Input.uv));
-    return ComputeBlinnPhongLighting(BaseColor, Normal, MaterialParam, Input.uv);
+#elif defined(LIGHTING_MODEL_PHONG)
+    float3 Normal = DecodeNormal(ResolveSurface1(UV));
+    float4 MaterialParam = DecodeMaterialParam(ResolveSurface2(UV));
+    return ComputeBlinnPhongLighting(BaseColor, Normal, MaterialParam, UV);
+#elif defined(LIGHTING_MODEL_WORLDNORMAL)
+    float3 Normal = DecodeNormal(ResolveSurface1(UV));
+    return float4(Normal * 0.5f + 0.5f, 1.0f);
+#else
+    return BaseColor;
+#endif
 }

@@ -1,7 +1,7 @@
-#include "Common/Functions.hlsl"
-#include "Common/VertexLayouts.hlsl"
-#include "Common/SystemSamplers.hlsl"
-#include "StaticMeshMaterialCommon.hlsli"
+#include "../Common/Utils/Functions.hlsl"
+#include "../Common/Geometry/VertexLayouts.hlsl"
+#include "../Common/Resources/SystemSamplers.hlsl"
+#include "../Common/Types/StaticMeshMaterialCommon.hlsli"
 
 Texture2D g_txColor : register(t0);
 

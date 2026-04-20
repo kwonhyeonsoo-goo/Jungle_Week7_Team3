@@ -1,5 +1,5 @@
-#include "Common/Functions.hlsl"
-#include "SurfaceData.hlsli"
+#include "../Common/Utils/Functions.hlsl"
+#include "../Common/Types/SurfaceData.hlsli"
 
 Texture2D NormalTexture : register(t0);
 SamplerState LinearClampSampler : register(s0);

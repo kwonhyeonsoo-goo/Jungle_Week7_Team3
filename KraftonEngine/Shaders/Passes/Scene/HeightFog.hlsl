@@ -1,8 +1,8 @@
 // HeightFog.hlsl
 // Fullscreen Triangle VS (SV_VertexID) + Exponential Height Fog PS
 
-#include "Common/Functions.hlsl"
-#include "Common/SystemResources.hlsl"
+#include "../../Common/Utils/Functions.hlsl"
+#include "../../Common/Resources/SystemResources.hlsl"
 
 // b2 (PerShader0): Fog parameters
 cbuffer FogBuffer : register(b2)

@@ -1,6 +1,6 @@
-#include "Common/Functions.hlsl"
-#include "Common/VertexLayouts.hlsl"
-#include "Common/SystemSamplers.hlsl"
+#include "../Common/Utils/Functions.hlsl"
+#include "../Common/Geometry/VertexLayouts.hlsl"
+#include "../Common/Resources/SystemSamplers.hlsl"
 
 Texture2D SubUVAtlas : register(t0);
 

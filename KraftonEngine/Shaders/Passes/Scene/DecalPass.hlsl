@@ -1,6 +1,6 @@
-#include "CommonTypes.hlsli"
-#include "SurfaceData.hlsli"
-#include "DecalCommon.hlsli"
+#include "../../Common/Types/CommonTypes.hlsli"
+#include "../../Common/Types/SurfaceData.hlsli"
+#include "../../Common/Types/DecalCommon.hlsli"
 
 Texture2D g_DecalTex : register(t0);
 Texture2D g_BaseColorTex : register(t1);

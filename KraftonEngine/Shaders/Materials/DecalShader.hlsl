@@ -1,6 +1,6 @@
-#include "Common/Functions.hlsl"
-#include "Common/VertexLayouts.hlsl"
-#include "Common/SystemSamplers.hlsl"
+#include "../Common/Utils/Functions.hlsl"
+#include "../Common/Geometry/VertexLayouts.hlsl"
+#include "../Common/Resources/SystemSamplers.hlsl"
 
 Texture2D g_txColor : register(t0);
 
@@ -40,11 +40,7 @@ float4 PS(PS_Input_Decal input) : SV_TARGET
     {
         discard;
     }
-    
+
     float4 finalColor = texColor * DecalColor;
-    float distAlpha = saturate(0.5f - length(decalLocalPos));
-    finalColor.a *= distAlpha;
-    
-    // Additive 블렌딩을 위해 Alpha를 RGB에 미리 곱함 (ONE, ONE 블렌딩 대응)
-    return float4(finalColor.rgb * finalColor.a, 1.0f);
+    return float4(ApplyWireframe(finalColor.rgb), finalColor.a);
 }

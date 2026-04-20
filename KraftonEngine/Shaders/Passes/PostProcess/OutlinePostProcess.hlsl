@@ -1,8 +1,8 @@
 // OutlinePostProcess.hlsl
 // Fullscreen Triangle VS + stencil-based outline PS.
 
-#include "Common/Functions.hlsl"
-#include "Common/SystemResources.hlsl"
+#include "../../Common/Utils/Functions.hlsl"
+#include "../../Common/Resources/SystemResources.hlsl"
 
 cbuffer OutlinePostProcessCB : register(b2)
 {

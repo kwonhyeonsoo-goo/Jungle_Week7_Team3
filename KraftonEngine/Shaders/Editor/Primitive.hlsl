@@ -1,5 +1,5 @@
-#include "Common/Functions.hlsl"
-#include "Common/VertexLayouts.hlsl"
+#include "../Common/Utils/Functions.hlsl"
+#include "../Common/Geometry/VertexLayouts.hlsl"
 
 cbuffer PerShader1 : register(b2)
 {

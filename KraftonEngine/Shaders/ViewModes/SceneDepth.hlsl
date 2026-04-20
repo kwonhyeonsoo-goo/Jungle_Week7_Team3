@@ -1,6 +1,6 @@
 // SceneDepth.hlsl
-#include "Common/Functions.hlsl"
-#include "Common/SystemResources.hlsl"
+#include "../Common/Utils/Functions.hlsl"
+#include "../Common/Resources/SystemResources.hlsl"
 
 // b2 (PerShader0): SceneDepth visualization
 cbuffer SceneDepthCB : register(b2)

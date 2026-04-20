@@ -1,7 +1,7 @@
 // FXAA.hlsl
-#include "Common/Functions.hlsl"
-#include "Common/SystemResources.hlsl"
-#include "Common/SystemSamplers.hlsl"
+#include "../../Common/Utils/Functions.hlsl"
+#include "../../Common/Resources/SystemResources.hlsl"
+#include "../../Common/Resources/SystemSamplers.hlsl"
 
 cbuffer FXAABuffer : register(b2)
 {

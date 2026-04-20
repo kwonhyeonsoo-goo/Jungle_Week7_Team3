@@ -1,5 +1,5 @@
-#include "Common/ConstantBuffers.hlsl"
-#include "Common/VertexLayouts.hlsl"
+#include "../Common/Resources/ConstantBuffers.hlsl"
+#include "../Common/Geometry/VertexLayouts.hlsl"
 
 PS_Input_ColorWorld VS(VS_Input_PC input)
 {

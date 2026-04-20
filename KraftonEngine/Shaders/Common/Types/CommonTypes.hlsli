@@ -1,9 +1,9 @@
 #ifndef COMMON_TYPES_HLSLI
 #define COMMON_TYPES_HLSLI
 
-#include "Common/Functions.hlsl"
-#include "Common/SystemSamplers.hlsl"
-#include "Common/SystemResources.hlsl"
+#include "../Utils/Functions.hlsl"
+#include "../Resources/SystemSamplers.hlsl"
+#include "../Resources/SystemResources.hlsl"
 #include "StaticMeshMaterialCommon.hlsli"
 
 struct FBaseDrawVSOutput
