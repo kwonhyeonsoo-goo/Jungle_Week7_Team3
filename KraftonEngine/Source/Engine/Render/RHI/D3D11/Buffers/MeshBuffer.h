@@ -13,7 +13,7 @@ public:
     FMeshBuffer(FMeshBuffer&&) = default;
     FMeshBuffer& operator=(FMeshBuffer&&) = default;
 
-    template<typename VertexType>
+    template <typename VertexType>
     void Create(ID3D11Device* InDevice, const TMeshData<VertexType>& InMeshData)
     {
         Release();
@@ -40,6 +40,7 @@ public:
     const FVertexBuffer& GetVertexBuffer() const { return VertexBuffer; }
     const FIndexBuffer& GetIndexBuffer() const { return IndexBuffer; }
     bool IsValid() const { return VertexBuffer.GetBuffer() != nullptr && VertexBuffer.GetVertexCount() > 0; }
+
 private:
     FVertexBuffer VertexBuffer;
     FIndexBuffer IndexBuffer;

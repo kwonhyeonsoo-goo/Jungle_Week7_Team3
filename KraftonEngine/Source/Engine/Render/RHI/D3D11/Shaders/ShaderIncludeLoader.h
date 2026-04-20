@@ -18,9 +18,7 @@ class FShaderIncludeLoader final : public ID3DInclude
 public:
     explicit FShaderIncludeLoader(const std::filesystem::path& InRootShaderFile,
                                   std::unordered_set<std::wstring>* InOutDependencies = nullptr)
-        : RootShaderFile(MakeNormalizedPath(InRootShaderFile))
-        , RootDirectory(RootShaderFile.parent_path())
-        , Dependencies(InOutDependencies)
+        : RootShaderFile(MakeNormalizedPath(InRootShaderFile)), RootDirectory(RootShaderFile.parent_path()), Dependencies(InOutDependencies)
     {
         RegisterDependency(RootShaderFile);
     }

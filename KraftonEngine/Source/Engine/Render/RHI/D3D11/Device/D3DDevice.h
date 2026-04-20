@@ -11,56 +11,56 @@
 class FD3DDevice
 {
 public:
-	FD3DDevice() = default;
+    FD3DDevice() = default;
 
-	void Create(HWND InHWindow);
-	void Release();
+    void Create(HWND InHWindow);
+    void Release();
 
-	void Present();
-	void OnResizeViewport(int width, int height);
+    void Present();
+    void OnResizeViewport(int width, int height);
 
-	ID3D11Device* GetDevice() const;
-	ID3D11DeviceContext* GetDeviceContext() const;
-	ID3DUserDefinedAnnotation* GetUserDefinedAnnotation() const { return UserDefinedAnnotation; }
-	ID3D11RenderTargetView* GetFrameBufferRTV() const { return FrameBufferRTV; }
-	ID3D11DepthStencilView* GetDepthStencilView() const { return DepthStencilView; }
-	const D3D11_VIEWPORT& GetViewport() const { return ViewportInfo; }
-	const float* GetClearColor() const { return ClearColor; }
+    ID3D11Device* GetDevice() const;
+    ID3D11DeviceContext* GetDeviceContext() const;
+    ID3DUserDefinedAnnotation* GetUserDefinedAnnotation() const { return UserDefinedAnnotation; }
+    ID3D11RenderTargetView* GetFrameBufferRTV() const { return FrameBufferRTV; }
+    ID3D11DepthStencilView* GetDepthStencilView() const { return DepthStencilView; }
+    const D3D11_VIEWPORT& GetViewport() const { return ViewportInfo; }
+    const float* GetClearColor() const { return ClearColor; }
 
-	void SetDepthStencilState(EDepthStencilState InState);
-	void SetBlendState(EBlendState InState);
-	void SetRasterizerState(ERasterizerState InState);
-
-private:
-	void CreateDeviceAndSwapChain(HWND InHWindow);
-	void ReleaseDeviceAndSwapChain();
-
-	void CreateFrameBuffer();
-	void ReleaseFrameBuffer();
-
-	void CreateDepthStencilBuffer();
-	void ReleaseDepthStencilBuffer();
+    void SetDepthStencilState(EDepthStencilState InState);
+    void SetBlendState(EBlendState InState);
+    void SetRasterizerState(ERasterizerState InState);
 
 private:
-	ID3D11Device* Device = nullptr;
-	ID3D11DeviceContext* DeviceContext = nullptr;
-	ID3DUserDefinedAnnotation* UserDefinedAnnotation = nullptr;
-	IDXGISwapChain* SwapChain = nullptr;
+    void CreateDeviceAndSwapChain(HWND InHWindow);
+    void ReleaseDeviceAndSwapChain();
 
-	ID3D11Texture2D* FrameBuffer = nullptr;
-	ID3D11RenderTargetView* FrameBufferRTV = nullptr;
+    void CreateFrameBuffer();
+    void ReleaseFrameBuffer();
 
-	ID3D11Texture2D* DepthStencilBuffer = nullptr;
-	ID3D11DepthStencilView* DepthStencilView = nullptr;
+    void CreateDepthStencilBuffer();
+    void ReleaseDepthStencilBuffer();
 
-	FRasterizerStateManager RasterizerStateManager;
-	FDepthStencilStateManager DepthStencilStateManager;
-	FBlendStateManager BlendStateManager;
+private:
+    ID3D11Device* Device = nullptr;
+    ID3D11DeviceContext* DeviceContext = nullptr;
+    ID3DUserDefinedAnnotation* UserDefinedAnnotation = nullptr;
+    IDXGISwapChain* SwapChain = nullptr;
 
-	D3D11_VIEWPORT ViewportInfo = {};
+    ID3D11Texture2D* FrameBuffer = nullptr;
+    ID3D11RenderTargetView* FrameBufferRTV = nullptr;
 
-	const float ClearColor[4] = { 0.25f, 0.25f, 0.25f, 1.0f };
+    ID3D11Texture2D* DepthStencilBuffer = nullptr;
+    ID3D11DepthStencilView* DepthStencilView = nullptr;
 
-	BOOL bTearingSupported = FALSE;
-	UINT SwapChainFlags = 0;
+    FRasterizerStateManager RasterizerStateManager;
+    FDepthStencilStateManager DepthStencilStateManager;
+    FBlendStateManager BlendStateManager;
+
+    D3D11_VIEWPORT ViewportInfo = {};
+
+    const float ClearColor[4] = { 0.25f, 0.25f, 0.25f, 1.0f };
+
+    BOOL bTearingSupported = FALSE;
+    UINT SwapChainFlags = 0;
 };

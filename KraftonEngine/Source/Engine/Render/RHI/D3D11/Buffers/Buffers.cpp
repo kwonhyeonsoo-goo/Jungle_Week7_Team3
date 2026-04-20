@@ -18,7 +18,7 @@ void BufferDebugLog(const char* Format, ...)
     OutputDebugStringA(Buffer);
     OutputDebugStringA("\n");
 }
-}
+} // namespace
 
 void FMeshBuffer::Release()
 {
@@ -69,7 +69,7 @@ void FVertexBuffer::Create(ID3D11Device* InDevice, const void* InData, uint32 In
     if (FAILED(hr))
     {
         BufferDebugLog("[VertexBuffer] CreateBuffer failed hr=0x%08X vertexCount=%u byteWidth=%u stride=%u device=%p data=%p",
-            static_cast<unsigned>(hr), InVertexCount, InByteWidth, InStride, InDevice, InData);
+                       static_cast<unsigned>(hr), InVertexCount, InByteWidth, InStride, InDevice, InData);
         VertexCount = 0;
         Stride = InStride;
         return;
@@ -197,7 +197,7 @@ void FIndexBuffer::Create(ID3D11Device* InDevice, const void* InData, uint32 InI
     if (FAILED(hr))
     {
         BufferDebugLog("[IndexBuffer] CreateBuffer failed hr=0x%08X indexCount=%u byteWidth=%u device=%p data=%p",
-            static_cast<unsigned>(hr), InIndexCount, InByteWidth, InDevice, InData);
+                       static_cast<unsigned>(hr), InIndexCount, InByteWidth, InDevice, InData);
         IndexCount = 0;
         return;
     }

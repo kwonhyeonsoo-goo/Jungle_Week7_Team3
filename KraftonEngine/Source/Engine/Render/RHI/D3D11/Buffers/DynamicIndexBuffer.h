@@ -15,6 +15,7 @@ public:
     void Bind(ID3D11DeviceContext* Context);
     uint32 GetMaxCount() const { return MaxCount; }
     ID3D11Buffer* GetBuffer() const { return Buffer; }
+
 private:
     ID3D11Buffer* Buffer = nullptr;
     uint32 MaxCount = 0;

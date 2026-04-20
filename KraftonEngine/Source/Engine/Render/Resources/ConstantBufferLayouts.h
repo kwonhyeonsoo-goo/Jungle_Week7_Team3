@@ -1,14 +1,14 @@
-    #pragma once
+#pragma once
 
-    #include "Core/CoreTypes.h"
-    #include "Math/Matrix.h"
-    #include "Math/Vector.h"
+#include "Core/CoreTypes.h"
+#include "Math/Matrix.h"
+#include "Math/Vector.h"
 
-    /*
-        셰이더와 CPU가 공유하는 상수 버퍼 레이아웃 정의입니다.
-        슬롯 번호는 Resources/BindingSlots.h와 맞춰 사용합니다.
-    */
-    struct FPerObjectConstants
+/*
+    셰이더와 CPU가 공유하는 상수 버퍼 레이아웃 정의입니다.
+    슬롯 번호는 Resources/BindingSlots.h와 맞춰 사용합니다.
+*/
+struct FPerObjectConstants
 {
     FMatrix Model;
     FMatrix NormalMatrix;

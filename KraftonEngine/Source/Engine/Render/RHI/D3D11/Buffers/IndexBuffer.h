@@ -14,6 +14,7 @@ public:
     void Release();
     uint32 GetIndexCount() const { return IndexCount; }
     ID3D11Buffer* GetBuffer() const;
+
 private:
     ID3D11Buffer* Buffer = nullptr;
     uint32 IndexCount = 0;

@@ -13,6 +13,7 @@ public:
     void Release();
     ID3D11PixelShader* Get() const { return Shader; }
     size_t GetByteSize() const { return ByteSize; }
+
 private:
     ID3D11PixelShader* Shader = nullptr;
     size_t ByteSize = 0;

@@ -16,6 +16,7 @@ public:
     uint32 GetMaxCount() const { return MaxCount; }
     ID3D11Buffer* GetBuffer() const { return Buffer; }
     uint32 GetStride() const { return Stride; }
+
 private:
     ID3D11Buffer* Buffer = nullptr;
     uint32 MaxCount = 0;

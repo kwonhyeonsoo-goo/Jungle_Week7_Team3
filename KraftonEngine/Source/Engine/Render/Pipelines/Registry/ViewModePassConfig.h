@@ -14,11 +14,11 @@
 
 namespace ViewModePassConfigUtils
 {
-    inline void AddDefine(TArray<FShaderMacroDefine>& Defines, const char* Name, const char* Value = "1")
-    {
-        Defines.push_back({ Name, Value });
-    }
+inline void AddDefine(TArray<FShaderMacroDefine>& Defines, const char* Name, const char* Value = "1")
+{
+    Defines.push_back({ Name, Value });
 }
+} // namespace ViewModePassConfigUtils
 
 enum class EViewModePostProcessVariant : uint16
 {

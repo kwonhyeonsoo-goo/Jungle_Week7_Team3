@@ -35,7 +35,8 @@ void FVertexShaderStage::Release()
     ByteSize = 0;
 }
 
-FVertexShaderStage::FVertexShaderStage(FVertexShaderStage&& Other) noexcept : Shader(Other.Shader), ByteSize(Other.ByteSize)
+FVertexShaderStage::FVertexShaderStage(FVertexShaderStage&& Other) noexcept
+    : Shader(Other.Shader), ByteSize(Other.ByteSize)
 {
     Other.Shader = nullptr;
     Other.ByteSize = 0;
@@ -76,7 +77,8 @@ void FPixelShaderStage::Release()
     ByteSize = 0;
 }
 
-FPixelShaderStage::FPixelShaderStage(FPixelShaderStage&& Other) noexcept : Shader(Other.Shader), ByteSize(Other.ByteSize)
+FPixelShaderStage::FPixelShaderStage(FPixelShaderStage&& Other) noexcept
+    : Shader(Other.Shader), ByteSize(Other.ByteSize)
 {
     Other.Shader = nullptr;
     Other.ByteSize = 0;
@@ -112,7 +114,8 @@ void FComputeShaderStage::Release()
     ByteSize = 0;
 }
 
-FComputeShaderStage::FComputeShaderStage(FComputeShaderStage&& Other) noexcept : Shader(Other.Shader), ByteSize(Other.ByteSize)
+FComputeShaderStage::FComputeShaderStage(FComputeShaderStage&& Other) noexcept
+    : Shader(Other.Shader), ByteSize(Other.ByteSize)
 {
     Other.Shader = nullptr;
     Other.ByteSize = 0;
@@ -325,44 +328,60 @@ namespace
 DXGI_FORMAT MaskToFormat(D3D_REGISTER_COMPONENT_TYPE ComponentType, BYTE Mask)
 {
     int Count = 0;
-    if (Mask & 0x1) ++Count;
-    if (Mask & 0x2) ++Count;
-    if (Mask & 0x4) ++Count;
-    if (Mask & 0x8) ++Count;
+    if (Mask & 0x1)
+        ++Count;
+    if (Mask & 0x2)
+        ++Count;
+    if (Mask & 0x4)
+        ++Count;
+    if (Mask & 0x8)
+        ++Count;
 
     if (ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
     {
         switch (Count)
         {
-        case 1: return DXGI_FORMAT_R32_FLOAT;
-        case 2: return DXGI_FORMAT_R32G32_FLOAT;
-        case 3: return DXGI_FORMAT_R32G32B32_FLOAT;
-        case 4: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+        case 1:
+            return DXGI_FORMAT_R32_FLOAT;
+        case 2:
+            return DXGI_FORMAT_R32G32_FLOAT;
+        case 3:
+            return DXGI_FORMAT_R32G32B32_FLOAT;
+        case 4:
+            return DXGI_FORMAT_R32G32B32A32_FLOAT;
         }
     }
     else if (ComponentType == D3D_REGISTER_COMPONENT_UINT32)
     {
         switch (Count)
         {
-        case 1: return DXGI_FORMAT_R32_UINT;
-        case 2: return DXGI_FORMAT_R32G32_UINT;
-        case 3: return DXGI_FORMAT_R32G32B32_UINT;
-        case 4: return DXGI_FORMAT_R32G32B32A32_UINT;
+        case 1:
+            return DXGI_FORMAT_R32_UINT;
+        case 2:
+            return DXGI_FORMAT_R32G32_UINT;
+        case 3:
+            return DXGI_FORMAT_R32G32B32_UINT;
+        case 4:
+            return DXGI_FORMAT_R32G32B32A32_UINT;
         }
     }
     else if (ComponentType == D3D_REGISTER_COMPONENT_SINT32)
     {
         switch (Count)
         {
-        case 1: return DXGI_FORMAT_R32_SINT;
-        case 2: return DXGI_FORMAT_R32G32_SINT;
-        case 3: return DXGI_FORMAT_R32G32B32_SINT;
-        case 4: return DXGI_FORMAT_R32G32B32A32_SINT;
+        case 1:
+            return DXGI_FORMAT_R32_SINT;
+        case 2:
+            return DXGI_FORMAT_R32G32_SINT;
+        case 3:
+            return DXGI_FORMAT_R32G32B32_SINT;
+        case 4:
+            return DXGI_FORMAT_R32G32B32A32_SINT;
         }
     }
     return DXGI_FORMAT_UNKNOWN;
 }
-}
+} // namespace
 
 bool FShader::CreateInputLayoutFromReflection(ID3D11Device* InDevice, ID3DBlob* VSBlob, ID3D11InputLayout** OutInputLayout) const
 {

@@ -13,24 +13,39 @@ const wchar_t* GetRenderPassMarkerName(ERenderPassNodeType PassType)
 {
     switch (PassType)
     {
-    case ERenderPassNodeType::DepthPrePass: return L"DepthPrePass";
-    case ERenderPassNodeType::BaseDrawPass: return L"OpaquePass";
-    case ERenderPassNodeType::DecalPass: return L"DecalPass";
-    case ERenderPassNodeType::LightingPass: return L"LightingPass";
-    case ERenderPassNodeType::AdditiveDecalPass: return L"AdditiveDecalPass";
-    case ERenderPassNodeType::AlphaBlendPass: return L"AlphaBlendPass";
-    case ERenderPassNodeType::ViewModeResolvePass: return L"ViewModeResolvePass";
-    case ERenderPassNodeType::SelectionMaskPass: return L"SelectionMaskPass";
-    case ERenderPassNodeType::OutlinePass: return L"OutlinePass";
-    case ERenderPassNodeType::DebugLinePass: return L"DebugLinePass";
-    case ERenderPassNodeType::GizmoPass: return L"GizmoPass";
-    case ERenderPassNodeType::OverlayTextPass: return L"OverlayTextPass";
-    case ERenderPassNodeType::HeightFogPass: return L"HeightFogPass";
-    case ERenderPassNodeType::FXAAPass: return L"FXAAPass";
-    default: return L"RenderPass";
+    case ERenderPassNodeType::DepthPrePass:
+        return L"DepthPrePass";
+    case ERenderPassNodeType::BaseDrawPass:
+        return L"OpaquePass";
+    case ERenderPassNodeType::DecalPass:
+        return L"DecalPass";
+    case ERenderPassNodeType::LightingPass:
+        return L"LightingPass";
+    case ERenderPassNodeType::AdditiveDecalPass:
+        return L"AdditiveDecalPass";
+    case ERenderPassNodeType::AlphaBlendPass:
+        return L"AlphaBlendPass";
+    case ERenderPassNodeType::ViewModeResolvePass:
+        return L"ViewModeResolvePass";
+    case ERenderPassNodeType::SelectionMaskPass:
+        return L"SelectionMaskPass";
+    case ERenderPassNodeType::OutlinePass:
+        return L"OutlinePass";
+    case ERenderPassNodeType::DebugLinePass:
+        return L"DebugLinePass";
+    case ERenderPassNodeType::GizmoPass:
+        return L"GizmoPass";
+    case ERenderPassNodeType::OverlayTextPass:
+        return L"OverlayTextPass";
+    case ERenderPassNodeType::HeightFogPass:
+        return L"HeightFogPass";
+    case ERenderPassNodeType::FXAAPass:
+        return L"FXAAPass";
+    default:
+        return L"RenderPass";
     }
 }
-}
+} // namespace
 
 void FRenderPipelineRunner::ExecutePipeline(
     ERenderPipelineType Root,

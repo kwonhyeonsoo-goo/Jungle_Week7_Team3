@@ -15,6 +15,7 @@ public:
     uint32 GetVertexCount() const { return VertexCount; }
     uint32 GetStride() const { return Stride; }
     ID3D11Buffer* GetBuffer() const;
+
 private:
     ID3D11Buffer* Buffer = nullptr;
     uint32 VertexCount = 0;

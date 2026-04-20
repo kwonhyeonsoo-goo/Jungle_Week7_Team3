@@ -18,7 +18,7 @@ FRenderNodeRef PassNode(ERenderPassNodeType Type)
     Ref.TypeValue = (int32)Type;
     return Ref;
 }
-}
+} // namespace
 
 void FRenderPipelineRegistry::Initialize()
 {
