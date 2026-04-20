@@ -24,11 +24,13 @@ void FRenderPipelineRegistry::Initialize()
 {
     Release();
 
+    // ==================== Default Scene Pipeline ====================
     FRenderPipelineDesc DefaultScene;
     DefaultScene.Type = ERenderPipelineType::DefaultScene;
     DefaultScene.Children = { PipelineNode(ERenderPipelineType::Scene) };
     Pipelines.emplace((int32)DefaultScene.Type, DefaultScene);
 
+    // ==================== Editor Scene Pipeline =====================
     FRenderPipelineDesc EditorScene;
     EditorScene.Type = ERenderPipelineType::EditorScene;
     EditorScene.Children = {
@@ -37,6 +39,7 @@ void FRenderPipelineRegistry::Initialize()
     };
     Pipelines.emplace((int32)EditorScene.Type, EditorScene);
 
+    // ======================= Scene Pipeline =========================
     FRenderPipelineDesc Scene;
     Scene.Type = ERenderPipelineType::Scene;
     Scene.Children = {
@@ -47,6 +50,7 @@ void FRenderPipelineRegistry::Initialize()
     };
     Pipelines.emplace((int32)Scene.Type, Scene);
 
+    // ==================== Scene ViewMode Pipeline ===================
     FRenderPipelineDesc SceneViewMode;
     SceneViewMode.Type = ERenderPipelineType::SceneViewMode;
     SceneViewMode.Children = {
@@ -57,6 +61,7 @@ void FRenderPipelineRegistry::Initialize()
     };
     Pipelines.emplace((int32)SceneViewMode.Type, SceneViewMode);
 
+    // =================== Scene PostProcess Pipeline =================
     FRenderPipelineDesc ScenePostProcess;
     ScenePostProcess.Type = ERenderPipelineType::ScenePostProcess;
     ScenePostProcess.Children = {
@@ -66,6 +71,7 @@ void FRenderPipelineRegistry::Initialize()
     };
     Pipelines.emplace((int32)ScenePostProcess.Type, ScenePostProcess);
 
+    // ==================== Editor Overlay Pipeline ===================
     FRenderPipelineDesc EditorOverlay;
     EditorOverlay.Type = ERenderPipelineType::EditorOverlay;
     EditorOverlay.Children = {
@@ -76,6 +82,7 @@ void FRenderPipelineRegistry::Initialize()
     };
     Pipelines.emplace((int32)EditorOverlay.Type, EditorOverlay);
 
+    // ====================== Outline Pipeline ========================
     FRenderPipelineDesc Outline;
     Outline.Type = ERenderPipelineType::Outline;
     Outline.Children = {
