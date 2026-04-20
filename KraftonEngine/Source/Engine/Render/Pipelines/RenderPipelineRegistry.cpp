@@ -1,4 +1,4 @@
-#include "Render/Pipelines/Registry/RenderPipelineRegistry.h"
+#include "Render/Pipelines/RenderPipelineRegistry.h"
 
 namespace
 {
@@ -59,7 +59,7 @@ void FRenderPipelineRegistry::Initialize()
     FRenderPipelineDesc ScenePostProcess;
     ScenePostProcess.Type = ERenderPipelineType::ScenePostProcess;
     ScenePostProcess.Children = {
-        PassNode(ERenderPassNodeType::ViewModePostProcessPass),
+        PassNode(ERenderPassNodeType::ViewModeResolvePass),
         PassNode(ERenderPassNodeType::HeightFogPass),
         PassNode(ERenderPassNodeType::FXAAPass)
     };

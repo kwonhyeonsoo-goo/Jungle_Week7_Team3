@@ -136,21 +136,21 @@ FString FShaderManager::GetBuiltInShaderPath(EShaderType InType) const
 {
     switch (InType)
     {
-    case EShaderType::Primitive: return "Shaders/Primitive.hlsl";
-    case EShaderType::Gizmo: return "Shaders/Gizmo.hlsl";
-    case EShaderType::Editor: return "Shaders/Editor.hlsl";
-    case EShaderType::StaticMesh: return "Shaders/StaticMeshShader.hlsl";
-    case EShaderType::Decal: return "Shaders/DecalShader.hlsl";
-    case EShaderType::OutlinePostProcess: return "Shaders/OutlinePostProcess.hlsl";
-    case EShaderType::SceneDepth: return "Shaders/SceneDepth.hlsl";
-    case EShaderType::NormalView: return "Shaders/NormalView.hlsl";
-    case EShaderType::FXAA: return "Shaders/FXAA.hlsl";
-    case EShaderType::Font: return "Shaders/ShaderFont.hlsl";
-    case EShaderType::OverlayFont: return "Shaders/ShaderOverlayFont.hlsl";
-    case EShaderType::SubUV: return "Shaders/ShaderSubUV.hlsl";
-    case EShaderType::Billboard: return "Shaders/ShaderBillboard.hlsl";
-    case EShaderType::HeightFog: return "Shaders/HeightFog.hlsl";
-    case EShaderType::DepthOnly: return "Shaders/DepthOnly.hlsl";
+    case EShaderType::Primitive: return "Shaders/Editor/Primitive.hlsl";
+    case EShaderType::Gizmo: return "Shaders/Editor/Gizmo.hlsl";
+    case EShaderType::Editor: return "Shaders/Editor/Editor.hlsl";
+    case EShaderType::StaticMesh: return "Shaders/Materials/StaticMeshShader.hlsl";
+    case EShaderType::Decal: return "Shaders/Materials/DecalShader.hlsl";
+    case EShaderType::OutlinePostProcess: return "Shaders/Passes/PostProcess/OutlinePostProcess.hlsl";
+    case EShaderType::SceneDepth: return "Shaders/ViewModes/SceneDepth.hlsl";
+    case EShaderType::NormalView: return "Shaders/ViewModes/NormalView.hlsl";
+    case EShaderType::FXAA: return "Shaders/Passes/PostProcess/FXAA.hlsl";
+    case EShaderType::Font: return "Shaders/Editor/ShaderFont.hlsl";
+    case EShaderType::OverlayFont: return "Shaders/Editor/ShaderOverlayFont.hlsl";
+    case EShaderType::SubUV: return "Shaders/Editor/ShaderSubUV.hlsl";
+    case EShaderType::Billboard: return "Shaders/Editor/ShaderBillboard.hlsl";
+    case EShaderType::HeightFog: return "Shaders/Passes/Scene/HeightFog.hlsl";
+    case EShaderType::DepthOnly: return "Shaders/Passes/Scene/DepthOnly.hlsl";
     default: return "";
     }
 }

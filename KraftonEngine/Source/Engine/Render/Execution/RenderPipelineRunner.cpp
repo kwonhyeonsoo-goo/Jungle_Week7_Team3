@@ -1,9 +1,9 @@
-﻿#include "Render/Execution/RenderPipelineRunner.h"
+#include "Render/Execution/RenderPipelineRunner.h"
 
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/Passes/Common/RenderPassContext.h"
-#include "Render/Pipelines/Registry/RenderPassRegistry.h"
-#include "Render/Pipelines/Registry/RenderPipelineRegistry.h"
+#include "Render/Pipelines/RenderPassRegistry.h"
+#include "Render/Pipelines/RenderPipelineRegistry.h"
 #include "Render/Execution/RenderMarkers.h"
 
 namespace
@@ -18,7 +18,7 @@ const wchar_t* GetRenderPassMarkerName(ERenderPassNodeType PassType)
     case ERenderPassNodeType::LightingPass: return L"LightingPass";
     case ERenderPassNodeType::AdditiveDecalPass: return L"AdditiveDecalPass";
     case ERenderPassNodeType::AlphaBlendPass: return L"AlphaBlendPass";
-    case ERenderPassNodeType::ViewModePostProcessPass: return L"ViewModePostProcessPass";
+    case ERenderPassNodeType::ViewModeResolvePass: return L"ViewModeResolvePass";
     case ERenderPassNodeType::SelectionMaskPass: return L"SelectionMaskPass";
     case ERenderPassNodeType::OutlinePass: return L"OutlinePass";
     case ERenderPassNodeType::DebugLinePass: return L"DebugLinePass";

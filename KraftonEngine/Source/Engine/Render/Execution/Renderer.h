@@ -17,8 +17,8 @@
 #include "Render/Resources/Managers/ShaderManager.h"
 #include "Render/Submission/Batching/LineBatch.h"
 #include "Render/Submission/Batching/FontBatch.h"
-#include "Render/Pipelines/Registry/RenderPassRegistry.h"
-#include "Render/Pipelines/Registry/RenderPipelineRegistry.h"
+#include "Render/Pipelines/RenderPassRegistry.h"
+#include "Render/Pipelines/RenderPipelineRegistry.h"
 #include "Render/Execution/RenderPipelineRunner.h"
 
 class FTextRenderSceneProxy;

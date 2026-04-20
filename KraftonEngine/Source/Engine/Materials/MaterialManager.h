@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Core/Singleton.h"
 #include "Core/CoreTypes.h"
@@ -99,5 +99,5 @@ private:
     std::vector<FMaterialFileDependency> CollectTextureDependencies(json::JSON& JsonData, const FString& MatFilePath) const;
     void RetireMaterialCacheEntry(FMaterialCacheEntry& Entry);
 
-	const FString DefaultShaderPath = "Shaders/StaticMeshShader.hlsl";
+	const FString DefaultShaderPath = "Shaders/Materials/StaticMeshShader.hlsl";
 };

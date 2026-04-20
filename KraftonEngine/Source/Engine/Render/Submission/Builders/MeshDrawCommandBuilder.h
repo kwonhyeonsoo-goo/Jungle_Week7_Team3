@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 
 class FPrimitiveSceneProxy;
 struct FRenderPassContext;

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Render/Types/RenderTypes.h"
-#include "Render/D3D11/Shaders/Stages/VertexShaderStage.h"
-#include "Render/D3D11/Shaders/Stages/PixelShaderStage.h"
+#include "Render/D3D11/Shaders/VertexShaderStage.h"
+#include "Render/D3D11/Shaders/PixelShaderStage.h"
 
 struct FMaterialParameterInfo;
 

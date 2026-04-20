@@ -1,4 +1,4 @@
-#include "Render/Passes/PostProcess/FXAAPass.h"
+#include "Render/Passes/Scene/FXAAPass.h"
 #include "Render/Passes/Common/RenderPassContext.h"
 #include "Render/View/SceneView.h"
 #include "Render/Core/RenderConstants.h"
@@ -29,8 +29,7 @@ void FFXAAPass::PrepareInputs(FRenderPassContext& Context)
 
 void FFXAAPass::PrepareTargets(FRenderPassContext& Context)
 {
-    ID3D11RenderTargetView* RTV = Context.GetViewportRTV();
-    Context.Context->OMSetRenderTargets(1, &RTV, Context.GetViewportDSV());
+    BindViewportTarget(Context);
 }
 
 void FFXAAPass::BuildDrawCommands(FRenderPassContext& Context)
@@ -58,11 +57,5 @@ void FFXAAPass::BuildDrawCommands(FRenderPassContext& Context)
 
 void FFXAAPass::SubmitDrawCommands(FRenderPassContext& Context)
 {
-    if (Context.DrawCommandList)
-    {
-        uint32 s, e;
-        Context.DrawCommandList->GetPassRange(ERenderPass::FXAA, s, e);
-        if (s < e)
-            Context.DrawCommandList->SubmitRange(s, e, *Context.Device, Context.Context, *Context.StateCache);
-    }
+    SubmitPassRange(Context, ERenderPass::FXAA);
 }

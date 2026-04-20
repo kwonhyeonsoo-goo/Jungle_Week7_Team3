@@ -1,9 +1,9 @@
 #pragma once
-#include "Render/Passes/RenderPass.h"
+#include "Render/Passes/Common/FullscreenPassBase.h"
 struct FSceneView; using FFrameContext = FSceneView;
 struct FRenderPassContext;
 class FPrimitiveSceneProxy;
-class FLightingPass : public FRenderPass
+class FLightingPass : public FFullscreenPassBase
 {
 public:
     void PrepareInputs(FRenderPassContext& Context) override;

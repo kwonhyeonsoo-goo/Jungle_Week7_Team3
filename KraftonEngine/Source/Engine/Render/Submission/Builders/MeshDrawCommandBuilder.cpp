@@ -7,7 +7,7 @@
 #include "Render/Resources/Managers/ShaderManager.h"
 #include "Render/Submission/Commands/DrawCommand.h"
 #include "Render/Passes/Common/PassRenderState.h"
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/Execution/Renderer.h"
 
 

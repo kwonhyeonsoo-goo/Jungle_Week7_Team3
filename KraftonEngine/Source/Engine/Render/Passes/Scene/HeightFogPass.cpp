@@ -1,4 +1,4 @@
-﻿#include "Render/Passes/PostProcess/HeightFogPass.h"
+#include "Render/Passes/Scene/HeightFogPass.h"
 #include "Render/Passes/Common/RenderPassContext.h"
 #include "Render/View/SceneView.h"
 #include "Render/Core/RenderConstants.h"
@@ -6,6 +6,7 @@
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 #include "Render/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/Scene/Scene.h"
 
 void FHeightFogPass::PrepareInputs(FRenderPassContext& Context)
@@ -43,8 +44,7 @@ void FHeightFogPass::PrepareInputs(FRenderPassContext& Context)
 
 void FHeightFogPass::PrepareTargets(FRenderPassContext& Context)
 {
-    ID3D11RenderTargetView* RTV = Context.GetViewportRTV();
-    Context.Context->OMSetRenderTargets(1, &RTV, Context.GetViewportDSV());
+    BindViewportTarget(Context);
 }
 
 void FHeightFogPass::BuildDrawCommands(FRenderPassContext& Context)
@@ -66,7 +66,7 @@ void FHeightFogPass::BuildDrawCommands(FRenderPassContext& Context)
         return;
     }
 
-    FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, 0);
+    FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, EViewModePostProcessVariant::None);
 }
 
 void FHeightFogPass::SubmitDrawCommands(FRenderPassContext& Context)
@@ -79,7 +79,7 @@ void FHeightFogPass::SubmitDrawCommands(FRenderPassContext& Context)
         {
             const auto& c = Context.DrawCommandList->GetCommands()[i];
             const uint16 UserBits = static_cast<uint16>(c.SortKey & 0xFFFu);
-            if (UserBits == 0)
+            if (UserBits == ToPostProcessUserBits(EViewModePostProcessVariant::None))
                 Context.DrawCommandList->SubmitRange(i, i + 1, *Context.Device, Context.Context, *Context.StateCache);
         }
     }

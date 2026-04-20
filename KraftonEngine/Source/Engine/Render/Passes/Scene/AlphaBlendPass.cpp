@@ -1,4 +1,4 @@
-#include "Render/Passes/Geometry/AlphaBlendPass.h"
+#include "Render/Passes/Scene/AlphaBlendPass.h"
 #include "Render/Passes/Common/RenderPassContext.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/MeshDrawCommandBuilder.h"
@@ -11,8 +11,7 @@ void FAlphaBlendPass::PrepareInputs(FRenderPassContext& Context)
 
 void FAlphaBlendPass::PrepareTargets(FRenderPassContext& Context)
 {
-    ID3D11RenderTargetView* RTV = Context.GetViewportRTV();
-    Context.Context->OMSetRenderTargets(1, &RTV, Context.GetViewportDSV());
+    BindViewportTarget(Context);
 }
 
 void FAlphaBlendPass::BuildDrawCommands(FRenderPassContext& Context, const FPrimitiveSceneProxy& Proxy)
@@ -22,11 +21,5 @@ void FAlphaBlendPass::BuildDrawCommands(FRenderPassContext& Context, const FPrim
 
 void FAlphaBlendPass::SubmitDrawCommands(FRenderPassContext& Context)
 {
-    if (Context.DrawCommandList)
-    {
-        uint32 s, e;
-        Context.DrawCommandList->GetPassRange(ERenderPass::AlphaBlend, s, e);
-        if (s < e)
-            Context.DrawCommandList->SubmitRange(s, e, *Context.Device, Context.Context, *Context.StateCache);
-    }
+    SubmitPassRange(Context, ERenderPass::AlphaBlend);
 }

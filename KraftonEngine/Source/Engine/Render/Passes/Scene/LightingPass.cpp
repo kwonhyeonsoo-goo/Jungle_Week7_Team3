@@ -1,10 +1,10 @@
-#include "Render/Passes/Resolve/LightingPass.h"
+#include "Render/Passes/Scene/LightingPass.h"
 #include "Render/Passes/Common/RenderPassContext.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 #include "Render/View/ViewModeSurfaceSet.h"
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/View/SceneView.h"
 #include "Render/Core/RenderConstants.h"
 #include "Render/View/ViewportRenderTargets.h"
@@ -70,8 +70,7 @@ void FLightingPass::PrepareInputs(FRenderPassContext& Context)
 
 void FLightingPass::PrepareTargets(FRenderPassContext& Context)
 {
-    ID3D11RenderTargetView* RTV = Context.GetViewportRTV();
-    Context.Context->OMSetRenderTargets(1, &RTV, Context.GetViewportDSV());
+    BindViewportTarget(Context);
 }
 
 void FLightingPass::BuildDrawCommands(FRenderPassContext& Context)
@@ -97,12 +96,7 @@ void FLightingPass::SubmitDrawCommands(FRenderPassContext& Context)
         return;
     }
 
-    uint32 s, e;
-    Context.DrawCommandList->GetPassRange(ERenderPass::Lighting, s, e);
-    if (s < e)
-    {
-        Context.DrawCommandList->SubmitRange(s, e, *Context.Device, Context.Context, *Context.StateCache);
-    }
+    SubmitPassRange(Context, ERenderPass::Lighting);
 
     if (Targets && Targets->ViewportRenderTexture && Targets->SceneColorCopyTexture &&
         Targets->ViewportRenderTexture != Targets->SceneColorCopyTexture)
@@ -112,7 +106,6 @@ void FLightingPass::SubmitDrawCommands(FRenderPassContext& Context)
         Context.Context->OMSetRenderTargets(0, nullptr, nullptr);
         Context.Context->CopyResource(Targets->SceneColorCopyTexture, Targets->ViewportRenderTexture);
 
-        ID3D11RenderTargetView* RTV = Context.GetViewportRTV();
-        Context.Context->OMSetRenderTargets(1, &RTV, Context.GetViewportDSV());
+        BindViewportTarget(Context);
     }
 }

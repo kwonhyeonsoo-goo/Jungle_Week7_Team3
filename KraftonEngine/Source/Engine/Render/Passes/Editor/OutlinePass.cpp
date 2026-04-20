@@ -8,6 +8,7 @@
 #include "Render/Resources/Pools/ConstantBufferPool.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 #include "Render/View/ViewportRenderTargets.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 
 void FOutlinePass::PrepareInputs(FRenderPassContext& Context)
 {
@@ -57,13 +58,12 @@ void FOutlinePass::PrepareInputs(FRenderPassContext& Context)
 
 void FOutlinePass::PrepareTargets(FRenderPassContext& Context)
 {
-    ID3D11RenderTargetView* RTV = Context.GetViewportRTV();
-    Context.Context->OMSetRenderTargets(1, &RTV, Context.GetViewportDSV());
+    BindViewportTarget(Context);
 }
 
 void FOutlinePass::BuildDrawCommands(FRenderPassContext& Context)
 {
-    FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, 1);
+    FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, EViewModePostProcessVariant::Outline);
 
     if (!Context.DrawCommandList || Context.DrawCommandList->GetCommands().empty())
     {
@@ -93,7 +93,7 @@ void FOutlinePass::SubmitDrawCommands(FRenderPassContext& Context)
         for (uint32 i = s; i < e; ++i)
         {
             const auto& c = Context.DrawCommandList->GetCommands()[i];
-            if ((c.SortKey & 0xFFFu) == 1)
+            if ((c.SortKey & 0xFFFu) == ToPostProcessUserBits(EViewModePostProcessVariant::Outline))
                 Context.DrawCommandList->SubmitRange(i, i + 1, *Context.Device, Context.Context, *Context.StateCache);
         }
     }

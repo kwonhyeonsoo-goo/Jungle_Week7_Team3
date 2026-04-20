@@ -10,7 +10,7 @@ class FLightingPass;
 class FAdditiveDecalPass;
 class FAlphaBlendPass;
 class FHeightFogPass;
-class FViewModePostProcessPass;
+class FViewModeResolvePass;
 class FFXAAPass;
 class FSelectionMaskPass;
 class FOutlinePass;
@@ -26,7 +26,7 @@ enum class ERenderPassNodeType
     LightingPass,
     AdditiveDecalPass,
     AlphaBlendPass,
-    ViewModePostProcessPass,
+    ViewModeResolvePass,
     HeightFogPass,
     FXAAPass,
     SelectionMaskPass,

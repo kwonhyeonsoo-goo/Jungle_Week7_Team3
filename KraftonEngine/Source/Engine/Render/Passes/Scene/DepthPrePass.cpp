@@ -1,4 +1,4 @@
-#include "Render/Passes/Geometry/DepthPrePass.h"
+#include "Render/Passes/Scene/DepthPrePass.h"
 #include "Render/Passes/Common/RenderPassContext.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
@@ -18,15 +18,5 @@ void FDepthPrePass::PrepareTargets(FRenderPassContext& Context)
 
 void FDepthPrePass::SubmitDrawCommands(FRenderPassContext& Context)
 {
-    if (!Context.DrawCommandList)
-    {
-        return;
-    }
-
-    uint32 Start = 0, End = 0;
-    Context.DrawCommandList->GetPassRange(ERenderPass::DepthPre, Start, End);
-    if (Start < End)
-    {
-        Context.DrawCommandList->SubmitRange(Start, End, *Context.Device, Context.Context, *Context.StateCache);
-    }
+    SubmitPassRange(Context, ERenderPass::DepthPre);
 }

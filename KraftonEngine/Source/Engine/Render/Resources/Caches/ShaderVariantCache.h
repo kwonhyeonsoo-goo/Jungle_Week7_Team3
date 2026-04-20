@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/CoreTypes.h"
-#include "Render/D3D11/Shaders/Programs/GraphicsShaderProgram.h"
+#include "Render/D3D11/Shaders/GraphicsShaderProgram.h"
 #include "Render/Resources/Shaders/ShaderDependencyUtils.h"
 
 #include <cstdlib>

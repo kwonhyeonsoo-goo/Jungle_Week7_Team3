@@ -1,10 +1,10 @@
-#include "Render/Passes/Geometry/BaseDrawPass.h"
+#include "Render/Passes/Scene/BaseDrawPass.h"
 #include "Render/Passes/Common/RenderPassContext.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/Submission/Builders/MeshDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 #include "Render/View/ViewModeSurfaceSet.h"
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/Core/RenderConstants.h"
 
 void FBaseDrawPass::PrepareInputs(FRenderPassContext& Context)
@@ -49,11 +49,5 @@ void FBaseDrawPass::BuildDrawCommands(FRenderPassContext& Context, const FPrimit
 
 void FBaseDrawPass::SubmitDrawCommands(FRenderPassContext& Context)
 {
-    if (Context.DrawCommandList)
-    {
-        uint32 s, e;
-        Context.DrawCommandList->GetPassRange(ERenderPass::Opaque, s, e);
-        if (s < e)
-            Context.DrawCommandList->SubmitRange(s, e, *Context.Device, Context.Context, *Context.StateCache);
-    }
+    SubmitPassRange(Context, ERenderPass::Opaque);
 }

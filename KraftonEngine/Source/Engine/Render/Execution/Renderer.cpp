@@ -15,7 +15,7 @@
 #include "Engine/Runtime/Engine.h"
 #include "Profiling/Timer.h"
 #include "Render/Core/RenderConstants.h"
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/Resources/Frame/FrameSharedResources.h"
 #include "Render/View/ViewModeSurfaceSet.h"
 #include "Render/View/ViewportRenderTargets.h"

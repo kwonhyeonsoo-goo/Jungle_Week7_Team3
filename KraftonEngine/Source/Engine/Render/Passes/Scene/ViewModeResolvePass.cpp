@@ -1,11 +1,11 @@
-#include "Render/Passes/Resolve/ViewModePostProcessPass.h"
+#include "Render/Passes/Scene/ViewModeResolvePass.h"
 #include "Render/View/ViewportRenderTargets.h"
 
 #include "Render/Submission/Builders/FullscreenDrawCommandBuilder.h"
 #include "Render/Submission/Commands/DrawCommand.h"
 #include "Render/Submission/Commands/DrawCommandList.h"
 #include "Render/View/SceneView.h"
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/Core/RenderConstants.h"
 #include "Render/Passes/Common/RenderPassContext.h"
 #include "Render/View/ViewModeSurfaceSet.h"
@@ -14,29 +14,30 @@
 
 namespace
 {
-uint16 GetViewModePostProcessBits(const FRenderPassContext& Context)
+EViewModePostProcessVariant GetViewModePostProcessVariant(const FRenderPassContext& Context)
 {
     if (!Context.ViewModePassRegistry || !Context.ViewModePassRegistry->HasConfig(Context.ActiveViewMode))
     {
-        return 0;
+        return EViewModePostProcessVariant::None;
     }
 
-    return Context.ViewModePassRegistry->GetPostProcessUserBits(Context.ActiveViewMode);
+    return Context.ViewModePassRegistry->GetPostProcessVariant(Context.ActiveViewMode);
 }
 
 } // namespace
 
-void FViewModePostProcessPass::PrepareInputs(FRenderPassContext& Context)
+void FViewModeResolvePass::PrepareInputs(FRenderPassContext& Context)
 {
     const FViewportRenderTargets* Targets = Context.Targets;
-    const uint16 UserBits = GetViewModePostProcessBits(Context);
-    if (UserBits == 0 || !Context.Frame)
+    const EViewModePostProcessVariant Variant = GetViewModePostProcessVariant(Context);
+    if (Variant == EViewModePostProcessVariant::None || !Context.Frame)
     {
         return;
     }
 
-    if (UserBits == 2)
+    switch (Variant)
     {
+    case EViewModePostProcessVariant::SceneDepth:
         if (Targets && Targets->DepthTexture && Targets->DepthCopyTexture &&
             Targets->DepthTexture != Targets->DepthCopyTexture)
         {
@@ -49,6 +50,13 @@ void FViewModePostProcessPass::PrepareInputs(FRenderPassContext& Context)
             ID3D11ShaderResourceView* DepthSRV = Targets->DepthCopySRV;
             Context.Context->PSSetShaderResources(ESystemTexSlot::SceneDepth, 1, &DepthSRV);
         }
+        break;
+
+    case EViewModePostProcessVariant::WorldNormal:
+    case EViewModePostProcessVariant::Outline:
+    case EViewModePostProcessVariant::None:
+    default:
+        break;
     }
 
     if (Context.StateCache)
@@ -61,26 +69,25 @@ void FViewModePostProcessPass::PrepareInputs(FRenderPassContext& Context)
     }
 }
 
-void FViewModePostProcessPass::PrepareTargets(FRenderPassContext& Context)
+void FViewModeResolvePass::PrepareTargets(FRenderPassContext& Context)
 {
-    ID3D11RenderTargetView* RTV = Context.GetViewportRTV();
-    Context.Context->OMSetRenderTargets(1, &RTV, Context.GetViewportDSV());
+    BindViewportTarget(Context);
 }
 
-void FViewModePostProcessPass::BuildDrawCommands(FRenderPassContext& Context)
+void FViewModeResolvePass::BuildDrawCommands(FRenderPassContext& Context)
 {
-    const uint16 UserBits = GetViewModePostProcessBits(Context);
-    if (UserBits == 0)
+    const EViewModePostProcessVariant Variant = GetViewModePostProcessVariant(Context);
+    if (Variant == EViewModePostProcessVariant::None)
     {
         return;
     }
 
-    if (UserBits == 3 && !Context.ActiveViewSurfaceSet)
+    if (Variant == EViewModePostProcessVariant::WorldNormal && !Context.ActiveViewSurfaceSet)
     {
         return;
     }
 
-    FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, UserBits);
+    FFullscreenDrawCommandBuilder::Build(ERenderPass::PostProcess, Context, *Context.DrawCommandList, Variant);
 
     if (!Context.DrawCommandList || Context.DrawCommandList->GetCommands().empty())
     {
@@ -88,7 +95,9 @@ void FViewModePostProcessPass::BuildDrawCommands(FRenderPassContext& Context)
     }
 
     FDrawCommand& Command = Context.DrawCommandList->GetCommands().back();
-    if (UserBits == 2)
+    switch (Variant)
+    {
+    case EViewModePostProcessVariant::SceneDepth:
     {
         FSceneDepthPConstants Constants = {};
         Constants.Exponent = Context.Frame->RenderOptions.Exponent;
@@ -103,15 +112,11 @@ void FViewModePostProcessPass::BuildDrawCommands(FRenderPassContext& Context)
             Command.PerShaderCB[0] = CB;
         }
 
-        // SceneDepth/Normal visualization은 기존 scene color 위에 반투명 합성이 아니라
-        // 자체가 최종 화면이어야 한다.
         Command.Blend = EBlendState::Opaque;
+        break;
     }
-    else if (UserBits == 3)
+    case EViewModePostProcessVariant::WorldNormal:
     {
-        // Normal view visualizes the normal surface directly through t0.
-        // Decal pass copies Surface1 into ModifiedSurface1 even when no decal draw
-        // occurs, so prefer the post-decal surface to reflect the final normal field.
         ID3D11ShaderResourceView* NormalSRV = Context.ActiveViewSurfaceSet->GetSRV(ESurfaceSlot::ModifiedSurface1);
         if (!NormalSRV)
         {
@@ -120,6 +125,12 @@ void FViewModePostProcessPass::BuildDrawCommands(FRenderPassContext& Context)
 
         Command.DiffuseSRV = NormalSRV;
         Command.Blend = EBlendState::Opaque;
+        break;
+    }
+    case EViewModePostProcessVariant::Outline:
+    case EViewModePostProcessVariant::None:
+    default:
+        break;
     }
 
     Command.SortKey = FDrawCommand::BuildSortKey(
@@ -127,18 +138,18 @@ void FViewModePostProcessPass::BuildDrawCommands(FRenderPassContext& Context)
         Command.Shader,
         nullptr,
         Command.DiffuseSRV,
-        UserBits);
+        ToPostProcessUserBits(Variant));
 }
 
-void FViewModePostProcessPass::SubmitDrawCommands(FRenderPassContext& Context)
+void FViewModeResolvePass::SubmitDrawCommands(FRenderPassContext& Context)
 {
     if (!Context.DrawCommandList)
     {
         return;
     }
 
-    const uint16 UserBits = GetViewModePostProcessBits(Context);
-    if (UserBits == 0)
+    const uint16 ExpectedUserBits = ToPostProcessUserBits(GetViewModePostProcessVariant(Context));
+    if (ExpectedUserBits == 0)
     {
         return;
     }
@@ -149,7 +160,7 @@ void FViewModePostProcessPass::SubmitDrawCommands(FRenderPassContext& Context)
     for (uint32 Index = Start; Index < End; ++Index)
     {
         const FDrawCommand& Command = Context.DrawCommandList->GetCommands()[Index];
-        if (static_cast<uint16>(Command.SortKey & 0xFFFu) == UserBits)
+        if (static_cast<uint16>(Command.SortKey & 0xFFFu) == ExpectedUserBits)
         {
             Context.DrawCommandList->SubmitRange(Index, Index + 1, *Context.Device, Context.Context, *Context.StateCache);
         }

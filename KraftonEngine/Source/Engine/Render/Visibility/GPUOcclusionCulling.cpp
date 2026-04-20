@@ -1,4 +1,4 @@
-﻿#include "Render/Visibility/GPUOcclusionCulling.h"
+#include "Render/Visibility/GPUOcclusionCulling.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 #include "Profiling/Stats.h"
 
@@ -59,9 +59,9 @@ void FGPUOcclusionCulling::Initialize(ID3D11Device* InDevice)
 {
 	Device = InDevice;
 
-	HiZCopyCS = CompileCS(Device, L"Shaders/HiZGenerate.hlsl", "CSCopyDepth");
-	HiZDownsampleCS = CompileCS(Device, L"Shaders/HiZGenerate.hlsl", "CSDownsample");
-	OcclusionTestCS = CompileCS(Device, L"Shaders/OcclusionTest.hlsl", "CSOcclusionTest");
+	HiZCopyCS = CompileCS(Device, L"Shaders/Passes/Visibility/HiZGenerate.hlsl", "CSCopyDepth");
+	HiZDownsampleCS = CompileCS(Device, L"Shaders/Passes/Visibility/HiZGenerate.hlsl", "CSDownsample");
+	OcclusionTestCS = CompileCS(Device, L"Shaders/Passes/Visibility/OcclusionTest.hlsl", "CSOcclusionTest");
 
 	if (!HiZCopyCS || !HiZDownsampleCS || !OcclusionTestCS)
 	{

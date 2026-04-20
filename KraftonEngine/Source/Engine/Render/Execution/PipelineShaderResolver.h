@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Render/Types/RenderTypes.h"
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 
 class FShader;
 class FViewModePassRegistry;

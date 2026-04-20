@@ -13,6 +13,19 @@ inline void AddDefine(TArray<FShaderMacroDefine>& Defines, const char* Name, con
 }
 } // namespace ViewModePassConfigUtils
 
+enum class EViewModePostProcessVariant : uint16
+{
+    None = 0,
+    Outline = 1,
+    SceneDepth = 2,
+    WorldNormal = 3,
+};
+
+inline uint16 ToPostProcessUserBits(EViewModePostProcessVariant Variant)
+{
+    return static_cast<uint16>(Variant);
+}
+
 struct FRenderPipelinePassDesc
 {
     EPipelineStage Stage = EPipelineStage::BaseDraw;
@@ -31,7 +44,7 @@ struct FViewModePassConfig
     bool bEnableLighting = false;
     bool bForceWireframeRasterizer = false;
     bool bSuppressSceneExtras = false;
-    uint16 PostProcessUserBits = 0;
+    EViewModePostProcessVariant PostProcessVariant = EViewModePostProcessVariant::None;
     TArray<FRenderPipelinePassDesc> Passes;
 };
 
@@ -82,9 +95,9 @@ inline bool SuppressesViewModeSceneExtras(const FViewModePassConfig* Config)
     return Config ? Config->bSuppressSceneExtras : false;
 }
 
-inline uint16 GetViewModePostProcessUserBits(const FViewModePassConfig* Config)
+inline EViewModePostProcessVariant GetViewModePostProcessVariant(const FViewModePassConfig* Config)
 {
-    return Config ? Config->PostProcessUserBits : 0;
+    return Config ? Config->PostProcessVariant : EViewModePostProcessVariant::None;
 }
 
 inline FRenderPipelinePassDesc BuildViewModeBaseDrawPassDesc(EShadingModel ShadingModel)
@@ -92,7 +105,7 @@ inline FRenderPipelinePassDesc BuildViewModeBaseDrawPassDesc(EShadingModel Shadi
     FRenderPipelinePassDesc Pass;
     Pass.Stage = EPipelineStage::BaseDraw;
     Pass.RenderPass = ERenderPass::Opaque;
-    Pass.ShaderVariant.FilePath = "Shaders/BaseDraw.hlsl";
+    Pass.ShaderVariant.FilePath = "Shaders/Passes/Scene/BaseDraw.hlsl";
     Pass.ShaderVariant.VSEntry = "VS_BaseDraw";
 
     switch (ShadingModel)
@@ -130,7 +143,7 @@ inline FRenderPipelinePassDesc BuildViewModeDecalPassDesc(EShadingModel ShadingM
     FRenderPipelinePassDesc Pass;
     Pass.Stage = EPipelineStage::Decal;
     Pass.RenderPass = ERenderPass::Decal;
-    Pass.ShaderVariant.FilePath = "Shaders/DecalPass.hlsl";
+    Pass.ShaderVariant.FilePath = "Shaders/Passes/Scene/DecalPass.hlsl";
     Pass.ShaderVariant.VSEntry = "VS_DecalFullscreen";
     Pass.bFullscreenPass = true;
 
@@ -167,28 +180,21 @@ inline FRenderPipelinePassDesc BuildViewModeLightingPassDesc(EShadingModel Shadi
     FRenderPipelinePassDesc Pass;
     Pass.Stage = EPipelineStage::Lighting;
     Pass.RenderPass = ERenderPass::Lighting;
-    Pass.ShaderVariant.FilePath = "Shaders/LightingPass.hlsl";
+    Pass.ShaderVariant.FilePath = "Shaders/ViewModes/UberLit.hlsl";
     Pass.ShaderVariant.VSEntry = "VS_Fullscreen";
+    Pass.ShaderVariant.PSEntry = "PS_UberLit";
     Pass.bFullscreenPass = true;
 
     switch (ShadingModel)
     {
     case EShadingModel::Gouraud:
-        Pass.ShaderVariant.PSEntry = "PS_Lighting_Gouraud";
         ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "LIGHTING_MODEL_GOURAUD");
-        ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "USE_GOURAUD_L");
         break;
     case EShadingModel::Lambert:
-        Pass.ShaderVariant.PSEntry = "PS_Lighting_Lambert";
         ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "LIGHTING_MODEL_LAMBERT");
-        ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "USE_NORMAL");
         break;
     case EShadingModel::BlinnPhong:
-        Pass.ShaderVariant.PSEntry = "PS_Lighting_BlinnPhong";
         ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "LIGHTING_MODEL_PHONG");
-        ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "USE_NORMAL");
-        ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "USE_MATERIAL_PARAM");
-        ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "USE_SPECULAR");
         break;
     case EShadingModel::Unlit:
     default:
@@ -219,6 +225,7 @@ inline void BuildViewModePasses(FViewModePassConfig& Config)
 
 inline void InitializeViewModePassConfig(FViewModePassConfig& Config, EViewMode InViewMode, FShaderVariantCache& VariantCache)
 {
+    Config = FViewModePassConfig();
     Config.ViewMode = InViewMode;
     Config.ShadingModel = GetShadingModelFromViewMode(InViewMode);
 
@@ -234,12 +241,12 @@ inline void InitializeViewModePassConfig(FViewModePassConfig& Config, EViewMode 
         Config.bEnableDecal = false;
         Config.bEnableLighting = false;
         Config.bSuppressSceneExtras = true;
-        Config.PostProcessUserBits = 2;
+        Config.PostProcessVariant = EViewModePostProcessVariant::SceneDepth;
         break;
     case EViewMode::WorldNormal:
         Config.bEnableLighting = false;
         Config.bSuppressSceneExtras = true;
-        Config.PostProcessUserBits = 3;
+        Config.PostProcessVariant = EViewModePostProcessVariant::WorldNormal;
         break;
     case EViewMode::Unlit:
         Config.bEnableLighting = false;
@@ -341,9 +348,9 @@ public:
         return SuppressesViewModeSceneExtras(GetConfig(ViewMode));
     }
 
-    uint16 GetPostProcessUserBits(EViewMode ViewMode) const
+    EViewModePostProcessVariant GetPostProcessVariant(EViewMode ViewMode) const
     {
-        return GetViewModePostProcessUserBits(GetConfig(ViewMode));
+        return GetViewModePostProcessVariant(GetConfig(ViewMode));
     }
 
 private:

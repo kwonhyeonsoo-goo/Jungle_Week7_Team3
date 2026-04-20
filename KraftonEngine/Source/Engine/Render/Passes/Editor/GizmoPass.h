@@ -1,9 +1,9 @@
 #pragma once
-#include "Render/Passes/RenderPass.h"
+#include "Render/Passes/Common/MeshPassBase.h"
 struct FSceneView; using FFrameContext = FSceneView;
 struct FRenderPassContext;
 class FPrimitiveSceneProxy;
-class FGizmoPass : public FRenderPass
+class FGizmoPass : public FMeshPassBase
 {
 public:
     void PrepareInputs(FRenderPassContext& Context) override;

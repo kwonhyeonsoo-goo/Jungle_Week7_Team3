@@ -1,15 +1,17 @@
 #pragma once
-#include "Render/Passes/RenderPass.h"
-struct FSceneView; using FFrameContext = FSceneView;
-struct FRenderPassContext;
+
+#include "Render/Passes/Common/FullscreenPassBase.h"
+
 class FPrimitiveSceneProxy;
-class FFXAAPass : public FRenderPass
+struct FRenderPassContext;
+
+class FViewModeResolvePass : public FFullscreenPassBase
 {
 public:
     void PrepareInputs(FRenderPassContext& Context) override;
     void PrepareTargets(FRenderPassContext& Context) override;
     void BuildDrawCommands(FRenderPassContext& Context) override;
-    // FXAA는 fullscreen pass이므로 프록시 입력을 사용하지 않는다.
+    // ViewMode post-process는 fullscreen path만 사용한다.
     void BuildDrawCommands(FRenderPassContext& Context, const FPrimitiveSceneProxy& Proxy) override { (void)Context; (void)Proxy; }
     void SubmitDrawCommands(FRenderPassContext& Context) override;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/Pipelines/Registry/RenderPipelineType.h"
+#include "Render/Pipelines/RenderPipelineType.h"
 
 class FRenderPipelineRegistry;
 class FRenderPassRegistry;

@@ -11,7 +11,7 @@
 #include "Render/Scene/DebugDraw/DebugDrawQueue.h"
 #include "Render/Visibility/LOD/LODContext.h"
 #include "Render/Execution/Renderer.h"
-#include "Render/Pipelines/ViewMode/ViewModePassConfig.h"
+#include "Render/Pipelines/ViewModePassConfig.h"
 #include "Render/Submission/Builders/MeshDrawCommandBuilder.h"
 #include "Render/Submission/Builders/TextDrawCommandBuilder.h"
 #include "Render/Scene/Proxies/Primitive/DecalSceneProxy.h"
@@ -80,7 +80,7 @@ void FRenderCollector::BuildFramePassCommands(const FFrameContext& Frame, FScene
         }
     }
 
-    if (FRenderPass* Pass = Renderer.GetPassRegistry().FindPass(ERenderPassNodeType::ViewModePostProcessPass))
+    if (FRenderPass* Pass = Renderer.GetPassRegistry().FindPass(ERenderPassNodeType::ViewModeResolvePass))
         Pass->BuildDrawCommands(PassContext);
     if (FRenderPass* Pass = Renderer.GetPassRegistry().FindPass(ERenderPassNodeType::HeightFogPass))
         Pass->BuildDrawCommands(PassContext);
