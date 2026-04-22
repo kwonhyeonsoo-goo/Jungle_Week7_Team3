@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "PrimitiveComponent.h"
 #include "Core/ResourceTypes.h"
 #include "Render/Visibility/Frustum/ConvexVolume.h"
@@ -43,6 +43,7 @@ private:
     void HandleFade(float DeltaTime);
     void UpdateReceivers();
     void DrawDebugBox();
+    void DrawDebugDirection();
 
 private:
     FConvexVolume ConvexVolume;

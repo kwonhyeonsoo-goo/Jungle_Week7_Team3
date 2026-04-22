@@ -1,4 +1,4 @@
-#include "Editor/UI/EditorDetailsPanel.h"
+﻿#include "Editor/UI/EditorDetailsPanel.h"
 
 #include "Editor/EditorEngine.h"
 
@@ -426,6 +426,10 @@ void FEditorDetailsPanel::RenderComponentProperties(AActor* Actor)
 	}
 
 	const bool bIsStaticMeshComponent = SelectedComponent->IsA<UStaticMeshComponent>();
+	const bool bHasMaterialProps = std::any_of(Props.begin(), Props.end(), [&](const FPropertyDescriptor& Prop)
+	{
+		return IsMaterialProp(Prop.Name, Prop.Type);
+	});
     UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(SelectedComponent);
 	if (bIsStaticMeshComponent && ImGui::CollapsingHeader("Static Mesh", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -446,7 +450,7 @@ void FEditorDetailsPanel::RenderComponentProperties(AActor* Actor)
 		}
 	}
 
-	if (bIsStaticMeshComponent && ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
+	if (bHasMaterialProps && ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		for (int32 i = 0; i < (int32)Props.size(); ++i)
 		{
