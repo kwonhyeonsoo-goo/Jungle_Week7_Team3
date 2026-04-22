@@ -1,86 +1,16 @@
-﻿#include "DecalComponent.h"
+#include "DecalComponent.h"
 
 #include "Materials/MaterialManager.h"
-#include "Collision/OBB.h"
-#include "Component/StaticMeshComponent.h"
 #include "GameFramework/AActor.h"
 #include "GameFramework/World.h"
-#include "Profiling/Stats.h"
 #include "Render/Scene/DebugDraw/DrawDebugHelpers.h"
 #include "Render/Scene/Proxies/Primitive/DecalSceneProxy.h"
-#include "Resource/ResourceManager.h"
-#include "Mesh/ObjManager.h"
-#include "Engine/Runtime/Engine.h"
-#include "Texture/Texture2D.h"
 #include "Materials/Material.h"
+#include "Serialization/Archive.h"
 #include <algorithm>
-#include <cmath>
+#include <cstring>
 
 IMPLEMENT_CLASS(UDecalComponent, UPrimitiveComponent)
-
-namespace
-{
-constexpr float TwoPI = 6.28318530f;
-
-void DrawDebugArrow(UWorld* World, const FVector& Start, const FVector& Dir, float Length, const FColor& Color, int Segs = 8)
-{
-    if (!World)
-    {
-        return;
-    }
-
-    const FVector SafeDir = Dir.Normalized();
-    if (SafeDir.LengthSquared() <= 1e-6f)
-    {
-        return;
-    }
-
-    const float StemLen = Length * 0.8f;
-    const float StemRadius = Length * 0.04f;
-    const float HeadRadius = Length * 0.1f;
-    const FVector Tip = Start + SafeDir * Length;
-    const FVector StemEnd = Start + SafeDir * StemLen;
-
-    FVector WorldUp(0.f, 0.f, 1.f);
-    if (fabsf(SafeDir.Dot(WorldUp)) > 0.98f)
-    {
-        WorldUp = FVector(1.f, 0.f, 0.f);
-    }
-
-    const FVector AxisX = SafeDir.Cross(WorldUp).Normalized();
-    const FVector AxisY = SafeDir.Cross(AxisX).Normalized();
-
-    auto DrawCircle = [&](const FVector& Center, float Radius)
-    {
-        for (int i = 0; i < Segs; ++i)
-        {
-            const float A0 = TwoPI * i / Segs;
-            const float A1 = TwoPI * (i + 1) / Segs;
-            const FVector P0 = Center + AxisX * (cosf(A0) * Radius) + AxisY * (sinf(A0) * Radius);
-            const FVector P1 = Center + AxisX * (cosf(A1) * Radius) + AxisY * (sinf(A1) * Radius);
-            DrawDebugLine(World, P0, P1, Color, 0.0f);
-        }
-    };
-
-    DrawCircle(Start, StemRadius);
-    DrawCircle(StemEnd, StemRadius);
-    for (int i = 0; i < 4; ++i)
-    {
-        const float A = TwoPI * i / 4;
-        const FVector P = AxisX * (cosf(A) * StemRadius) + AxisY * (sinf(A) * StemRadius);
-        DrawDebugLine(World, Start + P, StemEnd + P, Color, 0.0f);
-    }
-
-    DrawCircle(StemEnd, HeadRadius);
-    for (int i = 0; i < 4; ++i)
-    {
-        const float A = TwoPI * i / 4;
-        const FVector P = AxisX * (cosf(A) * HeadRadius) + AxisY * (sinf(A) * HeadRadius);
-        DrawDebugLine(World, StemEnd + P, Tip, Color, 0.0f);
-    }
-}
-} // namespace
-
 
 void UDecalComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction& ThisTickFunction)
 {
@@ -89,9 +19,10 @@ void UDecalComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
         HandleFade(DeltaTime);
     }
 
-    UpdateReceivers();
-    DrawDebugBox();
-    DrawDebugDirection();
+    if (ShouldDrawDebugBox())
+    {
+        DrawDebugBox();
+    }
 }
 
 FPrimitiveSceneProxy* UDecalComponent::CreateSceneProxy()
@@ -183,15 +114,9 @@ void UDecalComponent::SetMaterial(int32 ElementIndex, UMaterial* InMaterial)
     MarkProxyDirty(EDirtyFlag::Material);
 }
 
-void UDecalComponent::UpdateDecalVolumeFromTransform()
-{
-    ConvexVolume.UpdateAsOBB(GetWorldMatrix());
-}
-
 void UDecalComponent::OnTransformDirty()
 {
     UPrimitiveComponent::OnTransformDirty();
-    UpdateReceivers();
 }
 
 void UDecalComponent::HandleFade(float DeltaTime)
@@ -232,54 +157,21 @@ void UDecalComponent::HandleFade(float DeltaTime)
     MarkProxyDirty(EDirtyFlag::Material);
 }
 
-void UDecalComponent::UpdateReceivers()
+bool UDecalComponent::ShouldDrawDebugBox() const
 {
-    SCOPE_STAT_CAT("UpdateDecalReceivers", "6_Decal");
-
-    UpdateDecalVolumeFromTransform();
-
-    UWorld* World = GetOwner() ? GetOwner()->GetWorld() : nullptr;
-    if (!World)
+    const AActor* OwnerActor = GetOwner();
+    UWorld* World = OwnerActor ? OwnerActor->GetWorld() : nullptr;
+    if (!OwnerActor || !World)
     {
-        return;
+        return false;
     }
 
-    TArray<UPrimitiveComponent*> OverlappingPrimitives;
-    World->GetPartition().QueryFrustumAllPrimitive(ConvexVolume, OverlappingPrimitives);
-
-    Receivers.clear();
-
-    FOBB DecalOBB;
-    DecalOBB.UpdateAsOBB(GetWorldMatrix());
-
-    for (UPrimitiveComponent* PrimitiveComp : OverlappingPrimitives)
+    if (World->GetWorldType() != EWorldType::Editor)
     {
-        if (PrimitiveComp == this || PrimitiveComp->GetOwner() == GetOwner())
-        {
-            continue;
-        }
-
-        UStaticMeshComponent* StaticMeshComp = Cast<UStaticMeshComponent>(PrimitiveComp);
-        if (!StaticMeshComp || !StaticMeshComp->GetStaticMesh())
-        {
-            continue;
-        }
-
-        const FBoundingBox ReceiverBounds = StaticMeshComp->GetWorldBoundingBox();
-        if (!ReceiverBounds.IsValid())
-        {
-            continue;
-        }
-
-        if (!DecalOBB.IntersectOBBAABB(ReceiverBounds))
-        {
-            continue;
-        }
-
-        Receivers.push_back(StaticMeshComp);
+        return false;
     }
 
-    MarkProxyDirty(EDirtyFlag::Mesh);
+    return OwnerActor->IsVisible() && IsVisible() && ShouldRenderInCurrentWorld();
 }
 
 void UDecalComponent::DrawDebugBox()
@@ -312,20 +204,4 @@ void UDecalComponent::DrawDebugBox()
     DrawDebugLine(World, P[1], P[5], FColor::Green(), 0.0f);
     DrawDebugLine(World, P[2], P[6], FColor::Green(), 0.0f);
     DrawDebugLine(World, P[3], P[7], FColor::Green(), 0.0f);
-}
-
-void UDecalComponent::DrawDebugDirection()
-{
-    UWorld* World = GetOwner() ? GetOwner()->GetWorld() : nullptr;
-    if (!World)
-    {
-        return;
-    }
-
-    const FVector Origin = GetWorldLocation();
-    const FVector Direction = GetForwardVector();
-    constexpr float ArrowLength = 2.0f;
-    const FColor ArrowColor(135, 206, 235);
-
-    DrawDebugArrow(World, Origin, Direction, ArrowLength, ArrowColor, 8);
 }
