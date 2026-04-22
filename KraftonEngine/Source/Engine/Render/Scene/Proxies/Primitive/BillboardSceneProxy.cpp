@@ -1,12 +1,12 @@
-ï»¿#include "Render/Resources/Buffers/ConstantBufferLayouts.h"
-#include "Render/Passes/Base/PipelineStateTypes.h"
+#include "Render/Resources/Buffers/ConstantBufferLayouts.h"
+#include "Render/Execute/Context/PipelineStateTypes.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveShapeTypes.h"
-#include "Render/Passes/Base/RenderPassTypes.h"
+#include "Render/Execute/Passes/Base/RenderPassTypes.h"
 #include "Render/Scene/Proxies/Primitive/BillboardSceneProxy.h"
 #include "Component/BillboardComponent.h"
 #include "Render/Resources/Shaders/ShaderManager.h"
 #include "Render/Resources/Buffers/MeshBufferManager.h"
-#include "Render/Pipelines/Context/Scene/SceneView.h"
+#include "Render/Execute/Context/Scene/SceneView.h"
 #include "GameFramework/AActor.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialSemantics.h"
@@ -58,14 +58,14 @@ ID3D11ShaderResourceView* ResolveBillboardTextureSRV(UMaterial* Material)
 #include "Editor/UI/EditorConsolePanel.h"
 
 // ============================================================
-// UpdateMesh â€” TexturedQuad + Material shader/states
+// UpdateMesh ? TexturedQuad + Material shader/states
 // ============================================================
 void FBillboardSceneProxy::UpdateMesh()
 {
     UBillboardComponent* Comp = GetBillboardComponent();
     UMaterial* Mat = Comp ? Comp->GetMaterial() : nullptr;
 
-    // BillboardëŠ” ViewMode BaseDrawê°€ ì•„ë‹Œ ì „ìš© textured-quad ê²½ë¡œë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.
+    // Billboard´Â ViewMode Opaque°¡ ¾Æ´Ñ Àü¿ë textured-quad °æ·Î¸¦ »ç¿ëÇÕ´Ï´Ù.
     MeshBuffer = &FMeshBufferManager::Get().GetMeshBuffer(EMeshShape::TexturedQuad);
     Shader = FShaderManager::Get().GetShader(EShaderType::Billboard);
     Pass = ERenderPass::AlphaBlend;
@@ -93,7 +93,7 @@ void FBillboardSceneProxy::UpdateMesh()
 }
 
 // ============================================================
-// UpdatePerViewport â€” ë·°í¬íŠ¸ ì¹´ë©”ë¼ ê¸°ë°˜ ë¹Œë³´ë“œ í–‰ë ¬ ê°±ì‹ 
+// UpdatePerViewport ? ºäÆ÷Æ® Ä«¸Ş¶ó ±â¹İ ºôº¸µå Çà·Ä °»½Å
 // ============================================================
 void FBillboardSceneProxy::UpdatePerViewport(const FSceneView& SceneView)
 {

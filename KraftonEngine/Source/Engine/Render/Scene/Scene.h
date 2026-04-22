@@ -1,7 +1,7 @@
-ï»¿#pragma once
+#pragma once
 
 #include "Core/CoreTypes.h"
-#include "Render/Passes/Scene/FogParams.h"
+#include "Render/Execute/Passes/Scene/FogParams.h"
 #include "Render/Scene/DebugDraw/DebugDrawQueue.h"
 #include "Render/Scene/Proxies/Effects/FogSceneProxy.h"
 #include "Render/Scene/Proxies/Light/LightSceneProxy.h"
@@ -13,8 +13,8 @@ class ULightComponent;
 class UHeightFogComponent;
 
 /*
-    FSceneëŠ” ë Œë”ìš© í”„ë¡ì‹œ registryë¥¼ ê´€ë¦¬í•˜ëŠ” ì»¨í…Œì´ë„ˆì…ë‹ˆë‹¤.
-    Primitive / Light / Effect í”„ë¡ì‹œì˜ ë“±ë¡, dirty ì¶”ì , ì„ íƒ ìƒíƒœ, free slot ì¬ì‚¬ìš©ì„ ë‹´ë‹¹í•©ë‹ˆë‹¤.
+    FScene´Â ·»´õ¿ë ÇÁ·Ï½Ã registry¸¦ °ü¸®ÇÏ´Â ÄÁÅ×ÀÌ³ÊÀÔ´Ï´Ù.
+    Primitive / Light / Effect ÇÁ·Ï½ÃÀÇ µî·Ï, dirty ÃßÀû, ¼±ÅÃ »óÅÂ, free slot Àç»ç¿ëÀ» ´ã´çÇÕ´Ï´Ù.
 */
 class FScene
 {

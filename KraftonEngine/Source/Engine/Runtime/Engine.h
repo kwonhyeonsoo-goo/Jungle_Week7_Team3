@@ -1,11 +1,11 @@
-ï»¿#pragma once
+#pragma once
 
 #include "Object/Object.h"
 #include "GameFramework/World.h"
 #include "GameFramework/WorldContext.h"
 #include "Render/Renderer.h"
-#include "Render/Pipelines/Context/Scene/SceneView.h"
-#include "Render/Pipelines/Context/Viewport/ViewportRenderTargets.h"
+#include "Render/Execute/Context/Scene/SceneView.h"
+#include "Render/Execute/Context/Viewport/ViewportRenderTargets.h"
 
 #include <memory>
 
@@ -54,7 +54,7 @@ public:
 
     FRenderer& GetRenderer() { return Renderer; }
 
-    // Game Viewport Client â€” PIE/Standalone ìš©
+    // Game Viewport Client ? PIE/Standalone ¿ë
     void SetGameViewportClient(UGameViewportClient* InClient) { GameViewportClient = InClient; }
     UGameViewportClient* GetGameViewportClient() const { return GameViewportClient; }
 

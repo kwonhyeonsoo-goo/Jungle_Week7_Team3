@@ -1,18 +1,18 @@
-ï»¿#pragma once
+#pragma once
 
-#include "Render/Passes/Base/PipelineStateTypes.h"
-#include "Render/Passes/Base/RenderPassTypes.h"
+#include "Render/Execute/Context/PipelineStateTypes.h"
+#include "Render/Execute/Passes/Base/RenderPassTypes.h"
 #include "DrawCommand.h"
 #include "Render/RHI/D3D11/Device/D3DDevice.h"
 #include "Render/RHI/D3D11/Buffers/Buffers.h"
 
 /*
-    FDrawSubmitStateCache â€” Submit ë£¨í”„ì—ì„œ ì¤‘ë³µ GPU ìƒíƒœ ì „í™˜ì„ ë°©ì§€í•©ë‹ˆë‹¤.
-    ì´ì „ ì»¤ë§¨ë“œì™€ ë™ì¼í•œ ìƒíƒœëŠ” skipí•˜ì—¬ DeviceContext í˜¸ì¶œì„ ìµœì†Œí™”í•©ë‹ˆë‹¤.
+    FDrawSubmitStateCache ? Submit ·çÇÁ¿¡¼­ Áßº¹ GPU »óÅÂ ÀüÈ¯À» ¹æÁöÇÕ´Ï´Ù.
+    ÀÌÀü Ä¿¸Çµå¿Í µ¿ÀÏÇÑ »óÅÂ´Â skipÇÏ¿© DeviceContext È£ÃâÀ» ÃÖ¼ÒÈ­ÇÕ´Ï´Ù.
 */
 struct FDrawSubmitStateCache
 {
-    // ì²« ì»¤ë§¨ë“œì—ì„œ ëª¨ë“  GPU ìƒíƒœë¥¼ ë¬´ì¡°ê±´ ì„¸íŒ… (ì„¼í‹°ë„¬ ë¶ˆí•„ìš”)
+    // Ã¹ Ä¿¸Çµå¿¡¼­ ¸ğµç GPU »óÅÂ¸¦ ¹«Á¶°Ç ¼¼ÆÃ (¼¾Æ¼³Ú ºÒÇÊ¿ä)
     bool bForceAll = true;
 
     FShader*                  Shader         = nullptr;
@@ -22,8 +22,8 @@ struct FDrawSubmitStateCache
     D3D11_PRIMITIVE_TOPOLOGY  Topology       = {};
     uint8                     StencilRef     = 0;
     FMeshBuffer*              MeshBuffer     = nullptr;
-    ID3D11Buffer*             RawVB          = nullptr; // ë™ì  ì§€ì˜¤ë©”íŠ¸ë¦¬ VB ì¶”ì 
-    ID3D11Buffer*             RawIB          = nullptr; // ë™ì  ì§€ì˜¤ë©”íŠ¸ë¦¬ IB ì¶”ì 
+    ID3D11Buffer*             RawVB          = nullptr; // µ¿Àû Áö¿À¸ŞÆ®¸® VB ÃßÀû
+    ID3D11Buffer*             RawIB          = nullptr; // µ¿Àû Áö¿À¸ŞÆ®¸® IB ÃßÀû
     FConstantBuffer*          PerObjectCB    = nullptr;
     FConstantBuffer*          PerShaderCB[2] = {};
     FConstantBuffer*          LightCB        = nullptr;
@@ -32,19 +32,19 @@ struct FDrawSubmitStateCache
     ID3D11ShaderResourceView* SpecularSRV    = nullptr;
     ID3D11ShaderResourceView* LocalLightSRV  = nullptr;
 
-    // Render target ì¶”ì  (CopyResource í›„ DSV ë³µì› ë“±)
+    // Render target ÃßÀû (CopyResource ÈÄ DSV º¹¿ø µî)
     ID3D11RenderTargetView* RTV = nullptr;
     ID3D11DepthStencilView* DSV = nullptr;
 
     void Reset();
 
-    // í”„ë ˆì„ ë ì •ë¦¬ â€” material/system SRV ì–¸ë°”ì¸ë”©
+    // ÇÁ·¹ÀÓ ³¡ Á¤¸® ? material/system SRV ¾ğ¹ÙÀÎµù
     void Cleanup(ID3D11DeviceContext* Ctx);
 };
 
 /*
-    FDrawCommandList â€” í”„ë ˆì„ ë‹¨ìœ„ ì»¤ë§¨ë“œ ë²„í¼.
-    DrawCollectorê°€ ì»¤ë§¨ë“œë¥¼ ì¶”ê°€í•˜ê³ , Sort() í›„ Submit()ìœ¼ë¡œ GPUì— ì œì¶œí•©ë‹ˆë‹¤.
+    FDrawCommandList ? ÇÁ·¹ÀÓ ´ÜÀ§ Ä¿¸Çµå ¹öÆÛ.
+    DrawCollector°¡ Ä¿¸Çµå¸¦ Ãß°¡ÇÏ°í, Sort() ÈÄ Submit()À¸·Î GPU¿¡ Á¦ÃâÇÕ´Ï´Ù.
 */
 class FDrawCommandList
 {

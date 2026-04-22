@@ -1,9 +1,9 @@
-ï»¿#include "Render/Resources/Buffers/ConstantBufferLayouts.h"
+#include "Render/Resources/Buffers/ConstantBufferLayouts.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveShapeTypes.h"
-#include "Render/Passes/Base/RenderPassTypes.h"
+#include "Render/Execute/Passes/Base/RenderPassTypes.h"
 #include "Render/Scene/Proxies/Primitive/SubUVSceneProxy.h"
 #include "Component/SubUVComponent.h"
-#include "Render/Pipelines/Context/Scene/SceneView.h"
+#include "Render/Execute/Context/Scene/SceneView.h"
 #include "Render/Resources/Shaders/ShaderManager.h"
 #include "Render/Resources/Buffers/MeshBufferManager.h"
 
@@ -30,7 +30,7 @@ void FSubUVSceneProxy::UpdateMesh()
     Shader = FShaderManager::Get().GetShader(EShaderType::SubUV);
     Pass = ERenderPass::AlphaBlend;
 
-    // ExtraCB bind (UV region, b2 slot) â€” ì‹¤ì œ GPU ë²„í¼ëŠ” Rendererì—ì„œ lazy ìƒì„±
+    // ExtraCB bind (UV region, b2 slot) ? ½ÇÁ¦ GPU ¹öÆÛ´Â Renderer¿¡¼­ lazy »ı¼º
     ExtraCB.Bind<FSubUVRegionConstants>(&UVRegionCB, ECBSlot::PerShader0);
 
     // Set DiffuseSRV from particle resource

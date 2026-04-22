@@ -1,9 +1,9 @@
-ï»¿#include "TileBasedLightCulling.h"
+#include "TileBasedLightCulling.h"
 #include "Viewport/ViewportClient.h"
 #include "Viewport/Viewport.h"
 #include "Render/RHI/D3D11/Device/D3DDevice.h"
 #include "Render/RHI/D3D11/Buffers/ConstantBuffer.h"
-//#include "Render/Pipelines/Registry/RenderPipelineType.h"
+//#include "Render/Execute/Registry/RenderPipelineType.h"
 
 #include <d3dcompiler.h>
 
@@ -25,7 +25,7 @@ void FTileBasedLightCulling::Initialize(FD3DDevice* InDevice)
     check(InDevice);
     Device = InDevice;
 
-    // ---- Compute Shader ì»´íŒŒì¼ ----
+    // ---- Compute Shader ÄÄÆÄÀÏ ----
     ID3DBlob* CSBlob  = nullptr;
     ID3DBlob* ErrBlob = nullptr;
 
@@ -42,11 +42,11 @@ void FTileBasedLightCulling::Initialize(FD3DDevice* InDevice)
     {
         if (ErrBlob)
         {
-            // ì»´íŒŒì¼ ì˜¤ë¥˜ ë¡œê·¸ ì¶œë ¥ (í”„ë¡œì íŠ¸ ë¡œê¹… ë§¤í¬ë¡œë¡œ êµì²´)
+            // ÄÄÆÄÀÏ ¿À·ù ·Î±× Ãâ·Â (ÇÁ·ÎÁ§Æ® ·Î±ë ¸ÅÅ©·Î·Î ±³Ã¼)
             OutputDebugStringA((const char*)ErrBlob->GetBufferPointer());
             ErrBlob->Release();
         }
-        check(false); // ì…°ì´ë” ì»´íŒŒì¼ ì‹¤íŒ¨
+        check(false); // ¼ÎÀÌ´õ ÄÄÆÄÀÏ ½ÇÆĞ
     }
 
     hr = Device->GetDevice()->CreateComputeShader(
@@ -56,7 +56,7 @@ void FTileBasedLightCulling::Initialize(FD3DDevice* InDevice)
     CSBlob->Release();
     check(SUCCEEDED(hr));
 
-    // ---- LightCullingParams ìƒìˆ˜ ë²„í¼ (b2) ----
+    // ---- LightCullingParams »ó¼ö ¹öÆÛ (b2) ----
     //D3D11_BUFFER_DESC CBDesc = {};
     //CBDesc.ByteWidth      = sizeof(FLightCullingParams);
     //CBDesc.Usage          = D3D11_USAGE_DYNAMIC;
@@ -148,7 +148,7 @@ void FTileBasedLightCulling::Dispatch(const FFrameContext& frameContext, bool bE
 
     ID3D11DeviceContext* Context = Device->GetDeviceContext();
 
-	//ì´ì „ ë°”ì¸ë”© í•´ì œ
+	//ÀÌÀü ¹ÙÀÎµù ÇØÁ¦
     float ClearColor[4] = { 0, 0, 0, 0 };
     Context->ClearUnorderedAccessViewFloat(DebugHitMapUAV, ClearColor);
 
@@ -158,24 +158,24 @@ void FTileBasedLightCulling::Dispatch(const FFrameContext& frameContext, bool bE
     Context->CSSetUnorderedAccessViews(0, 4, NullUAVs1, nullptr);
     Context->CSSetShader(nullptr, nullptr, 0);
 
-    // ---- CS ë°”ì¸ë”© ----
+    // ---- CS ¹ÙÀÎµù ----
     Context->CSSetShader(LightCullingCS, nullptr, 0);
 
-    // ---- SRV (t0: PointLight ë°ì´í„°, t1: SceneDepth) ----
-	// í˜„ì¬ ì™¸ë¶€ì—ì„œ ì£¼ì…ì¤‘
+    // ---- SRV (t0: PointLight µ¥ÀÌÅÍ, t1: SceneDepth) ----
+	// ÇöÀç ¿ÜºÎ¿¡¼­ ÁÖÀÔÁß
     //ID3D11ShaderResourceView* SRVs[] = { PointLightDataSRV };
     //Context->CSSetShaderResources(0, 1, SRVs);
 
-    // ---- UAV (u0: ë¯¸ì‚¬ìš©, u1: PerTile, u2: Culled, u3: HitMap) ----
+    // ---- UAV (u0: ¹Ì»ç¿ë, u1: PerTile, u2: Culled, u3: HitMap) ----
     ID3D11UnorderedAccessView* UAVs[] = {
-        nullptr,                           // u0 ë¯¸ì‚¬ìš©
+        nullptr,                           // u0 ¹Ì»ç¿ë
         PerTilePointLightIndexMaskOutUAV,  // u1
         CulledPointLightIndexMaskOUTUAV,   // u2
         DebugHitMapUAV,                    // u3
     };
     Context->CSSetUnorderedAccessViews(0, 4, UAVs, nullptr);
 
-    // ---- ìƒìˆ˜ ë²„í¼ ----
+    // ---- »ó¼ö ¹öÆÛ ----
     Context->CSSetConstantBuffers(2, 1, &LightCullingParamsCB);
 
 
@@ -185,7 +185,7 @@ void FTileBasedLightCulling::Dispatch(const FFrameContext& frameContext, bool bE
     const UINT GroupSizeY = (ViewHeight + TILE_SIZE - 1) / TILE_SIZE;
     Context->Dispatch(GroupSizeX, GroupSizeY, 1);
 
-    // ---- ë°”ì¸ë”© í•´ì œ ----
+    // ---- ¹ÙÀÎµù ÇØÁ¦ ----
     ID3D11ShaderResourceView*  NullSRVs[1]  = { nullptr };
     ID3D11UnorderedAccessView* NullUAVs[4]  = { nullptr, nullptr, nullptr, nullptr };
     Context->CSSetShaderResources(0, 1, NullSRVs);
@@ -211,14 +211,14 @@ void FTileBasedLightCulling::ResizeTiles(uint32 InWidth, uint32 InHeight)
 
 void FTileBasedLightCulling::CreatePointLightBufferGPU()
 {
-    // ê¸°ì¡´ ë¦¬ì†ŒìŠ¤ í•´ì œ
+    // ±âÁ¸ ¸®¼Ò½º ÇØÁ¦
     //if (PointLightDataSRV) { PointLightDataSRV->Release(); PointLightDataSRV = nullptr; }
     //if (PointLightBuffer)  { PointLightBuffer->Release();  PointLightBuffer  = nullptr; }
 
     //if (Lights.empty())
     //    return;
 
-    //// StructuredBuffer ìƒì„±
+    //// StructuredBuffer »ı¼º
     //D3D11_BUFFER_DESC Desc = {};
     //Desc.BindFlags           = D3D11_BIND_SHADER_RESOURCE;
     //Desc.ByteWidth           = sizeof(FLocalLightInfo) * Lights.size();
@@ -232,7 +232,7 @@ void FTileBasedLightCulling::CreatePointLightBufferGPU()
     //HRESULT hr = Device->GetDevice()->CreateBuffer(&Desc, &InitData, &PointLightBuffer);
     //check(SUCCEEDED(hr));
 
-    // SRV (ì…°ì´ë” t0)
+    // SRV (¼ÎÀÌ´õ t0)
     //D3D11_SHADER_RESOURCE_VIEW_DESC SrvDesc = {};
     //SrvDesc.ViewDimension       = D3D11_SRV_DIMENSION_BUFFER;
     //SrvDesc.Format              = DXGI_FORMAT_UNKNOWN;
@@ -245,7 +245,7 @@ void FTileBasedLightCulling::CreatePointLightBufferGPU()
 
 void FTileBasedLightCulling::CreateTileMaskBuffers()
 {
-    // ê¸°ì¡´ ë¦¬ì†ŒìŠ¤ í•´ì œ
+    // ±âÁ¸ ¸®¼Ò½º ÇØÁ¦
     auto SafeRelease = [](auto*& ptr) { if (ptr) { ptr->Release(); ptr = nullptr; } };
     SafeRelease(PerTilePointLightIndexMaskSRV);
     SafeRelease(PerTilePointLightIndexMaskOutUAV);
@@ -253,7 +253,7 @@ void FTileBasedLightCulling::CreateTileMaskBuffers()
     SafeRelease(CulledPointLightIndexMaskOUTUAV);
     SafeRelease(CulledPointLightIndexMaskBuffer);
 
-    // ê³µí†µ Buffer + UAV + SRV ìƒì„± ëŒë‹¤
+    // °øÅë Buffer + UAV + SRV »ı¼º ¶÷´Ù
     auto CreateMaskBuffer = [&](
         uint32                      NumElements,
         ID3D11Buffer**              OutBuffer,
@@ -292,20 +292,20 @@ void FTileBasedLightCulling::CreateTileMaskBuffers()
         }
     };
 
-    // u1: íƒ€ì¼ë³„ ì¡°ëª… ë§ˆìŠ¤í¬ (NumTiles * BucketCount ê°œì˜ uint)
+    // u1: Å¸ÀÏº° Á¶¸í ¸¶½ºÅ© (NumTiles * BucketCount °³ÀÇ uint)
     CreateMaskBuffer(
         NumTiles * NumBucketsPerTile,
         &PerTilePointLightIndexMaskBuffer,
         &PerTilePointLightIndexMaskOutUAV,
-        &PerTilePointLightIndexMaskSRV     // PSì—ì„œ ì½ê¸° ìœ„í•´ SRVë„ ìƒì„±
+        &PerTilePointLightIndexMaskSRV     // PS¿¡¼­ ÀĞ±â À§ÇØ SRVµµ »ı¼º
     );
 
-    // u2: ì „ì²´ OR ëˆ„ì  ë§ˆìŠ¤í¬ (BucketCount ê°œì˜ uint, Shadow Map ìµœì í™”ìš©)
+    // u2: ÀüÃ¼ OR ´©Àû ¸¶½ºÅ© (BucketCount °³ÀÇ uint, Shadow Map ÃÖÀûÈ­¿ë)
     CreateMaskBuffer(
         NumBucketsPerTile,
         &CulledPointLightIndexMaskBuffer,
         &CulledPointLightIndexMaskOUTUAV,
-        nullptr                            // CPU ìŠ¤í…Œì´ì§•ìœ¼ë¡œ ì½ìœ¼ë¯€ë¡œ SRV ë¶ˆí•„ìš”
+        nullptr                            // CPU ½ºÅ×ÀÌÂ¡À¸·Î ÀĞÀ¸¹Ç·Î SRV ºÒÇÊ¿ä
     );
 }
 
@@ -330,7 +330,7 @@ void FTileBasedLightCulling::CreateDebugHitMap(uint32 InWidth, uint32 InHeight)
     HRESULT hr = Device->GetDevice()->CreateTexture2D(&TexDesc, nullptr, &DebugHitMapTexture);
     check(SUCCEEDED(hr));
 
-    // UAV (ì…°ì´ë” u3)
+    // UAV (¼ÎÀÌ´õ u3)
     D3D11_UNORDERED_ACCESS_VIEW_DESC UavDesc = {};
     UavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
     UavDesc.Format        = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -338,7 +338,7 @@ void FTileBasedLightCulling::CreateDebugHitMap(uint32 InWidth, uint32 InHeight)
     hr = Device->GetDevice()->CreateUnorderedAccessView(DebugHitMapTexture, &UavDesc, &DebugHitMapUAV);
     check(SUCCEEDED(hr));
 
-    // SRV (í›„ì²˜ë¦¬ íŒ¨ìŠ¤ì—ì„œ ì˜¤ë²„ë ˆì´ ë Œë”ë§)
+    // SRV (ÈÄÃ³¸® ÆĞ½º¿¡¼­ ¿À¹ö·¹ÀÌ ·»´õ¸µ)
     D3D11_SHADER_RESOURCE_VIEW_DESC SrvDesc = {};
     SrvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
     SrvDesc.Format              = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -359,7 +359,7 @@ void FTileBasedLightCulling::UpdateLightCullingParamsCB(const FFrameContext& fra
     Params.TileSizeX        = TILE_SIZE;
     Params.TileSizeY        = TILE_SIZE;
     Params.Enable25DCulling = bEnable25DCulling ? 1u : 0u;
-    Params.NearZ            = frameContext.NearClip;  // ì¹´ë©”ë¼ ìƒìˆ˜ì—ì„œ ê°€ì ¸ì˜¤ë„ë¡ êµì²´ ê¶Œì¥
+    Params.NearZ            = frameContext.NearClip;  // Ä«¸Ş¶ó »ó¼ö¿¡¼­ °¡Á®¿Àµµ·Ï ±³Ã¼ ±ÇÀå
     Params.FarZ             = frameContext.FarClip;
     Params.NumLights        = (float)LightCount;
 

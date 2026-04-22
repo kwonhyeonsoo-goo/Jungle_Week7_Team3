@@ -1,5 +1,5 @@
-ï»¿#include "Render/Resources/Buffers/ConstantBufferLayouts.h"
-#include "Render/Passes/Base/RenderPassTypes.h"
+#include "Render/Resources/Buffers/ConstantBufferLayouts.h"
+#include "Render/Execute/Passes/Base/RenderPassTypes.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 #include "Render/Scene/Scene.h"
 #include "Component/PrimitiveComponent.h"
@@ -8,7 +8,7 @@
 #include "Render/Resources/Shaders/ShaderManager.h"
 
 // ============================================================
-// FPrimitiveSceneProxy â€” ê¸°ë³¸ êµ¬í˜„
+// FPrimitiveSceneProxy ? ±âº» ±¸Çö
 // ============================================================
 FPrimitiveSceneProxy::FPrimitiveSceneProxy(UPrimitiveComponent* InComponent)
     : Owner(InComponent)
@@ -27,7 +27,7 @@ void FPrimitiveSceneProxy::UpdateTransform()
 
 void FPrimitiveSceneProxy::UpdateMaterial()
 {
-    // ê¸°ë³¸ PrimitiveComponentëŠ” ì„¹ì…˜ë³„ ë¨¸í‹°ë¦¬ì–¼ì´ ì—†ìŒ â€” ì„œë¸Œí´ë˜ìŠ¤ì—ì„œ ì˜¤ë²„ë¼ì´ë“œ
+    // ±âº» PrimitiveComponent´Â ¼½¼Çº° ¸ÓÆ¼¸®¾óÀÌ ¾øÀ½ ? ¼­ºêÅ¬·¡½º¿¡¼­ ¿À¹ö¶óÀÌµå
 }
 
 void FPrimitiveSceneProxy::UpdateVisibility()

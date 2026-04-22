@@ -1,13 +1,13 @@
-ï»¿#pragma once
+#pragma once
 
 #include "Core/CoreTypes.h"
 #include "Math/Matrix.h"
-#include "Render/Pipelines/Context/Scene/SceneView.h"
+#include "Render/Execute/Context/Scene/SceneView.h"
 #include "Render/Scene/Proxies/Light/LightTypes.h"
 #include <d3d11.h>
 
 // ============================================================
-// LightCulling ìƒìˆ˜ ë²„í¼ (b2 ë ˆì§€ìŠ¤í„°, ì…°ì´ë”ì™€ ë ˆì´ì•„ì›ƒ ì¼ì¹˜)
+// LightCulling »ó¼ö ¹öÆÛ (b2 ·¹Áö½ºÅÍ, ¼ÎÀÌ´õ¿Í ·¹ÀÌ¾Æ¿ô ÀÏÄ¡)
 // ============================================================
 struct FLightCullingParams
 {
@@ -39,25 +39,25 @@ public:
     FTileBasedLightCulling(const FTileBasedLightCulling&)            = delete;
     FTileBasedLightCulling& operator=(const FTileBasedLightCulling&) = delete;
 
-    // ---- ì´ˆê¸°í™” / í•´ì œ ----
+    // ---- ÃÊ±âÈ­ / ÇØÁ¦ ----
     void Initialize(FD3DDevice* InDevice);
     void Release();
     bool IsInitialized() const { return Device != nullptr && LightCullingCS != nullptr; }
     void ResizeTiles(uint32 InWidth, uint32 InHeight);
 
-    // ---- í™”ë©´ ë¦¬ì‚¬ì´ì¦ˆ ----
+    // ---- È­¸é ¸®»çÀÌÁî ----
     void OnResize(uint32 InWidth, uint32 InHeight);
 
-    // ---- ì¡°ëª… ë°ì´í„° ê°±ì‹  ----
+    // ---- Á¶¸í µ¥ÀÌÅÍ °»½Å ----
     void SetPointLightData(const uint32 InLightsCount);
 	
-	// ---- ë””ë²„ê·¸ íˆíŠ¸ë§µ ê°±ì‹ (wireframe ëª¨ë“œì¼ë•Œ ì‚¬ìš©)
+	// ---- µğ¹ö±× È÷Æ®¸Ê °»½Å(wireframe ¸ğµåÀÏ¶§ »ç¿ë)
     void ClearDebugHitMap();
 
     // ---- Dispatch ----
     void Dispatch(const FFrameContext& frameContext, bool bEnable25DCulling = true);
 
-    // ---- ê²°ê³¼ SRV (Pixel Shaderì—ì„œ íƒ€ì¼ë³„ ë§ˆìŠ¤í¬ ì½ê¸°) ----
+    // ---- °á°ú SRV (Pixel Shader¿¡¼­ Å¸ÀÏº° ¸¶½ºÅ© ÀĞ±â) ----
     ID3D11ShaderResourceView* GetPerTileMaskSRV()    const { return PerTilePointLightIndexMaskSRV; }
     ID3D11ShaderResourceView* GetDebugHitMapSRV()    const { return DebugHitMapSRV; }
     //ID3D11ShaderResourceView* GetPointLightDataSRV() const { return PointLightDataSRV; }
@@ -66,7 +66,7 @@ public:
     FConstantBuffer* GetLightCullingParamsCBWrapper() { return LightCullingParamsCBWrapper; }
 
 
-	//LightPassì— ë˜ì§ˆ param ì •ë³´
+	//LightPass¿¡ ´øÁú param Á¤º¸
     ID3D11Buffer* GetLightCullingParamsCB() const { return LightCullingParamsCB; }
 
     uint32 GetNumTilesX()        const { return NumTilesX; }
@@ -95,20 +95,20 @@ private:
     ID3D11UnorderedAccessView* PerTilePointLightIndexMaskOutUAV  = nullptr;
     ID3D11ShaderResourceView*  PerTilePointLightIndexMaskSRV     = nullptr;
 
-    // ---- Culled (OR ëˆ„ì ) Mask Buffer (UAV u2, Shadow Mapìš©) ----
+    // ---- Culled (OR ´©Àû) Mask Buffer (UAV u2, Shadow Map¿ë) ----
     ID3D11Buffer*              CulledPointLightIndexMaskBuffer   = nullptr;
     ID3D11UnorderedAccessView* CulledPointLightIndexMaskOUTUAV   = nullptr;
 
-    // ---- Debug HitMap (UAV u3 / SRV for í›„ì²˜ë¦¬) ----
+    // ---- Debug HitMap (UAV u3 / SRV for ÈÄÃ³¸®) ----
     ID3D11Texture2D*           DebugHitMapTexture = nullptr;
     ID3D11UnorderedAccessView* DebugHitMapUAV     = nullptr;
     ID3D11ShaderResourceView*  DebugHitMapSRV     = nullptr;
 
-    // ---- LightCullingParams ìƒìˆ˜ ë²„í¼ (b2) ----
+    // ---- LightCullingParams »ó¼ö ¹öÆÛ (b2) ----
     ID3D11Buffer* LightCullingParamsCB = nullptr;
     FConstantBuffer* LightCullingParamsCBWrapper = nullptr;
 
-    // ---- Tile ë©”íƒ€ë°ì´í„° ----
+    // ---- Tile ¸ŞÅ¸µ¥ÀÌÅÍ ----
     uint32 NumTilesX        = 0;
     uint32 NumTilesY        = 0;
     uint32 NumTiles         = 0;

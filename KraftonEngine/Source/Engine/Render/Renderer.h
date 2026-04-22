@@ -1,19 +1,19 @@
-ï»¿#pragma once
+#pragma once
 
 #include <memory>
 #include <unordered_map>
 
-#include "Render/Overlay/OverlayBatchSet.h"
-#include "Render/Passes/Base/RenderPassTypes.h"
-#include "Render/Pipelines/Context/FrameRenderResources.h"
-#include "Render/Pipelines/Context/RenderCollectContext.h"
-#include "Render/Pipelines/Context/RenderPipelineContext.h"
-#include "Render/Pipelines/Context/Scene/SceneView.h"
-#include "Render/Pipelines/Context/ViewMode/SceneViewModeSurfaces.h"
-#include "Render/Pipelines/Context/Viewport/ViewportRenderTargets.h"
-#include "Render/Pipelines/Registry/RenderPassRegistry.h"
-#include "Render/Pipelines/Registry/RenderPipelineRegistry.h"
-#include "Render/Pipelines/Runner/RenderPipelineRunner.h"
+#include "Render/Submission/Batching/OverlayBatchSet.h"
+#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+#include "Render/Execute/Context/FrameRenderResources.h"
+#include "Render/Execute/Context/RenderCollectContext.h"
+#include "Render/Execute/Context/RenderPipelineContext.h"
+#include "Render/Execute/Context/Scene/SceneView.h"
+#include "Render/Execute/Context/ViewMode/SceneViewModeSurfaces.h"
+#include "Render/Execute/Context/Viewport/ViewportRenderTargets.h"
+#include "Render/Execute/Registry/RenderPassRegistry.h"
+#include "Render/Execute/Registry/RenderPipelineRegistry.h"
+#include "Render/Execute/Runner/RenderPipelineRunner.h"
 #include "Render/Resources/Shaders/ShaderManager.h"
 #include "Render/RHI/D3D11/Common/D3D11API.h"
 #include "Render/RHI/D3D11/Device/D3DDevice.h"
@@ -31,8 +31,8 @@ class FOctree;
 class FWorldPrimitivePickingBVH;
 
 /*
-    ë Œë”ë§ ì „ì²´ë¥¼ ì´ê´„í•˜ëŠ” ìµœìƒìœ„ ì˜¤ì¼€ìŠ¤íŠ¸ë ˆì´í„°ì…ë‹ˆë‹¤.
-    í”„ë ˆì„ ê³µìš© ìì› ì¤€ë¹„, ë“œë¡œìš° ëŒ€ìƒ ìˆ˜ì§‘, ì»¤ë§¨ë“œ ìƒì„±, íŒŒì´í”„ë¼ì¸ ì‹¤í–‰ë§Œ ë‹´ë‹¹í•©ë‹ˆë‹¤.
+    ·»´õ¸µ ÀüÃ¼¸¦ ÃÑ°ıÇÏ´Â ÃÖ»óÀ§ ¿ÀÄÉ½ºÆ®·¹ÀÌÅÍÀÔ´Ï´Ù.
+    ÇÁ·¹ÀÓ °ø¿ë ÀÚ¿ø ÁØºñ, µå·Î¿ì ´ë»ó ¼öÁı, Ä¿¸Çµå »ı¼º, ÆÄÀÌÇÁ¶óÀÎ ½ÇÇà¸¸ ´ã´çÇÕ´Ï´Ù.
 */
 class FRenderer
 {
@@ -50,7 +50,7 @@ public:
 
     void BeginCollect(const FSceneView& SceneView, uint32 MaxProxyCount = 0);
 
-    // ìˆ˜ì§‘ ë‹¨ê³„ facade
+    // ¼öÁı ´Ü°è facade
     void CollectWorld(UWorld* World, FRenderCollectContext& CollectContext);
     void CollectGrid(float GridSpacing, int32 GridHalfLineCount, FScene& Scene);
     void CollectOverlayText(const FOverlayStatSystem& OverlaySystem, const UEditorEngine& Editor, FScene& Scene);
@@ -64,7 +64,7 @@ public:
     const TArray<class FPrimitiveSceneProxy*>& GetLastVisiblePrimitiveProxies() const { return DrawCollector.GetLastVisiblePrimitiveProxies(); }
     const FCollectedLights& GetCollectedLights() const { return DrawCollector.GetCollectedLights(); }
 
-    // ìˆ˜ì§‘ëœ ê²°ê³¼ë¥¼ ë“œë¡œìš° ì»¤ë§¨ë“œë¡œ ë³€í™˜
+    // ¼öÁıµÈ °á°ú¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯
     void BuildDrawCommands(FRenderPipelineContext& PipelineContext);
 
     void BeginFrame(const FSceneView& SceneView, const FViewportRenderTargets* Targets = nullptr);

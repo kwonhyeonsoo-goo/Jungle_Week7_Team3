@@ -1,4 +1,4 @@
-ï»¿#include "Editor/EditorEngine.h"
+#include "Editor/EditorEngine.h"
 
 #include "Engine/Runtime/WindowsWindow.h"
 #include "Engine/Serialization/SceneSaveManager.h"
@@ -14,9 +14,9 @@
 #include "Viewport/Viewport.h"
 #include "Profiling/GPUProfiler.h"
 #include "Profiling/Stats.h"
-#include "Render/Pipelines/Registry/ViewModePassRegistry.h"
-#include "Render/Pipelines/Context/RenderCollectContext.h"
-#include "Render/Pipelines/Context/ViewMode/SceneViewModeSurfaces.h"
+#include "Render/Execute/Registry/ViewModePassRegistry.h"
+#include "Render/Execute/Context/RenderCollectContext.h"
+#include "Render/Execute/Context/ViewMode/SceneViewModeSurfaces.h"
 
 IMPLEMENT_CLASS(UEditorEngine, UEngine)
 
@@ -45,7 +45,7 @@ void PreloadDefaultObjAssets(ID3D11Device* Device)
 
 void UEditorEngine::Init(FWindowsWindow* InWindow)
 {
-    // ì—”ì§„ ê³µí†µ ì´ˆê¸°í™” (Renderer, D3D, ì‹±ê¸€í„´ ë“±)
+    // ¿£Áø °øÅë ÃÊ±âÈ­ (Renderer, D3D, ½Ì±ÛÅÏ µî)
     UEngine::Init(InWindow);
 
     FObjManager::ScanMeshAssets();
@@ -53,7 +53,7 @@ void UEditorEngine::Init(FWindowsWindow* InWindow)
     FMaterialManager::Get().ScanMaterialAssets();
     PreloadDefaultObjAssets(Renderer.GetFD3DDevice().GetDevice());
 
-    // ì—ë””í„° ì „ìš© ì´ˆê¸°í™”
+    // ¿¡µğÅÍ Àü¿ë ÃÊ±âÈ­
     FEditorSettings::Get().LoadFromFile(FEditorSettings::GetDefaultSettingsPath());
 
     MainPanel.Create(Window, Renderer, this);
@@ -70,14 +70,14 @@ void UEditorEngine::Init(FWindowsWindow* InWindow)
     SelectionManager.Init();
     SelectionManager.SetWorld(GetWorld());
 
-    // ë·°í¬íŠ¸ ë ˆì´ì•„ì›ƒ ì´ˆê¸°í™” + ì €ì¥ëœ ì„¤ì • ë³µì›
+    // ºäÆ÷Æ® ·¹ÀÌ¾Æ¿ô ÃÊ±âÈ­ + ÀúÀåµÈ ¼³Á¤ º¹¿ø
     ViewportLayout.Initialize(this, Window, Renderer, &SelectionManager);
     ViewportLayout.LoadFromSettings();
 }
 
 void UEditorEngine::Shutdown()
 {
-    // ì—ë””í„° í•´ì œ (ì—”ì§„ë³´ë‹¤ ë¨¼ì €)
+    // ¿¡µğÅÍ ÇØÁ¦ (¿£Áøº¸´Ù ¸ÕÀú)
     ViewportLayout.SaveToSettings();
     FEditorSettings::Get().SaveToFile(FEditorSettings::GetDefaultSettingsPath());
     CloseScene();
@@ -85,23 +85,23 @@ void UEditorEngine::Shutdown()
     MainPanel.Release();
     GPUOcclusion.Release();
 
-    // ë·°í¬íŠ¸ ë ˆì´ì•„ì›ƒ í•´ì œ
+    // ºäÆ÷Æ® ·¹ÀÌ¾Æ¿ô ÇØÁ¦
     ViewportLayout.Release();
 
-    // ì—”ì§„ ê³µí†µ í•´ì œ (Renderer, D3D ë“±)
+    // ¿£Áø °øÅë ÇØÁ¦ (Renderer, D3D µî)
     UEngine::Shutdown();
 }
 
 void UEditorEngine::OnWindowResized(uint32 Width, uint32 Height)
 {
     UEngine::OnWindowResized(Width, Height);
-    // ìœˆë„ìš° ë¦¬ì‚¬ì´ì¦ˆ ì‹œì—ëŠ” ImGui íŒ¨ë„ì´ ì‹¤ì œ í¬ê¸°ë¥¼ ê²°ì •í•˜ë¯€ë¡œ
-    // FViewport RTëŠ” SSplitter ë ˆì´ì•„ì›ƒì—ì„œ ì§€ì—° ë¦¬ì‚¬ì´ì¦ˆë¡œ ì²˜ë¦¬ë¨
+    // À©µµ¿ì ¸®»çÀÌÁî ½Ã¿¡´Â ImGui ÆĞ³ÎÀÌ ½ÇÁ¦ Å©±â¸¦ °áÁ¤ÇÏ¹Ç·Î
+    // FViewport RT´Â SSplitter ·¹ÀÌ¾Æ¿ô¿¡¼­ Áö¿¬ ¸®»çÀÌÁî·Î Ã³¸®µÊ
 }
 
 void UEditorEngine::Tick(float DeltaTime)
 {
-    // --- PIE ìš”ì²­ ì²˜ë¦¬ (í”„ë ˆì„ ê²½ê³„ì—ì„œ ì²˜ë¦¬ë˜ë„ë¡ Tick ì„ ë‘ì—ì„œ ì†Œë¹„) ---
+    // --- PIE ¿äÃ» Ã³¸® (ÇÁ·¹ÀÓ °æ°è¿¡¼­ Ã³¸®µÇµµ·Ï Tick ¼±µÎ¿¡¼­ ¼Òºñ) ---
     if (bRequestEndPlayMapQueued)
     {
         bRequestEndPlayMapQueued = false;
@@ -171,14 +171,14 @@ void UEditorEngine::RenderUI(float DeltaTime)
     MainPanel.Render(DeltaTime);
 }
 
-// â”€â”€â”€ PIE (Play In Editor) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// UE íŒ¨í„´ ìš”ì•½: RequestëŠ” ë‹¨ì¼ ìŠ¬ë¡¯(std::optional)ì— ì €ì¥ë§Œ í•˜ê³  ì¦‰ì‹œ ì‹¤í–‰í•˜ì§€ ì•ŠëŠ”ë‹¤.
-// ì‹¤ì œ StartPIEëŠ” ë‹¤ìŒ Tick ì„ ë‘ì˜ StartQueuedPlaySessionRequestì—ì„œ ì¼ì–´ë‚œë‹¤.
-// ì´ìœ ëŠ” UI ì½œë°±/íŠ¸ëœì­ì…˜ ë„ì¤‘ ê°™ì€ ë¶ˆì•ˆì •í•œ íƒ€ì´ë°ì„ í”¼í•˜ê¸° ìœ„í•¨.
+// ¦¡¦¡¦¡ PIE (Play In Editor) ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+// UE ÆĞÅÏ ¿ä¾à: Request´Â ´ÜÀÏ ½½·Ô(std::optional)¿¡ ÀúÀå¸¸ ÇÏ°í Áï½Ã ½ÇÇàÇÏÁö ¾Ê´Â´Ù.
+// ½ÇÁ¦ StartPIE´Â ´ÙÀ½ Tick ¼±µÎÀÇ StartQueuedPlaySessionRequest¿¡¼­ ÀÏ¾î³­´Ù.
+// ÀÌÀ¯´Â UI Äİ¹é/Æ®·£Àè¼Ç µµÁß °°Àº ºÒ¾ÈÁ¤ÇÑ Å¸ÀÌ¹ÖÀ» ÇÇÇÏ±â À§ÇÔ.
 
 void UEditorEngine::RequestPlaySession(const FRequestPlaySessionParams& InParams)
 {
-    // ë™ì‹œ ìš”ì²­ì€ UEì™€ ë™ì¼í•˜ê²Œ ë®ì–´ì“´ë‹¤ (ì§„ì§œ í ì•„ë‹˜ â€” ë‹¨ì¼ ìŠ¬ë¡¯).
+    // µ¿½Ã ¿äÃ»Àº UE¿Í µ¿ÀÏÇÏ°Ô µ¤¾î¾´´Ù (ÁøÂ¥ Å¥ ¾Æ´Ô ? ´ÜÀÏ ½½·Ô).
     PlaySessionRequest = InParams;
 }
 
@@ -256,7 +256,7 @@ void UEditorEngine::StartQueuedPlaySessionRequest()
     const FRequestPlaySessionParams Params = *PlaySessionRequest;
     PlaySessionRequest.reset();
 
-    // ì´ë¯¸ PIE ì¤‘ì´ë©´ ê¸°ì¡´ ì„¸ì…˜ì„ ì •ë¦¬ í›„ ìƒˆë¡œ ì‹œì‘ (ë‹¨ìˆœí™”).
+    // ÀÌ¹Ì PIE ÁßÀÌ¸é ±âÁ¸ ¼¼¼ÇÀ» Á¤¸® ÈÄ »õ·Î ½ÃÀÛ (´Ü¼øÈ­).
     if (PlayInEditorSessionInfo.has_value())
     {
         EndPlayMap();
@@ -272,7 +272,7 @@ void UEditorEngine::StartQueuedPlaySessionRequest()
 
 void UEditorEngine::StartPlayInEditorSession(const FRequestPlaySessionParams& Params)
 {
-    // 1) í˜„ì¬ ì—ë””í„° ì›”ë“œë¥¼ ë³µì œí•´ PIE ì›”ë“œ ìƒì„± (UEì˜ CreatePIEWorldByDuplication ëŒ€ì‘).
+    // 1) ÇöÀç ¿¡µğÅÍ ¿ùµå¸¦ º¹Á¦ÇØ PIE ¿ùµå »ı¼º (UEÀÇ CreatePIEWorldByDuplication ´ëÀÀ).
     UWorld* EditorWorld = GetWorld();
     if (!EditorWorld)
     {
@@ -284,7 +284,7 @@ void UEditorEngine::StartPlayInEditorSession(const FRequestPlaySessionParams& Pa
         return;
     }
 
-    // 2) PIE WorldContextë¥¼ WorldListì— ë“±ë¡.
+    // 2) PIE WorldContext¸¦ WorldList¿¡ µî·Ï.
     FWorldContext Ctx;
     Ctx.WorldType = EWorldType::PIE;
     Ctx.ContextHandle = FName("PIE");
@@ -296,7 +296,7 @@ void UEditorEngine::StartPlayInEditorSession(const FRequestPlaySessionParams& Pa
     }
     WorldList.push_back(Ctx);
 
-    // 3) ì„¸ì…˜ ì •ë³´ ê¸°ë¡ (ì´ì „ í™œì„± í•¸ë“¤ í¬í•¨ â€” EndPlayMapì—ì„œ ë³µì›).
+    // 3) ¼¼¼Ç Á¤º¸ ±â·Ï (ÀÌÀü È°¼º ÇÚµé Æ÷ÇÔ ? EndPlayMap¿¡¼­ º¹¿ø).
     FLevelEditorViewportClient* PIEViewportClient = Params.DestinationViewportClient ? Params.DestinationViewportClient : ViewportLayout.GetActiveViewport();
     if (!PIEViewportClient)
     {
@@ -325,33 +325,33 @@ void UEditorEngine::StartPlayInEditorSession(const FRequestPlaySessionParams& Pa
         }
     }
 
-    // 4) ActiveWorldHandleì„ PIEë¡œ ì „í™˜ â€” ì´í›„ GetWorld()ëŠ” PIE ì›”ë“œë¥¼ ë°˜í™˜.
+    // 4) ActiveWorldHandleÀ» PIE·Î ÀüÈ¯ ? ÀÌÈÄ GetWorld()´Â PIE ¿ùµå¸¦ ¹İÈ¯.
     SetActiveWorld(FName("PIE"));
 
-    // GPU Occlusion readbackì€ ProxyId ê¸°ë°˜ì´ë¼ ì›”ë“œê°€ ê°ˆë¦¬ë©´ stale.
-    // ì´ì „ í”„ë ˆì„ ê²°ê³¼ë¥¼ ë¬´íš¨í™”í•´ì•¼ wrong-proxy hit ë°©ì§€.
+    // GPU Occlusion readbackÀº ProxyId ±â¹İÀÌ¶ó ¿ùµå°¡ °¥¸®¸é stale.
+    // ÀÌÀü ÇÁ·¹ÀÓ °á°ú¸¦ ¹«È¿È­ÇØ¾ß wrong-proxy hit ¹æÁö.
     OnRenderSceneCleared();
 
-    // 5) í™œì„± ë·°í¬íŠ¸ ì¹´ë©”ë¼ë¥¼ PIE ì›”ë“œì˜ ActiveCameraë¡œ ì„¤ì • â€”
-    //    LOD ê°±ì‹  ë“±ì—ì„œ ActiveCameraë¥¼ ì°¸ì¡°í•˜ë¯€ë¡œ ì„¤ì • í•„ìš”.
+    // 5) È°¼º ºäÆ÷Æ® Ä«¸Ş¶ó¸¦ PIE ¿ùµåÀÇ ActiveCamera·Î ¼³Á¤ ?
+    //    LOD °»½Å µî¿¡¼­ ActiveCamera¸¦ ÂüÁ¶ÇÏ¹Ç·Î ¼³Á¤ ÇÊ¿ä.
     if (UCameraComponent* VCCamera = PIEViewportClient->GetCamera())
     {
         PIEWorld->SetActiveCamera(VCCamera);
     }
 
-    // 6) Selectionì„ PIE ì›”ë“œ ê¸°ì¤€ìœ¼ë¡œ ì¬ë°”ì¸ë”© â€” ì—ë””í„° ì•¡í„°ë¥¼ ê°€ë¦¬í‚¨ ì±„ë¡œ ë‘ë©´
-    //    í”½í‚¹(=PIE ì›”ë“œ) / outliner / outline ë Œë”ê°€ ëª¨ë‘ ì–´ê¸‹ë‚œë‹¤.
+    // 6) SelectionÀ» PIE ¿ùµå ±âÁØÀ¸·Î Àç¹ÙÀÎµù ? ¿¡µğÅÍ ¾×ÅÍ¸¦ °¡¸®Å² Ã¤·Î µÎ¸é
+    //    ÇÈÅ·(=PIE ¿ùµå) / outliner / outline ·»´õ°¡ ¸ğµÎ ¾î±ß³­´Ù.
     SelectionManager.ClearSelection();
-    SelectionManager.SetGizmoEnabled(false); //PIEê°€ ì‹œì‘ë˜ë©´ gizmo ë¹„í™œì„±í™”
+    SelectionManager.SetGizmoEnabled(false); //PIE°¡ ½ÃÀÛµÇ¸é gizmo ºñÈ°¼ºÈ­
     SelectionManager.SetWorld(PIEWorld);
 
-    // ì´ ì½”ë“œì™€ ëŒ€ì‘ë˜ëŠ” ê²Œ ì•„ë˜ EndPlayMap()ì— ìˆìŒ.
-    // MainPanel.HideEditorWindowsForPIE(); //PIE ì¤‘ì—ëŠ” ì—ë””í„° íŒ¨ë„ì„ ìˆ¨ê¹€.
+    // ÀÌ ÄÚµå¿Í ´ëÀÀµÇ´Â °Ô ¾Æ·¡ EndPlayMap()¿¡ ÀÖÀ½.
+    // MainPanel.HideEditorWindowsForPIE(); //PIE Áß¿¡´Â ¿¡µğÅÍ ÆĞ³ÎÀ» ¼û±è.
     ViewportLayout.DisableWorldAxisForPIE();
 
-    // 7) BeginPlay íŠ¸ë¦¬ê±° â€” ëª¨ë“  ë“±ë¡/ë°”ì¸ë”©ì´ ëë‚œ ë‹¤ìŒ ì²« Tick ì´ì „ì— í˜¸ì¶œ.
-    //    UWorld::BeginPlayê°€ bHasBegunPlayë¥¼ ë¨¼ì € ì„¸íŒ…í•˜ë¯€ë¡œ BeginPlay ë„ì¤‘
-    //    SpawnActorë¡œ ë§Œë“  ì‹ ê·œ ì•¡í„°ë„ ìë™ìœ¼ë¡œ BeginPlayëœë‹¤.
+    // 7) BeginPlay Æ®¸®°Å ? ¸ğµç µî·Ï/¹ÙÀÎµùÀÌ ³¡³­ ´ÙÀ½ Ã¹ Tick ÀÌÀü¿¡ È£Ãâ.
+    //    UWorld::BeginPlay°¡ bHasBegunPlay¸¦ ¸ÕÀú ¼¼ÆÃÇÏ¹Ç·Î BeginPlay µµÁß
+    //    SpawnActor·Î ¸¸µç ½Å±Ô ¾×ÅÍµµ ÀÚµ¿À¸·Î BeginPlayµÈ´Ù.
     PIEWorld->BeginPlay();
 }
 
@@ -362,26 +362,26 @@ void UEditorEngine::EndPlayMap()
         return;
     }
 
-    // í™œì„± ì›”ë“œë¥¼ PIE ì‹œì‘ ì „ í•¸ë“¤ë¡œ ë³µì›.
+    // È°¼º ¿ùµå¸¦ PIE ½ÃÀÛ Àü ÇÚµé·Î º¹¿ø.
     const FName PrevHandle = PlayInEditorSessionInfo->PreviousActiveWorldHandle;
     SetActiveWorld(PrevHandle);
 
-    // ë³µê·€í•œ Editor ì›”ë“œì˜ VisibleProxies/ìºì‹œëœ ì¹´ë©”ë¼ ìƒíƒœë¥¼ ê°•ì œ ë¬´íš¨í™”.
-    // PIE ì¤‘ Editor WorldTickì´ skipë˜ì–´ ìºì‹œê°€ PIE ì‹œì‘ ì „ ì‹œì  ê·¸ëŒ€ë¡œ ë‚¨ì•„ ìˆê³ ,
-    // NeedsVisibleProxyRebuild()ê°€ ì¹´ë©”ë¼ ë³€í™” ê¸°ë°˜ì´ë¼ falseë¥¼ ë°˜í™˜í•˜ë©´ stale
-    // VisibleProxiesê°€ ê·¸ëŒ€ë¡œ ì¬ì‚¬ìš©ë˜ì–´ dangling proxy ì°¸ì¡°ë¡œ í¬ë˜ì‹œê°€ ë‚  ìˆ˜ ìˆë‹¤.
+    // º¹±ÍÇÑ Editor ¿ùµåÀÇ VisibleProxies/Ä³½ÃµÈ Ä«¸Ş¶ó »óÅÂ¸¦ °­Á¦ ¹«È¿È­.
+    // PIE Áß Editor WorldTickÀÌ skipµÇ¾î Ä³½Ã°¡ PIE ½ÃÀÛ Àü ½ÃÁ¡ ±×´ë·Î ³²¾Æ ÀÖ°í,
+    // NeedsVisibleProxyRebuild()°¡ Ä«¸Ş¶ó º¯È­ ±â¹İÀÌ¶ó false¸¦ ¹İÈ¯ÇÏ¸é stale
+    // VisibleProxies°¡ ±×´ë·Î Àç»ç¿ëµÇ¾î dangling proxy ÂüÁ¶·Î Å©·¡½Ã°¡ ³¯ ¼ö ÀÖ´Ù.
     //
-    // ë˜í•œ Renderer::FrameResources.PerObjectCBPoolì€ ProxyIdë¡œ ì¸ë±ì‹±ë˜ëŠ” ì›”ë“œ ê°„ ê³µìœ  í’€ì´ë¼,
-    // PIE ì¤‘ PIE í”„ë¡ì‹œê°€ ë®ì–´ì“´ ìŠ¬ë¡¯ì´ ê·¸ëŒ€ë¡œ ë‚¨ì•„ ìˆìœ¼ë©´ Editor í”„ë¡ì‹œì˜
-    // bPerObjectCBDirty=false ìƒíƒœë¡œ ì¸í•´ ì—…ë¡œë“œê°€ skipë˜ì–´ PIE ë§ˆì§€ë§‰ transformìœ¼ë¡œ
-    // ë Œë”ëœë‹¤. ëª¨ë“  Editor í”„ë¡ì‹œë¥¼ PerObjectCB dirtyë¡œ ë§ˆí‚¹í•´ ì¬ì—…ë¡œë“œ ê°•ì œ.
+    // ¶ÇÇÑ Renderer::FrameResources.PerObjectCBPoolÀº ProxyId·Î ÀÎµ¦½ÌµÇ´Â ¿ùµå °£ °øÀ¯ Ç®ÀÌ¶ó,
+    // PIE Áß PIE ÇÁ·Ï½Ã°¡ µ¤¾î¾´ ½½·ÔÀÌ ±×´ë·Î ³²¾Æ ÀÖÀ¸¸é Editor ÇÁ·Ï½ÃÀÇ
+    // bPerObjectCBDirty=false »óÅÂ·Î ÀÎÇØ ¾÷·Îµå°¡ skipµÇ¾î PIE ¸¶Áö¸· transformÀ¸·Î
+    // ·»´õµÈ´Ù. ¸ğµç Editor ÇÁ·Ï½Ã¸¦ PerObjectCB dirty·Î ¸¶Å·ÇØ Àç¾÷·Îµå °­Á¦.
     if (UWorld* EditorWorld = GetWorld())
     {
         EditorWorld->GetScene().MarkAllPerObjectCBDirty();
 
-        // ActiveCameraëŠ” PIE ì‹œì‘ ì‹œ PIE ì›”ë“œë¡œ ì˜®ê²¨ì¡Œê³  PIE ì›”ë“œì™€ í•¨ê»˜ íŒŒê´´ëë‹¤.
-        // Editor ì›”ë“œì˜ ActiveCameraëŠ” ì—¬ì „íˆ ê·¸ dangling í¬ì¸í„°ë¥¼ ê°€ë¦¬í‚¬ ìˆ˜ ìˆìœ¼ë¯€ë¡œ
-        // í™œì„± ë·°í¬íŠ¸ì˜ ì¹´ë©”ë¼ë¡œ ë‹¤ì‹œ ë°”ì¸ë”©í•´ ì¤˜ì•¼ frustum cullingì´ ì •ìƒ ë™ì‘í•œë‹¤.
+        // ActiveCamera´Â PIE ½ÃÀÛ ½Ã PIE ¿ùµå·Î ¿Å°ÜÁ³°í PIE ¿ùµå¿Í ÇÔ²² ÆÄ±«µÆ´Ù.
+        // Editor ¿ùµåÀÇ ActiveCamera´Â ¿©ÀüÈ÷ ±× dangling Æ÷ÀÎÅÍ¸¦ °¡¸®Å³ ¼ö ÀÖÀ¸¹Ç·Î
+        // È°¼º ºäÆ÷Æ®ÀÇ Ä«¸Ş¶ó·Î ´Ù½Ã ¹ÙÀÎµùÇØ Áà¾ß frustum cullingÀÌ Á¤»ó µ¿ÀÛÇÑ´Ù.
         FLevelEditorViewportClient* PIEViewportClient = PlayInEditorSessionInfo->DestinationViewportClient;
         if (PIEViewportClient && PIEViewportClient->GetCamera())
         {
@@ -405,19 +405,19 @@ void UEditorEngine::EndPlayMap()
         }
     }
 
-    // Selectionì„ ì—ë””í„° ì›”ë“œë¡œ ë³µì› â€” PIE ì•¡í„°ëŠ” ê³§ íŒŒê´´ë˜ë¯€ë¡œ ë¨¼ì € ë¹„ìš´ë‹¤.
+    // SelectionÀ» ¿¡µğÅÍ ¿ùµå·Î º¹¿ø ? PIE ¾×ÅÍ´Â °ğ ÆÄ±«µÇ¹Ç·Î ¸ÕÀú ºñ¿î´Ù.
     SelectionManager.ClearSelection();
-    SelectionManager.SetGizmoEnabled(true); //PIEê°€ ëë‚˜ë©´ gizmo í™œì„±í™”
+    SelectionManager.SetGizmoEnabled(true); //PIE°¡ ³¡³ª¸é gizmo È°¼ºÈ­
     SelectionManager.SetWorld(GetWorld());
 
-    // ì´ ì½”ë“œì™€ ëŒ€ì‘ë˜ëŠ” ê²Œ ìœ„ì˜ StartPlayInEditorSession()ì— ìˆìŒ.
+    // ÀÌ ÄÚµå¿Í ´ëÀÀµÇ´Â °Ô À§ÀÇ StartPlayInEditorSession()¿¡ ÀÖÀ½.
     // MainPanel.RestoreEditorWindowsAfterPIE();
     ViewportLayout.RestoreWorldAxisAfterPIE();
 
-    // PIE WorldContext ì œê±° (DestroyWorldContextê°€ EndPlay + DestroyObject ìˆ˜í–‰).
+    // PIE WorldContext Á¦°Å (DestroyWorldContext°¡ EndPlay + DestroyObject ¼öÇà).
     DestroyWorldContext(FName("PIE"));
 
-    // PIE ì›”ë“œì˜ í”„ë¡ì‹œê°€ ëª¨ë‘ íŒŒê´´ëìœ¼ë¯€ë¡œ GPU Occlusion readback ë¬´íš¨í™”.
+    // PIE ¿ùµåÀÇ ÇÁ·Ï½Ã°¡ ¸ğµÎ ÆÄ±«µÆÀ¸¹Ç·Î GPU Occlusion readback ¹«È¿È­.
     OnRenderSceneCleared();
 
     for (FEditorViewportClient* VC : ViewportLayout.GetAllViewportClients())
@@ -431,7 +431,7 @@ void UEditorEngine::EndPlayMap()
     PlayInEditorSessionInfo.reset();
 }
 
-// â”€â”€â”€ ê¸°ì¡´ ë©”ì„œë“œ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ¦¡¦¡¦¡ ±âÁ¸ ¸Ş¼­µå ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
 
 void UEditorEngine::ResetViewport()
 {
@@ -461,7 +461,7 @@ void UEditorEngine::ClearScene()
     SelectionManager.ClearSelection();
     SelectionManager.SetWorld(nullptr);
 
-    // ì”¬ í”„ë¡ì‹œ íŒŒê´´ ì „ GPU Occlusion ìŠ¤í…Œì´ì§• ë°ì´í„° ë¬´íš¨í™”
+    // ¾À ÇÁ·Ï½Ã ÆÄ±« Àü GPU Occlusion ½ºÅ×ÀÌÂ¡ µ¥ÀÌÅÍ ¹«È¿È­
     OnRenderSceneCleared();
 
     for (FWorldContext& Ctx : WorldList)
@@ -619,7 +619,7 @@ void UEditorEngine::RenderViewport(FLevelEditorViewportClient* VC)
         SCOPE_STAT_CAT("Renderer.Render", "4_ExecutePass");
         PipelineContext.VisibleProxies = &Renderer.GetCollectedPrimitives().VisibleProxies;
         Renderer.BuildDrawCommands(PipelineContext);
-        Renderer.RunRootPipeline(ERenderPipelineType::EditorScene, PipelineContext);
+        Renderer.RunRootPipeline(ERenderPipelineType::EditorRootPipeline, PipelineContext);
     }
 
     if (GPUOcclusion.IsInitialized())

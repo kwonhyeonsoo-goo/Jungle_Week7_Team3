@@ -1,7 +1,7 @@
-ï»¿#pragma once
+#pragma once
 
-#include "Render/Passes/Base/RenderPassTypes.h"
-#include "Render/Pipelines/Registry/ViewModePassRegistry.h"
+#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+#include "Render/Execute/Registry/ViewModePassRegistry.h"
 
 class FPrimitiveSceneProxy;
 class FTextRenderSceneProxy;
@@ -10,25 +10,25 @@ struct FRenderPipelineContext;
 
 namespace DrawCommandBuilder
 {
-    // ì¼ë°˜ ë©”ì‹œ í”„ë¡ì‹œë¥¼ ë“œë¡œìš° ì»¤ë§¨ë“œë¡œ ë³€í™˜í•©ë‹ˆë‹¤.
+    // ÀÏ¹İ ¸Ş½Ã ÇÁ·Ï½Ã¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
     void BuildMeshDrawCommand(const FPrimitiveSceneProxy& Proxy, ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // í’€ìŠ¤í¬ë¦° íŒ¨ìŠ¤ìš© ë“œë¡œìš° ì»¤ë§¨ë“œë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
+    // Ç®½ºÅ©¸° ÆĞ½º¿ë µå·Î¿ì Ä¿¸Çµå¸¦ »ı¼ºÇÕ´Ï´Ù.
     void BuildFullscreenDrawCommand(ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList, EViewModePostProcessVariant PostProcessVariant = EViewModePostProcessVariant::None);
 
-    // ë””ë²„ê·¸ ë¼ì¸ ë°°ì¹˜ë¥¼ ë“œë¡œìš° ì»¤ë§¨ë“œë¡œ ë³€í™˜í•©ë‹ˆë‹¤.
+    // µğ¹ö±× ¶óÀÎ ¹èÄ¡¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
     void BuildLineDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ì—ë””í„° helper billboardìš© ì˜¤ë²„ë ˆì´ ë“œë¡œìš° ì»¤ë§¨ë“œë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
+    // ¿¡µğÅÍ helper billboard¿ë ¿À¹ö·¹ÀÌ µå·Î¿ì Ä¿¸Çµå¸¦ »ı¼ºÇÕ´Ï´Ù.
     void BuildOverlayBillboardDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // í™”ë©´ ì˜¤ë²„ë ˆì´ í…ìŠ¤íŠ¸ì™€ editor helper world textìš© ë“œë¡œìš° ì»¤ë§¨ë“œë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
+    // È­¸é ¿À¹ö·¹ÀÌ ÅØ½ºÆ®¿Í editor helper world text¿ë µå·Î¿ì Ä¿¸Çµå¸¦ »ı¼ºÇÕ´Ï´Ù.
     void BuildOverlayTextDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ì›”ë“œ í…ìŠ¤íŠ¸ í”„ë¡ì‹œë¥¼ ë“œë¡œìš° ì»¤ë§¨ë“œë¡œ ë³€í™˜í•©ë‹ˆë‹¤.
+    // ¿ùµå ÅØ½ºÆ® ÇÁ·Ï½Ã¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
     void BuildWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
     void BuildOverlayWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ë°ì¹¼ í”„ë¡ì‹œë¥¼ ë“œë¡œìš° ì»¤ë§¨ë“œë¡œ ë³€í™˜í•©ë‹ˆë‹¤.
+    // µ¥Ä® ÇÁ·Ï½Ã¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
     void BuildDecalDrawCommand(const FPrimitiveSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 }

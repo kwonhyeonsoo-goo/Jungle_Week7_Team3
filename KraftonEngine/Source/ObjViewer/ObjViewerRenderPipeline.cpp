@@ -1,4 +1,4 @@
-ï»¿// #include "ObjViewer/ObjViewerRenderPipeline.h"
+// #include "ObjViewer/ObjViewerRenderPipeline.h"
 //
 // #include "ObjViewer/ObjViewerEngine.h"
 // #include "Render/Renderer/Renderer.h"
@@ -19,10 +19,10 @@
 //
 // void FObjViewerRenderPipeline::Execute(float DeltaTime, FRenderer& Renderer)
 //{
-//	// ì˜¤í”„ìŠ¤í¬ë¦° RTì— 3D ì”¬ ë Œë”
+//	// ¿ÀÇÁ½ºÅ©¸° RT¿¡ 3D ¾À ·»´õ
 //	RenderPreviewViewport(Renderer);
 //
-//	// ìŠ¤ì™‘ì²´ì¸ ë°±ë²„í¼ â†’ ImGui í•©ì„± â†’ Present
+//	// ½º¿ÒÃ¼ÀÎ ¹é¹öÆÛ ¡æ ImGui ÇÕ¼º ¡æ Present
 //	Renderer.BeginFrame();
 //	Engine->RenderUI(DeltaTime);
 //	Renderer.EndFrame();
@@ -41,7 +41,7 @@
 //
 //	ID3D11DeviceContext* Ctx = Renderer.GetFD3DDevice().GetDeviceContext();
 //
-//	// ì§€ì—° ë¦¬ì‚¬ì´ì¦ˆ ì ìš© + ì˜¤í”„ìŠ¤í¬ë¦° RT ë°”ì¸ë”©
+//	// Áö¿¬ ¸®»çÀÌÁî Àû¿ë + ¿ÀÇÁ½ºÅ©¸° RT ¹ÙÀÎµù
 //	if (VP->ApplyPendingResize())
 //	{
 //		Camera->OnResize(static_cast<int32>(VP->GetWidth()), static_cast<int32>(VP->GetHeight()));
@@ -49,7 +49,7 @@
 //	const float ClearColor[4] = { 0.15f, 0.15f, 0.15f, 1.0f };
 //	VP->BeginRender(Ctx, ClearColor);
 //
-//	// Frame ì„¤ì •
+//	// Frame ¼³Á¤
 //	Frame.ClearViewportResources();
 //
 //	UWorld* World = Engine->GetWorld();
@@ -78,11 +78,11 @@
 //		Renderer.ReleaseViewModeTextures();
 //	}
 //
-//	// BeginCollect â†’ ì›”ë“œ ìˆ˜ì§‘ â†’ ë™ì  ì»¤ë§¨ë“œ â†’ Scene pipeline ì‹¤í–‰
+//	// BeginCollect ¡æ ¿ùµå ¼öÁı ¡æ µ¿Àû Ä¿¸Çµå ¡æ Scene pipeline ½ÇÇà
 //	Renderer.BeginCollect(Frame, Scene.GetPrimitiveProxyCount());
 //	Collector.CollectWorld(World, Frame, Renderer);
 //	Renderer.BuildDynamicCommands(Frame, &Scene);
 //	Renderer.PreparePipelineExecution(Frame);
-//	Renderer.ExecutePipeline(ERenderPipelineType::Scene, Frame);
+//	Renderer.ExecutePipeline(ERenderPipelineType::ScenePipeline, Frame);
 //	Renderer.FinalizePipelineExecution();
 // }

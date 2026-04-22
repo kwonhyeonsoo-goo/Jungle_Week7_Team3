@@ -1,7 +1,7 @@
-ï»¿#pragma once
+#pragma once
 
 #include "Viewport/ViewportClient.h"
-#include "Render/Pipelines/Context/Scene/ViewTypes.h"
+#include "Render/Execute/Context/Scene/ViewTypes.h"
 
 #include "UI/SWindow.h"
 #include <string>
@@ -28,19 +28,19 @@ class FEditorViewportClient : public FViewportClient
 public:
 	void Initialize(FWindowsWindow* InWindow);
 	void SetOverlayStatSystem(FOverlayStatSystem* InOverlayStatSystem) { OverlayStatSystem = InOverlayStatSystem; }
-	// WorldëŠ” ë” ì´ìƒ ì €ì¥í•˜ì§€ ì•ŠëŠ”ë‹¤ â€” GetWorld()ëŠ” GEngine->GetWorld()ë¥¼ ê²½ìœ í•˜ì—¬
-	// ActiveWorldHandleì„ ë”°ë¥´ë¯€ë¡œ PIE ì „í™˜ ì‹œ ìë™ìœ¼ë¡œ ì˜¬ë°”ë¥¸ ì›”ë“œë¥¼ ë°˜í™˜í•œë‹¤.
+	// World´Â ´õ ÀÌ»ó ÀúÀåÇÏÁö ¾Ê´Â´Ù ? GetWorld()´Â GEngine->GetWorld()¸¦ °æÀ¯ÇÏ¿©
+	// ActiveWorldHandleÀ» µû¸£¹Ç·Î PIE ÀüÈ¯ ½Ã ÀÚµ¿À¸·Î ¿Ã¹Ù¸¥ ¿ùµå¸¦ ¹İÈ¯ÇÑ´Ù.
 	UWorld* GetWorld() const;
 	void SetGizmo(UGizmoComponent* InGizmo) { Gizmo = InGizmo; }
 	void SetSettings(const FEditorSettings* InSettings) { Settings = InSettings; }
 	void SetSelectionManager(FSelectionManager* InSelectionManager) { SelectionManager = InSelectionManager; }
 	UGizmoComponent* GetGizmo() { return Gizmo; }
 
-	// ë·°í¬íŠ¸ë³„ ë Œë” ì˜µì…˜
+	// ºäÆ÷Æ®º° ·»´õ ¿É¼Ç
 	FViewportRenderOptions& GetRenderOptions() { return RenderOptions; }
 	const FViewportRenderOptions& GetRenderOptions() const { return RenderOptions; }
 
-	// ë·°í¬íŠ¸ íƒ€ì… ì „í™˜ (Perspective / Ortho ë°©í–¥)
+	// ºäÆ÷Æ® Å¸ÀÔ ÀüÈ¯ (Perspective / Ortho ¹æÇâ)
 	void SetViewportType(ELevelViewportType NewType);
 	void SetViewportSize(float InWidth, float InHeight);
 
@@ -52,7 +52,7 @@ public:
 
 	void Tick(float DeltaTime);
 
-	// í™œì„± ìƒíƒœ â€” í™œì„± ë·°í¬íŠ¸ë§Œ ì…ë ¥ ì²˜ë¦¬
+	// È°¼º »óÅÂ ? È°¼º ºäÆ÷Æ®¸¸ ÀÔ·Â Ã³¸®
 	void SetActive(bool bInActive) { bIsActive = bInActive; }
 	bool IsActive() const { return bIsActive; }
 
@@ -61,18 +61,18 @@ public:
 	void SetPaneToolbarHeight(float InHeight) { PaneToolbarHeight = InHeight; }
 	float GetPaneToolbarHeight() const { return PaneToolbarHeight; }
 
-	// FViewport ì†Œìœ 
+	// FViewport ¼ÒÀ¯
 	void SetViewport(FViewport* InViewport) { Viewport = InViewport; }
 	FViewport* GetViewport() const override { return Viewport; }
 
-	// SWindow ë ˆì´ì•„ì›ƒ ì—°ê²° â€” SSplitter ë¦¬í”„ ë…¸ë“œ
+	// SWindow ·¹ÀÌ¾Æ¿ô ¿¬°á ? SSplitter ¸®ÇÁ ³ëµå
 	void SetLayoutWindow(SWindow* InWindow) { LayoutWindow = InWindow; }
 	SWindow* GetLayoutWindow() const { return LayoutWindow; }
 
-	// SWindow Rect â†’ ViewportScreenRect ê°±ì‹  + FViewport ë¦¬ì‚¬ì´ì¦ˆ ìš”ì²­
+	// SWindow Rect ¡æ ViewportScreenRect °»½Å + FViewport ¸®»çÀÌÁî ¿äÃ»
 	void UpdateLayoutRect();
 
-	// ImDrawListì— ìì‹ ì˜ SRVë¥¼ SWindow Rect ìœ„ì¹˜ì— ë Œë”
+	// ImDrawList¿¡ ÀÚ½ÅÀÇ SRV¸¦ SWindow Rect À§Ä¡¿¡ ·»´õ
 	void RenderViewportImage();
 	void RenderViewportBorder();
 
@@ -80,7 +80,7 @@ private:
 	void TickEditorShortcuts();
 	void TickInput(float DeltaTime);
 	void TickInteraction(float DeltaTime);
-	void HandleDragStart(const FRay& Ray); //í”½í‚¹ ì‹œì‘
+	void HandleDragStart(const FRay& Ray); //ÇÈÅ· ½ÃÀÛ
 
 private:
 	FViewport* Viewport = nullptr;
@@ -99,8 +99,8 @@ private:
 	bool bIsActive = false;
 	EEditorViewportPlayState PlayState = EEditorViewportPlayState::Stopped;
 	float PaneToolbarHeight = 0.0f;
-	// ë·°í¬íŠ¸ ì‹¤ì œ ë Œë” ì˜ì—­(íˆ´ë°” ì œì™¸)
+	// ºäÆ÷Æ® ½ÇÁ¦ ·»´õ ¿µ¿ª(Åø¹Ù Á¦¿Ü)
 	FRect ViewportScreenRect;
-	// ë·°í¬íŠ¸ í”„ë ˆì„ ì˜ì—­(íˆ´ë°” í¬í•¨ ì „ì²´ íŒ¨ë„)
+	// ºäÆ÷Æ® ÇÁ·¹ÀÓ ¿µ¿ª(Åø¹Ù Æ÷ÇÔ ÀüÃ¼ ÆĞ³Î)
 	FRect ViewportFrameRect;
 };

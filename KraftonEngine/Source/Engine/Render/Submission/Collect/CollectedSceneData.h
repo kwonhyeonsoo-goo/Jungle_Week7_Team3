@@ -1,6 +1,6 @@
-ï»¿#pragma once
+#pragma once
 
-#include "Render/Pipelines/Context/RenderCollectContext.h"
+#include "Render/Execute/Context/RenderCollectContext.h"
 #include "Render/Scene/Proxies/Light/LightTypes.h"
 #include "Render/Submission/Collect/CollectedOverlayData.h"
 
@@ -21,8 +21,8 @@ struct FCollectedPrimitives
 };
 
 /*
-    FCollectedSceneDataëŠ” Scene ìˆ˜ì§‘ ê²°ê³¼ë¥¼ í•œ ë©ì–´ë¦¬ë¡œ ë¬¶ëŠ” êµ¬ì¡°ì²´ì…ë‹ˆë‹¤.
-    Primitiveì™€ Lightë¥¼ Rendererê°€ ë”°ë¡œ ë“¤ê³  ìˆì§€ ì•Šê³  collector ê²°ê³¼ í•˜ë‚˜ë¡œ ì „ë‹¬í•©ë‹ˆë‹¤.
+    FCollectedSceneData´Â Scene ¼öÁı °á°ú¸¦ ÇÑ µ¢¾î¸®·Î ¹­´Â ±¸Á¶Ã¼ÀÔ´Ï´Ù.
+    Primitive¿Í Light¸¦ Renderer°¡ µû·Î µé°í ÀÖÁö ¾Ê°í collector °á°ú ÇÏ³ª·Î Àü´ŞÇÕ´Ï´Ù.
 */
 struct FCollectedSceneData
 {

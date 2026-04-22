@@ -1,4 +1,4 @@
-ï»¿#include "Render/Pipelines/Context/Scene/ViewTypes.h"
+#include "Render/Execute/Context/Scene/ViewTypes.h"
 #include "Engine/Runtime/Engine.h"
 
 #include "Platform/Paths.h"
@@ -38,7 +38,7 @@ void UEngine::Init(FWindowsWindow* InWindow)
 {
     Window = InWindow;
 
-    // ì‹±ê¸€í„´ ì´ˆê¸°í™” ìˆœì„œ ë³´ìž¥
+    // ½Ì±ÛÅÏ ÃÊ±âÈ­ ¼ø¼­ º¸Àå
     FNamePool::Get();
     FObjectFactory::Get();
 
@@ -119,7 +119,7 @@ void UEngine::Render(float DeltaTime)
     {
         FRenderPipelineContext PipelineContext = Renderer.CreatePipelineContext(SceneView, &RenderTargets, Scene, Scene ? &Renderer.GetLastVisiblePrimitiveProxies() : nullptr);
         Renderer.BuildDrawCommands(PipelineContext);
-        Renderer.RunRootPipeline(ERenderPipelineType::DefaultScene, PipelineContext);
+        Renderer.RunRootPipeline(ERenderPipelineType::DefaultRootPipeline, PipelineContext);
     }
 }
 
@@ -137,8 +137,8 @@ void UEngine::WorldTick(float DeltaTime)
 {
     SCOPE_STAT_CAT("UEngine::WorldTick", "1_WorldTick");
 
-    // PIE í™œì„± ì‹œ Editor ì›”ë“œëŠ” sleep (UE ë™ìž‘ê³¼ ë™ì¼).
-    // culling/octree/visibility ê°±ì‹ ì„ ê±´ë„ˆë›°ì–´ 50k+ í™˜ê²½ì—ì„œ ë¹„ìš© 2ë°°ë¥¼ ë°©ì§€.
+    // PIE È°¼º ½Ã Editor ¿ùµå´Â sleep (UE µ¿ÀÛ°ú µ¿ÀÏ).
+    // culling/octree/visibility °»½ÅÀ» °Ç³Ê¶Ù¾î 50k+ È¯°æ¿¡¼­ ºñ¿ë 2¹è¸¦ ¹æÁö.
     bool bHasPIEWorld = false;
     for (const FWorldContext& Ctx : WorldList)
     {
@@ -149,17 +149,17 @@ void UEngine::WorldTick(float DeltaTime)
         }
     }
 
-    // ì›”ë“œ íƒ€ìž…ë³„ Tick ë¼ìš°íŒ…:
-    // - Editor: bTickInEditor ì•¡í„°ë§Œ TickManager ëŒ€ìƒ
-    // - PIE/Game: BeginPlay ì´í›„ bNeedsTick ì•¡í„°ë§Œ TickManager ëŒ€ìƒ
-    // - ê¸°íƒ€:   ì‹œê°„ ê°±ì‹ ë§Œ ìœ ì§€
+    // ¿ùµå Å¸ÀÔº° Tick ¶ó¿ìÆÃ:
+    // - Editor: bTickInEditor ¾×ÅÍ¸¸ TickManager ´ë»ó
+    // - PIE/Game: BeginPlay ÀÌÈÄ bNeedsTick ¾×ÅÍ¸¸ TickManager ´ë»ó
+    // - ±âÅ¸:   ½Ã°£ °»½Å¸¸ À¯Áö
     for (FWorldContext& Ctx : WorldList)
     {
         UWorld* World = Ctx.World;
         if (!World)
             continue;
 
-        // PIE í™œì„± ì‹œ Editor ì›”ë“œëŠ” ì™„ì „ížˆ skip
+        // PIE È°¼º ½Ã Editor ¿ùµå´Â ¿ÏÀüÈ÷ skip
         if (bHasPIEWorld && Ctx.WorldType == EWorldType::Editor)
         {
             continue;
@@ -167,7 +167,7 @@ void UEngine::WorldTick(float DeltaTime)
 
         const ELevelTick TickType = ToLevelTickType(Ctx.WorldType);
 
-        // ì›”ë“œ ë‹¨ìœ„ ì—…ë°ì´íŠ¸ (FlushPrimitive / VisibleProxies / DebugDraw /s TickManager)
+        // ¿ùµå ´ÜÀ§ ¾÷µ¥ÀÌÆ® (FlushPrimitive / VisibleProxies / DebugDraw /s TickManager)
         World->Tick(DeltaTime, TickType);
     }
 }

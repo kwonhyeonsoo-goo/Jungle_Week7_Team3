@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 
 #include "Core/Singleton.h"
 #include "Core/CoreTypes.h"
@@ -10,8 +10,8 @@
 using ShaderDependencyUtils::FShaderFileDependency;
 
 /*
-    ì—”ì§„ì´ ìì£¼ ì‚¬ìš©í•˜ëŠ” ë‚´ì¥ ì…°ì´ë” ì¢…ë¥˜ì…ë‹ˆë‹¤.
-    BaseDraw, Decal, Fog, Gizmo ê°™ì€ ê³µìš© ì…°ì´ë”ë¥¼ ì—¬ê¸°ì„œ ê´€ë¦¬í•©ë‹ˆë‹¤.
+    ¿£ÁøÀÌ ÀÚÁÖ »ç¿ëÇÏ´Â ³»Àå ¼ÎÀÌ´õ Á¾·ùÀÔ´Ï´Ù.
+    Opaque, Decal, Fog, Gizmo °°Àº °ø¿ë ¼ÎÀÌ´õ¸¦ ¿©±â¼­ °ü¸®ÇÕ´Ï´Ù.
 */
 enum class EShaderType : uint32
 {
@@ -36,8 +36,8 @@ enum class EShaderType : uint32
 };
 
 /*
-    ì‚¬ìš©ì ì…°ì´ë” ìºì‹œ í•­ëª©ì…ë‹ˆë‹¤.
-    ì»´íŒŒì¼ëœ ì…°ì´ë”ì™€ ì›ë³¸ íŒŒì¼ ë³€ê²½ ê°ì‹œ ì •ë³´ë¥¼ í•¨ê»˜ ë³´ê´€í•©ë‹ˆë‹¤.
+    »ç¿ëÀÚ ¼ÎÀÌ´õ Ä³½Ã Ç×¸ñÀÔ´Ï´Ù.
+    ÄÄÆÄÀÏµÈ ¼ÎÀÌ´õ¿Í ¿øº» ÆÄÀÏ º¯°æ °¨½Ã Á¤º¸¸¦ ÇÔ²² º¸°üÇÕ´Ï´Ù.
 */
 struct FCustomShaderCacheEntry
 {
@@ -46,7 +46,7 @@ struct FCustomShaderCacheEntry
 };
 
 /*
-    ë‚´ì¥ ì…°ì´ë”ì™€ ì‚¬ìš©ì ì…°ì´ë”ë¥¼ ìƒì„±/ë³´ê´€/í•«ë¦¬ë¡œë“œí•˜ëŠ” ë§¤ë‹ˆì €ì…ë‹ˆë‹¤.
+    ³»Àå ¼ÎÀÌ´õ¿Í »ç¿ëÀÚ ¼ÎÀÌ´õ¸¦ »ı¼º/º¸°ü/ÇÖ¸®·ÎµåÇÏ´Â ¸Å´ÏÀúÀÔ´Ï´Ù.
 */
 class FShaderManager : public TSingleton<FShaderManager>
 {

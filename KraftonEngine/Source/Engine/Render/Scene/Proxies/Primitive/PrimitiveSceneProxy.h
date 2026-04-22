@@ -1,4 +1,4 @@
-ï»¿#pragma once
+#pragma once
 
 #include "Core/CoreTypes.h"
 #include "Render/Scene/Proxies/SceneProxy.h"
@@ -12,78 +12,78 @@ class FScene;
 struct FSceneView;
 
 // ============================================================
-// FPrimitiveSceneProxy â€” UPrimitiveComponentì˜ ë Œë” ë°ì´í„° ë¯¸ëŸ¬ (ê¸°ë³¸ í´ë˜ìŠ¤)
+// FPrimitiveSceneProxy ? UPrimitiveComponentÀÇ ·»´õ µ¥ÀÌÅÍ ¹Ì·¯ (±âº» Å¬·¡½º)
 // ============================================================
-// ì»´í¬ë„ŒíŠ¸ ë“±ë¡ ì‹œ CreateSceneProxy()ë¡œ 1íšŒ ìƒì„±.
-// ì´í›„ DirtyFlagsê°€ ì¼œì§„ í•„ë“œë§Œ ê°€ìƒ í•¨ìˆ˜ë¥¼ í†µí•´ ê°±ì‹ .
-// Rendererê°€ ë§¤ í”„ë ˆì„ ì´ í”„ë¡ì‹œë¥¼ ì§ì ‘ ìˆœíšŒí•˜ì—¬ draw call ìˆ˜í–‰.
+// ÄÄÆ÷³ÍÆ® µî·Ï ½Ã CreateSceneProxy()·Î 1È¸ »ı¼º.
+// ÀÌÈÄ DirtyFlags°¡ ÄÑÁø ÇÊµå¸¸ °¡»ó ÇÔ¼ö¸¦ ÅëÇØ °»½Å.
+// Renderer°¡ ¸Å ÇÁ·¹ÀÓ ÀÌ ÇÁ·Ï½Ã¸¦ Á÷Á¢ ¼øÈ¸ÇÏ¿© draw call ¼öÇà.
 class FPrimitiveSceneProxy : public FSceneProxy
 {
 public:
     FPrimitiveSceneProxy(UPrimitiveComponent* InComponent);
     virtual ~FPrimitiveSceneProxy() = default;
 
-    // --- ê°€ìƒ ê°±ì‹  ì¸í„°í˜ì´ìŠ¤ (ì„œë¸Œí´ë˜ìŠ¤ê°€ ì˜¤ë²„ë¼ì´ë“œ) ---
+    // --- °¡»ó °»½Å ÀÎÅÍÆäÀÌ½º (¼­ºêÅ¬·¡½º°¡ ¿À¹ö¶óÀÌµå) ---
     virtual void UpdateTransform();
     virtual void UpdateMaterial();
     virtual void UpdateVisibility();
     virtual void UpdateMesh();
 
-    // --- ì†Œìœ  ì»´í¬ë„ŒíŠ¸ ---
-    UPrimitiveComponent* Owner = nullptr; // ì†Œìœ  ì»´í¬ë„ŒíŠ¸ (ì—­ì°¸ì¡°ìš©)
+    // --- ¼ÒÀ¯ ÄÄÆ÷³ÍÆ® ---
+    UPrimitiveComponent* Owner = nullptr; // ¼ÒÀ¯ ÄÄÆ÷³ÍÆ® (¿ªÂüÁ¶¿ë)
 
     // --- LOD ---
-    FVector CachedWorldPos; // Transform ê°±ì‹  ì‹œ ìºì‹± â€” LOD ê±°ë¦¬ ê³„ì‚°ìš©
+    FVector CachedWorldPos; // Transform °»½Å ½Ã Ä³½Ì ? LOD °Å¸® °è»ê¿ë
     uint32 CurrentLOD = 0;
     virtual void UpdateLOD(uint32 /*LODLevel*/) {}
 
-    // --- Per-viewport ê°±ì‹  (bPerViewportUpdate=true í”„ë¡ì‹œë§Œ) ---
-    // ë§¤ í”„ë ˆì„, ê° ë·°í¬íŠ¸ì˜ ì¹´ë©”ë¼ ë°ì´í„°ë¡œ í”„ë¡ì‹œ ìƒíƒœë¥¼ ê°±ì‹ 
+    // --- Per-viewport °»½Å (bPerViewportUpdate=true ÇÁ·Ï½Ã¸¸) ---
+    // ¸Å ÇÁ·¹ÀÓ, °¢ ºäÆ÷Æ®ÀÇ Ä«¸Ş¶ó µ¥ÀÌÅÍ·Î ÇÁ·Ï½Ã »óÅÂ¸¦ °»½Å
     virtual void UpdatePerViewport(const FSceneView& SceneView) {}
 
-    // ì„ íƒëœ í”„ë¡ì‹œì˜ ì†Œìœ  ì•¡í„° ì»´í¬ë„ŒíŠ¸ì—ì„œ ë””ë²„ê·¸ ì‹œê°í™” ìˆ˜ì§‘
+    // ¼±ÅÃµÈ ÇÁ·Ï½ÃÀÇ ¼ÒÀ¯ ¾×ÅÍ ÄÄÆ÷³ÍÆ®¿¡¼­ µğ¹ö±× ½Ã°¢È­ ¼öÁı
     void CollectSelectedVisuals(FScene& Scene) const;
 
-    // --- ê°€ì‹œì„±Â·ì„ íƒ ---
+    // --- °¡½Ã¼º¡¤¼±ÅÃ ---
     bool bVisible = true;
     bool bSelected = false;
     bool bSupportsOutline = true;
-    bool bNeverCull = false; // trueë©´ frustum culling ëŒ€ìƒì—ì„œ ì œì™¸ (Gizmo ë“± ì—ë””í„° í”„ë¡ì‹œ)
-    bool bShowAABB = true;   // ì„ íƒ ì‹œ AABB ë””ë²„ê·¸ ë¼ì¸ í‘œì‹œ ì—¬ë¶€ (Billboard/SubUV ë“±ì€ false)
+    bool bNeverCull = false; // true¸é frustum culling ´ë»ó¿¡¼­ Á¦¿Ü (Gizmo µî ¿¡µğÅÍ ÇÁ·Ï½Ã)
+    bool bShowAABB = true;   // ¼±ÅÃ ½Ã AABB µğ¹ö±× ¶óÀÎ Ç¥½Ã ¿©ºÎ (Billboard/SubUV µîÀº false)
 
-    // --- ë Œë” íŒ¨ìŠ¤ ---
+    // --- ·»´õ ÆĞ½º ---
     ERenderPass Pass = ERenderPass::Opaque;
 
-    // ë¨¸í‹°ë¦¬ì–¼ ê¸°ë°˜ ë Œë” ìƒíƒœ (ê°œë³„ ì„¹ì…˜ì— ì •ë³´ê°€ ì—†ì„ ë•Œ ì‚¬ìš©)
+    // ¸ÓÆ¼¸®¾ó ±â¹İ ·»´õ »óÅÂ (°³º° ¼½¼Ç¿¡ Á¤º¸°¡ ¾øÀ» ¶§ »ç¿ë)
     EBlendState Blend = EBlendState::Opaque;
     EDepthStencilState DepthStencil = EDepthStencilState::Default;
     ERasterizerState Rasterizer = ERasterizerState::SolidBackCull;
 
-    // --- ìºì‹±ëœ ë Œë” ë°ì´í„° (ë“±ë¡ ì‹œ ì´ˆê¸°í™”, dirty ì‹œë§Œ ê°±ì‹ ) ---
+    // --- Ä³½ÌµÈ ·»´õ µ¥ÀÌÅÍ (µî·Ï ½Ã ÃÊ±âÈ­, dirty ½Ã¸¸ °»½Å) ---
     FShader* Shader = nullptr;
     FMeshBuffer* MeshBuffer = nullptr;
     FPerObjectConstants PerObjectConstants = {};
     FBoundingBox CachedBounds;
     mutable bool bPerObjectCBDirty = true;
 
-    // ì„¹ì…˜ë³„ ë“œë¡œìš° ì •ë³´ (ë©”ì‹œ/ë¨¸í‹°ë¦¬ì–¼ ë³€ê²½ ì‹œë§Œ ì¬êµ¬ì¶•)
+    // ¼½¼Çº° µå·Î¿ì Á¤º¸ (¸Ş½Ã/¸ÓÆ¼¸®¾ó º¯°æ ½Ã¸¸ Àç±¸Ãà)
     TArray<FMeshSectionRenderData> SectionRenderData;
 
-    // íŠ¹ìˆ˜ CB (Gizmo, SubUV ë“±)
+    // Æ¯¼ö CB (Gizmo, SubUV µî)
     FConstantBufferBinding ExtraCB;
 
-    // í…ìŠ¤ì²˜/ë¨¸í‹°ë¦¬ì–¼ ë°”ì¸ë”© (Billboard/SubUV/ê°„ë‹¨í•œ primitive ë Œë”ë§ìš©)
+    // ÅØ½ºÃ³/¸ÓÆ¼¸®¾ó ¹ÙÀÎµù (Billboard/SubUV/°£´ÜÇÑ primitive ·»´õ¸µ¿ë)
     ID3D11ShaderResourceView* DiffuseSRV = nullptr;
     ID3D11ShaderResourceView* NormalSRV = nullptr;
     ID3D11ShaderResourceView* SpecularSRV = nullptr;
     FConstantBuffer* MaterialCB[2] = {};
 
-    // ë·°í¬íŠ¸ë³„ ê°±ì‹ ì´ í•„ìš”í•œ í”„ë¡ì‹œ (Gizmo, Billboard ë“±)
+    // ºäÆ÷Æ®º° °»½ÅÀÌ ÇÊ¿äÇÑ ÇÁ·Ï½Ã (Gizmo, Billboard µî)
     bool bPerViewportUpdate = false;
-    bool bFontBatched = false; // trueë©´ FFontGeometry ë°°ì¹­ ê²½ë¡œ ì‚¬ìš© (TextRenderProxy)
-    bool bAllowViewModeShaderOverride = false; // trueë©´ ViewMode BaseDraw/Decal/Lighting ì…°ì´ë”ë¡œ ëŒ€ì²´ ê°€ëŠ¥
+    bool bFontBatched = false; // true¸é FFontGeometry ¹èÄª °æ·Î »ç¿ë (TextRenderProxy)
+    bool bAllowViewModeShaderOverride = false; // true¸é ViewMode Opaque/Decal/Lighting ¼ÎÀÌ´õ·Î ´ëÃ¼ °¡´É
 
-    // í° ì”¬ì—ì„œëŠ” visible proxy ë¹Œë“œ ì¤‘ LOD ê°±ì‹ ì„ í”„ë ˆì„ ë¶„ì‚°í•œë‹¤.
+    // Å« ¾À¿¡¼­´Â visible proxy ºôµå Áß LOD °»½ÅÀ» ÇÁ·¹ÀÓ ºĞ»êÇÑ´Ù.
     uint32 LastLODUpdateFrame = UINT32_MAX;
 
     void MarkPerObjectCBDirty() const { bPerObjectCBDirty = true; }
