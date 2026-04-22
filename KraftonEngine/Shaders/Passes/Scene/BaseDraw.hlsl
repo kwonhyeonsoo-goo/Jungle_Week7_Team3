@@ -50,7 +50,12 @@ FBaseDrawVSOutput VS_BaseDraw(VS_Input_PNCT_T Input)
 
     // Gouraud Shading용 정점 라이팅 계산을 위해 월드 포지션 계산
     float3 WorldPos = mul(Input.position, Model).xyz;
+#if defined(USE_LIGHT_CULLING)
+    // Tile-Based Light Culling: 정점의 스크린 타일에서 활성화된 조명만 처리
+    float3 GouraudLighting = ComputeGouraudLightingColorCulled(VSNormal, WorldPos, Output.position);
+#else
     float3 GouraudLighting = ComputeGouraudLightingColor(VSNormal, WorldPos);
+#endif
     Output.gouraud = float4(GouraudLighting, 1.0f);
 
     return Output;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Render/Passes/Base/MeshPassBase.h"
 struct FRenderPipelineContext;
 class FPrimitiveSceneProxy;
@@ -14,4 +14,7 @@ public:
     void BuildDrawCommands(FRenderPipelineContext& Context) override { (void)Context; }
     void BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy) override;
     void SubmitDrawCommands(FRenderPipelineContext& Context) override;
+
+protected:
+    void Cleanup(FRenderPipelineContext& Context) override;
 };

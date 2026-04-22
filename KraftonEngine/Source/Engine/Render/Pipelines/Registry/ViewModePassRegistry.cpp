@@ -58,6 +58,7 @@ FRenderPipelinePassDesc BuildViewModeBaseDrawPassDesc(EShadingModel ShadingModel
         Pass.ShaderVariant.PSEntry = "PS_BaseDraw_Gouraud";
         ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "SHADING_MODEL_GOURAUD");
         ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "OUTPUT_GOURAUD_L");
+        ViewModePassConfigUtils::AddDefine(Pass.ShaderVariant.Defines, "USE_LIGHT_CULLING");
         break;
     case EShadingModel::Lambert:
         Pass.ShaderVariant.PSEntry = "PS_BaseDraw_Lambert";

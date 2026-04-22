@@ -163,21 +163,120 @@ float3 LocalLightLambert(FLocalLightInfo LocalLight, float3 N, float3 WorldPosit
 {
     float3 LightVector = LocalLight.Position - WorldPosition;
     float Distance = length(LightVector);
-    
+
     if (Distance >= LocalLight.AttenuationRadius || LocalLight.AttenuationRadius <= 0.001f)
         return 0;
-    
+
     float3 L = LightVector / Distance;
     float Diffuse = saturate(dot(N, L));
     float Attenuation = saturate(1.0f - (Distance / LocalLight.AttenuationRadius));
     Attenuation *= Attenuation;
-    
+
     if (dot(LocalLight.Direction, LocalLight.Direction) > 0.0001f)
     {
         float3 SpotDir = normalize(LocalLight.Direction);
         Attenuation *= smoothstep(cos(radians(LocalLight.OuterConeAngle)), cos(radians(LocalLight.InnerConeAngle)), dot(-L, SpotDir));
     }
-    
+
     return Diffuse * LocalLight.Color * LocalLight.Intensity * Attenuation;
 }
+
+// ============================================================
+// Tile-Based Light Culling for Gouraud Vertex Shading
+// ============================================================
+#if defined(USE_LIGHT_CULLING)
+
+// 타일당 최대 1024개 조명 → 32개 uint 비트마스크 버킷
+#define TILE_LC_BUCKET_COUNT 32
+
+// t7: LightCullingPass가 채운 타일별 조명 비트마스크
+StructuredBuffer<uint> g_PerTileLightMask : register(t7);
+
+// b5: LightCullingParams (b2의 StaticMeshMaterialBuffer와 충돌 방지를 위해 b5 사용)
+cbuffer LightCullingParamsVS : register(b5)
+{
+    uint2  ScreenSize;
+    uint2  TileSize;
+    uint   Enable25DCulling;
+    float  NearZ;
+    float  FarZ;
+    float  NumLightsLC;
+};
+
+// Gouraud Vertex Shader용 타일 기반 컬링 라이팅 계산
+// ClipPos: VS에서 출력되는 SV_POSITION (perspective divide 이전의 클립 공간 좌표)
+float3 ComputeGouraudLightingColorCulled(float3 Normal, float3 WorldPosition, float4 ClipPos)
+{
+    float3 N = normalize(Normal);
+    float3 TotalLight = GetAmbientLightColor();
+
+    // 방향광은 타일 컬링 없이 전체 기여
+    for (int i = 0; i < NumDirectionalLights; ++i)
+    {
+        float3 L = normalize(Directional[i].Direction);
+        float Diffuse = saturate(dot(N, -L));
+        TotalLight += Diffuse * Directional[i].Color * Directional[i].Intensity;
+    }
+
+    // 로컬 라이트가 없거나 스크린 크기 미설정 시 조기 반환
+    if (NumLocalLights <= 0 || ScreenSize.x == 0u || ScreenSize.y == 0u || ClipPos.w <= 0.0f)
+        return saturate(TotalLight);
+
+    // 클립 공간 → NDC → 스크린 픽셀 → 타일 좌표
+    float2 NDC      = ClipPos.xy / ClipPos.w;
+    float2 UV       = float2(NDC.x * 0.5f + 0.5f, -NDC.y * 0.5f + 0.5f);
+    float2 PixelF   = UV * float2(ScreenSize);
+
+    uint2 TileCoord;
+    TileCoord.x = (uint)PixelF.x / TileSize.x;
+    TileCoord.y = (uint)PixelF.y / TileSize.y;
+
+    uint NumTilesX = (ScreenSize.x + TileSize.x - 1u) / TileSize.x;
+    uint NumTilesY = (ScreenSize.y + TileSize.y - 1u) / TileSize.y;
+    TileCoord.x    = min(TileCoord.x, NumTilesX - 1u);
+    TileCoord.y    = min(TileCoord.y, NumTilesY - 1u);
+
+    uint TileIndex  = TileCoord.y * NumTilesX + TileCoord.x;
+    uint TileOffset = TileIndex * TILE_LC_BUCKET_COUNT;
+
+    for (int j = 0; j < NumLocalLights; ++j)
+    {
+        uint BucketIdx = (uint)j / 32u;
+        uint BitIdx    = (uint)j % 32u;
+
+        if (BucketIdx >= TILE_LC_BUCKET_COUNT)
+            break;
+
+        // 타일 마스크에서 해당 조명 비트 확인 — 0이면 스킵
+        if ((g_PerTileLightMask[TileOffset + BucketIdx] & (1u << BitIdx)) == 0u)
+            continue;
+
+        FLocalLightInfo LocalLight = g_LightBuffer[j];
+        float3 LightVector = LocalLight.Position - WorldPosition;
+        float  Distance    = length(LightVector);
+
+        if (Distance >= LocalLight.AttenuationRadius || LocalLight.AttenuationRadius <= 0.001f)
+            continue;
+
+        float3 L           = LightVector / Distance;
+        float  Diffuse     = saturate(dot(N, L));
+        float  Attenuation = saturate(1.0f - Distance / LocalLight.AttenuationRadius);
+        Attenuation *= Attenuation;
+
+        if (dot(LocalLight.Direction, LocalLight.Direction) > 0.0001f)
+        {
+            float3 SpotDir  = normalize(LocalLight.Direction);
+            float  CosAngle = dot(-L, SpotDir);
+            float  CosInner = cos(radians(LocalLight.InnerConeAngle));
+            float  CosOuter = cos(radians(LocalLight.OuterConeAngle));
+            Attenuation *= smoothstep(CosOuter, CosInner, CosAngle);
+        }
+
+        TotalLight += Diffuse * LocalLight.Color * LocalLight.Intensity * Attenuation;
+    }
+
+    return saturate(TotalLight);
+}
+#endif // USE_LIGHT_CULLING
+
 #endif
