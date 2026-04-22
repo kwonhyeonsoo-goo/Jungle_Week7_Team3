@@ -21,8 +21,8 @@ struct FCollectedPrimitives
 };
 
 /*
-    FCollectedSceneData´Â Scene ¼öÁý °á°ú¸¦ ÇÑ µ¢¾î¸®·Î ¹­´Â ±¸Á¶Ã¼ÀÔ´Ï´Ù.
-    Primitive¿Í Light¸¦ Renderer°¡ µû·Î µé°í ÀÖÁö ¾Ê°í collector °á°ú ÇÏ³ª·Î Àü´ÞÇÕ´Ï´Ù.
+    FCollectedSceneDataï¿½ï¿½ Scene ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½î¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½Ô´Ï´ï¿½.
+    Primitiveï¿½ï¿½ Lightï¿½ï¿½ Rendererï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ collector ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 */
 struct FCollectedSceneData
 {

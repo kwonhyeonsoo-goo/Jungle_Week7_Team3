@@ -54,7 +54,7 @@ public:
 
     FRenderer& GetRenderer() { return Renderer; }
 
-    // Game Viewport Client ? PIE/Standalone ¿ë
+    // Game Viewport Client ? PIE/Standalone ï¿½ï¿½
     void SetGameViewportClient(UGameViewportClient* InClient) { GameViewportClient = InClient; }
     UGameViewportClient* GetGameViewportClient() const { return GameViewportClient; }
 

@@ -38,7 +38,7 @@ void UEngine::Init(FWindowsWindow* InWindow)
 {
     Window = InWindow;
 
-    // ½Ì±ÛÅÏ ÃÊ±âÈ­ ¼ø¼­ º¸Àå
+    // ï¿½Ì±ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     FNamePool::Get();
     FObjectFactory::Get();
 
@@ -137,8 +137,8 @@ void UEngine::WorldTick(float DeltaTime)
 {
     SCOPE_STAT_CAT("UEngine::WorldTick", "1_WorldTick");
 
-    // PIE È°¼º ½Ã Editor ¿ùµå´Â sleep (UE µ¿ÀÛ°ú µ¿ÀÏ).
-    // culling/octree/visibility °»½ÅÀ» °Ç³Ê¶Ù¾î 50k+ È¯°æ¿¡¼­ ºñ¿ë 2¹è¸¦ ¹æÁö.
+    // PIE È°ï¿½ï¿½ ï¿½ï¿½ Editor ï¿½ï¿½ï¿½ï¿½ï¿½ sleep (UE ï¿½ï¿½ï¿½Û°ï¿½ ï¿½ï¿½ï¿½ï¿½).
+    // culling/octree/visibility ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç³Ê¶Ù¾ï¿½ 50k+ È¯ï¿½æ¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ 2ï¿½è¸¦ ï¿½ï¿½ï¿½ï¿½.
     bool bHasPIEWorld = false;
     for (const FWorldContext& Ctx : WorldList)
     {
@@ -149,17 +149,17 @@ void UEngine::WorldTick(float DeltaTime)
         }
     }
 
-    // ¿ùµå Å¸ÀÔº° Tick ¶ó¿ìÆÃ:
-    // - Editor: bTickInEditor ¾×ÅÍ¸¸ TickManager ´ë»ó
-    // - PIE/Game: BeginPlay ÀÌÈÄ bNeedsTick ¾×ÅÍ¸¸ TickManager ´ë»ó
-    // - ±âÅ¸:   ½Ã°£ °»½Å¸¸ À¯Áö
+    // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ôºï¿½ Tick ï¿½ï¿½ï¿½ï¿½ï¿½:
+    // - Editor: bTickInEditor ï¿½ï¿½ï¿½Í¸ï¿½ TickManager ï¿½ï¿½ï¿½
+    // - PIE/Game: BeginPlay ï¿½ï¿½ï¿½ï¿½ bNeedsTick ï¿½ï¿½ï¿½Í¸ï¿½ TickManager ï¿½ï¿½ï¿½
+    // - ï¿½ï¿½Å¸:   ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½
     for (FWorldContext& Ctx : WorldList)
     {
         UWorld* World = Ctx.World;
         if (!World)
             continue;
 
-        // PIE È°¼º ½Ã Editor ¿ùµå´Â ¿ÏÀüÈ÷ skip
+        // PIE È°ï¿½ï¿½ ï¿½ï¿½ Editor ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ skip
         if (bHasPIEWorld && Ctx.WorldType == EWorldType::Editor)
         {
             continue;
@@ -167,7 +167,7 @@ void UEngine::WorldTick(float DeltaTime)
 
         const ELevelTick TickType = ToLevelTickType(Ctx.WorldType);
 
-        // ¿ùµå ´ÜÀ§ ¾÷µ¥ÀÌÆ® (FlushPrimitive / VisibleProxies / DebugDraw /s TickManager)
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® (FlushPrimitive / VisibleProxies / DebugDraw /s TickManager)
         World->Tick(DeltaTime, TickType);
     }
 }

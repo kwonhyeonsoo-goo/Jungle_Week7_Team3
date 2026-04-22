@@ -57,8 +57,8 @@ float4 PS_UberLit(PS_Input_UV Input) : SV_TARGET0
     
     // Local Lights (Point, Spot)
     uint2 PixelCoord = uint2(Input.position.xy);
-    uint2 TileCoord = PixelCoord / TileSize; // ê°??±ë¶„ë³??˜ëˆ”
-    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x; // ???‰ì— ì¡´ì¬?˜ëŠ” ?€????
+    uint2 TileCoord = PixelCoord / TileSize; // ï¿½??ï¿½ë¶„ï¿½??ï¿½ëˆ”
+    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x; // ???ï¿½ì— ì¡´ì¬?ï¿½ëŠ” ?ï¿½????
     uint FlatTileIndex = TileCoord.x + TileCoord.y * TilesX;
     
     int BucketsPerTile = MAX_LIGHTS_PER_TILE / 32;
@@ -97,8 +97,8 @@ float4 PS_UberLit(PS_Input_UV Input) : SV_TARGET0
 
     // Local Lights (Point, Spot)
     uint2 PixelCoord = uint2(Input.position.xy);
-    uint2 TileCoord = PixelCoord / TileSize; // ê°??±ë¶„ë³??˜ëˆ”
-    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x; // ???‰ì— ì¡´ì¬?˜ëŠ” ?€????
+    uint2 TileCoord = PixelCoord / TileSize; // ï¿½??ï¿½ë¶„ï¿½??ï¿½ëˆ”
+    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x; // ???ï¿½ì— ì¡´ì¬?ï¿½ëŠ” ?ï¿½????
     uint FlatTileIndex = TileCoord.x + TileCoord.y * TilesX;
     
     int BucketsPerTile = MAX_LIGHTS_PER_TILE / 32;

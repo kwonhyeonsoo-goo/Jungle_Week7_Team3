@@ -10,7 +10,7 @@
 
 IMPLEMENT_CLASS(UMaterial, UMaterialInterface)
 
-// ¦¡¦¡¦¡ UMaterial ¦¡¦¡¦¡
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UMaterial ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 UMaterial::~UMaterial()
 {
@@ -339,7 +339,7 @@ void UMaterial::Serialize(FArchive& Ar)
     }
 }
 
-// ¦¡¦¡¦¡ UMaterialInstanceDynamic ¦¡¦¡¦¡
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UMaterialInstanceDynamic ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 IMPLEMENT_CLASS(UMaterialInstanceDynamic, UMaterial)
 

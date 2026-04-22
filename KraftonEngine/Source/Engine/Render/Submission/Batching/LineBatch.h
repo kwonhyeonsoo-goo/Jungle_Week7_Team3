@@ -7,7 +7,7 @@
 #include "Render/Execute/Context/Scene/ViewTypes.h"
 #include "Render/Submission/Batching/BatchBuffer.h"
 
-// FLineVertex ???�인 ?�더링용 버텍??(Position + Color)
+// FLineVertex ???�인 ?�더링용 버텍??(Position + Color)
 struct FLineVertex
 {
     FVector  Position;
@@ -18,7 +18,7 @@ struct FLineVertex
         : Position(InPos), Color(InColor) {}
 };
 
-// FLineBatch ???�인 배치�?만들�??�로?�한??
+// FLineBatch ???�인 배치�?만들�??�로?�한??
 class FLineBatch
 {
 public:

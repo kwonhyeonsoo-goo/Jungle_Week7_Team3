@@ -25,7 +25,7 @@ public:
 	float SplitterRatios[3] = { 0.5f, 0.5f, 0.5f };
 	int32 SplitterCount = 0;
 
-	// Perspective Camera (slot 0) º¹¿ø¿ë
+	// Perspective Camera (slot 0) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	FVector PerspCamLocation = FVector(10, 0, 5);
 	FRotator PerspCamRotation;
 	float PerspCamFOV = 60.0f;
@@ -35,7 +35,7 @@ public:
 	// File paths
 	FString DefaultSavePath = FPaths::ToUtf8(FPaths::SceneDir());
 
-	// UI À§Á¬ Ç¥½Ã ¿©ºÎ
+	// UI ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	struct FUIVisibility
 	{
 		bool bConsole = true;

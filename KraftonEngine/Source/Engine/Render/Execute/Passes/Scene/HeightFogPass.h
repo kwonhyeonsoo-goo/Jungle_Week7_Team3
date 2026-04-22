@@ -3,14 +3,14 @@
 struct FRenderPipelineContext;
 class FPrimitiveSceneProxy;
 /*
-    SceneDepth¸¦ ±â¹ÝÀ¸·Î ³ôÀÌ ¾È°³¸¦ ÇÕ¼ºÇÏ´Â fullscreen ÆÐ½ºÀÔ´Ï´Ù.
+    SceneDepthï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È°ï¿½ï¿½ï¿½ ï¿½Õ¼ï¿½ï¿½Ï´ï¿½ fullscreen ï¿½Ð½ï¿½ï¿½Ô´Ï´ï¿½.
 */
 class FHeightFogPass : public FPostProcessPassBase
 {
 public:
     void PrepareInputs(FRenderPipelineContext& Context) override;
     void BuildDrawCommands(FRenderPipelineContext& Context) override;
-    // Height fog´Â fullscreen passÀÌ¹Ç·Î ÇÁ·Ï½Ã ÀÔ·ÂÀ» »ç¿ëÇÏÁö ¾Ê´Â´Ù.
+    // Height fogï¿½ï¿½ fullscreen passï¿½Ì¹Ç·ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
     void BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy) override { (void)Context; (void)Proxy; }
     void SubmitDrawCommands(FRenderPipelineContext& Context) override;
 };

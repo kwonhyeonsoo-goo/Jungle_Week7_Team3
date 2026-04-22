@@ -13,8 +13,8 @@ class ULightComponent;
 class UHeightFogComponent;
 
 /*
-    FScene´Â ·»´õ¿ë ÇÁ·Ï½Ã registry¸¦ °ü¸®ÇÏ´Â ÄÁÅ×ÀÌ³ÊÀÔ´Ï´Ù.
-    Primitive / Light / Effect ÇÁ·Ï½ÃÀÇ µî·Ï, dirty ÃßÀû, ¼±ÅÃ »óÅÂ, free slot Àç»ç¿ëÀ» ´ã´çÇÕ´Ï´Ù.
+    FSceneï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½ registryï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ï¿½Ô´Ï´ï¿½.
+    Primitive / Light / Effect ï¿½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½, dirty ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, free slot ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 */
 class FScene
 {

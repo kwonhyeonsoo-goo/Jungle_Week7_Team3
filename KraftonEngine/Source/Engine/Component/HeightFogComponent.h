@@ -18,7 +18,7 @@ public:
 
 	void Serialize(FArchive& Ar) override;
 
-	// Transform 변�???FogBaseHeight 갱신
+	// Transform 변�???FogBaseHeight 갱신
 	void OnTransformDirty() override;
 
 private:

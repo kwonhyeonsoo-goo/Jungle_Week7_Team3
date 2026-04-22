@@ -51,7 +51,7 @@ void FLightCullingPass::SubmitDrawCommands(FRenderPipelineContext& Context)
 
     if (Context.LightCulling && Context.Resources && Context.Resources->LocalLightCount >= 0)
     {
-		//Frame Buffer гр╢Г
+		//Frame Buffer О©╫р╢О©╫
         ID3D11Buffer* b0 = Context.Resources->FrameBuffer.GetBuffer();
         Context.Context->CSSetConstantBuffers(ECBSlot::Frame, 1, &b0);
 

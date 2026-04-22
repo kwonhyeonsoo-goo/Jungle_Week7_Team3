@@ -5,9 +5,9 @@ struct FRenderPipelineContext;
 class FPrimitiveSceneProxy;
 
 /*
-	¶óÀÌÆ® È÷Æ®¸ÊÀ» »ý¼ºÇÏ´Â fullscreen ÈÄÃ³¸® ÆÐ½ºÀÔ´Ï´Ù.
-	¶óÀÌÆ® È÷Æ®¸ÊÀº ¾ÀÀÇ °¢ ÇÈ¼¿¿¡ ´ëÇØ ÇØ´ç ÇÈ¼¿¿¡ ¿µÇâÀ» ÁÖ´Â ¶óÀÌÆ®ÀÇ Á¤º¸¸¦ ÀÎÄÚµùÇÑ ÅØ½ºÃ³ÀÔ´Ï´Ù.
-	ÀÌ ÆÐ½º´Â ¶óÀÌÆ® È÷Æ®¸ÊÀ» »ý¼ºÇÏ¿© µð¹ö±ë ¸ñÀûÀ¸·Î È°¿ëÇÏ°Å³ª, Æ¯Á¤ ¶óÀÌÆÃ È¿°ú¸¦ ±¸ÇöÇÏ´Â µ¥ »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.
+	ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ fullscreen ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½Ð½ï¿½ï¿½Ô´Ï´ï¿½.
+	ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ï¿½Ô´Ï´ï¿½.
+	ï¿½ï¿½ ï¿½Ð½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½ï¿½Ï°Å³ï¿½, Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
 */
 
 class FLightHitMapPass : public FPostProcessPassBase
@@ -15,7 +15,7 @@ class FLightHitMapPass : public FPostProcessPassBase
 public:
     void PrepareInputs(FRenderPipelineContext& Context) override;
     void BuildDrawCommands(FRenderPipelineContext& Context) override;
-    // OutlineÀº fullscreen post-process¶ó¼­ ÇÁ·Ï½Ã ÀÔ·ÂÀ» »ç¿ëÇÏÁö ¾Ê´Â´Ù.
+    // Outlineï¿½ï¿½ fullscreen post-processï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
     void BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy) override
     {
         (void)Context;

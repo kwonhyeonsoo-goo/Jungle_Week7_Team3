@@ -8,7 +8,7 @@
 #include "Render/Resources/Shaders/ShaderManager.h"
 
 // ============================================================
-// FPrimitiveSceneProxy ? ±âº» ±¸Çö
+// FPrimitiveSceneProxy ? ï¿½âº» ï¿½ï¿½ï¿½ï¿½
 // ============================================================
 FPrimitiveSceneProxy::FPrimitiveSceneProxy(UPrimitiveComponent* InComponent)
     : Owner(InComponent)
@@ -27,7 +27,7 @@ void FPrimitiveSceneProxy::UpdateTransform()
 
 void FPrimitiveSceneProxy::UpdateMaterial()
 {
-    // ±âº» PrimitiveComponent´Â ¼½¼Çº° ¸ÓÆ¼¸®¾óÀÌ ¾øÀ½ ? ¼­ºêÅ¬·¡½º¿¡¼­ ¿À¹ö¶óÀÌµå
+    // ï¿½âº» PrimitiveComponentï¿½ï¿½ ï¿½ï¿½ï¿½Çºï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ? ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½
 }
 
 void FPrimitiveSceneProxy::UpdateVisibility()

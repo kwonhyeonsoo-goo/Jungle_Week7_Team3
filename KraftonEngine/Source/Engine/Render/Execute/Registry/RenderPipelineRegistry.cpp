@@ -1,4 +1,4 @@
-﻿#include "Render/Execute/Registry/RenderPipelineRegistry.h"
+#include "Render/Execute/Registry/RenderPipelineRegistry.h"
 
 namespace
 {

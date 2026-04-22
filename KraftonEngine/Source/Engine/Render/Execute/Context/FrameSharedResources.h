@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Render/RHI/D3D11/Buffers/Buffers.h"
 #include "Render/Resources/Bindings/RenderBindingSlots.h"

@@ -3,14 +3,14 @@
 struct FRenderPipelineContext;
 class FPrimitiveSceneProxy;
 /*
-    ¼±ÅÃ ¸¶½ºÅ©¸¦ ÀÐ¾î ¿Ü°û¼±À» ÇÕ¼ºÇÏ´Â ÈÄÃ³¸® ÆÐ½ºÀÔ´Ï´Ù.
+    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ ï¿½Ð¾ï¿½ ï¿½Ü°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Õ¼ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½Ð½ï¿½ï¿½Ô´Ï´ï¿½.
 */
 class FOutlinePass : public FPostProcessPassBase
 {
 public:
     void PrepareInputs(FRenderPipelineContext& Context) override;
     void BuildDrawCommands(FRenderPipelineContext& Context) override;
-    // OutlineÀº fullscreen post-process¶ó¼­ ÇÁ·Ï½Ã ÀÔ·ÂÀ» »ç¿ëÇÏÁö ¾Ê´Â´Ù.
+    // Outlineï¿½ï¿½ fullscreen post-processï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
     void BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy) override { (void)Context; (void)Proxy; }
     void SubmitDrawCommands(FRenderPipelineContext& Context) override;
 };

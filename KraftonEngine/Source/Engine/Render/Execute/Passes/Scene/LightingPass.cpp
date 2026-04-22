@@ -31,12 +31,12 @@ void BuildSurfaceSRVTable(const FRenderPipelineContext& Context, EShadingModel S
     switch (ShadingModel)
     {
     case EShadingModel::Gouraud:
-        // Surface1 = GouraudL, ³ª¸ÓÁö Ç¥¸éÀº »ç¿ëÇÏÁö ¾Ê½À´Ï´Ù.
+        // Surface1 = GouraudL, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.
         OutSurfaceSRVs[1] = Context.ActiveViewSurfaces->GetSRV(ESceneViewModeSurfaceSlot::Surface1);
         break;
 
     case EShadingModel::Lambert:
-        // Surface1 = Normal, ModifiedSurface1 = Decal Àû¿ë Normal
+        // Surface1 = Normal, ModifiedSurface1 = Decal ï¿½ï¿½ï¿½ï¿½ Normal
         OutSurfaceSRVs[1] = Context.ActiveViewSurfaces->GetSRV(ESceneViewModeSurfaceSlot::Surface1);
         OutSurfaceSRVs[4] = Context.ActiveViewSurfaces->GetSRV(ESceneViewModeSurfaceSlot::ModifiedSurface1);
         break;
@@ -84,14 +84,14 @@ void FLightingPass::PrepareInputs(FRenderPipelineContext& Context)
     BuildSurfaceSRVTable(Context, ShadingModel, SurfaceSRVs);
     Context.Context->PSSetShaderResources(0, ARRAY_SIZE(SurfaceSRVs), SurfaceSRVs);
 
-	// LightCulling °ü·Ã µ¥ÀÌÅÍ ¹ÙÀÌµù
+	// LightCulling ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
     if (Context.LightCulling)
     {
-        // TileMask SRV Ãß°¡
+        // TileMask SRV ï¿½ß°ï¿½
         ID3D11ShaderResourceView* TileMaskSRV = Context.LightCulling->GetPerTileMaskSRV();
         Context.Context->PSSetShaderResources(7, 1, &TileMaskSRV);
 
-		// µð¹ö±× ¿ë È÷Æ®¸Ê SRV Ãß°¡
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ SRV ï¿½ß°ï¿½
 		ID3D11ShaderResourceView* HipMapSRV = Context.LightCulling->GetDebugHitMapSRV();
         Context.Context->PSSetShaderResources(8, 1, &HipMapSRV);
 

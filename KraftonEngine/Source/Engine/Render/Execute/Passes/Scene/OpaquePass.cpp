@@ -18,10 +18,10 @@ void FOpaquePass::PrepareInputs(FRenderPipelineContext& Context)
     Context.Context->PSSetShaderResources(ESystemTexSlot::Stencil, 1, &NullSystemSRV);
     Context.Context->PSSetShaderResources(ESystemTexSlot::LocalLights, 1, &NullSystemSRV);
 
-	// LightCulling °ü·Ã µ¥ÀÌÅÍ ¹ÙÀÌµù
+	// LightCulling ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
     if (Context.LightCulling)
     {
-        // TileMask SRV Ãß°¡
+        // TileMask SRV ï¿½ß°ï¿½
         ID3D11ShaderResourceView* TileMaskSRV = Context.LightCulling->GetPerTileMaskSRV();
         Context.Context->PSSetShaderResources(7, 1, &TileMaskSRV);
 

@@ -10,25 +10,25 @@ struct FRenderPipelineContext;
 
 namespace DrawCommandBuilder
 {
-    // ÀÏ¹Ý ¸Þ½Ã ÇÁ·Ï½Ã¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
+    // ï¿½Ï¹ï¿½ ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½Ï½Ã¸ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
     void BuildMeshDrawCommand(const FPrimitiveSceneProxy& Proxy, ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // Ç®½ºÅ©¸° ÆÐ½º¿ë µå·Î¿ì Ä¿¸Çµå¸¦ »ý¼ºÇÕ´Ï´Ù.
+    // Ç®ï¿½ï¿½Å©ï¿½ï¿½ ï¿½Ð½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     void BuildFullscreenDrawCommand(ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList, EViewModePostProcessVariant PostProcessVariant = EViewModePostProcessVariant::None);
 
-    // µð¹ö±× ¶óÀÎ ¹èÄ¡¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
     void BuildLineDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ¿¡µðÅÍ helper billboard¿ë ¿À¹ö·¹ÀÌ µå·Î¿ì Ä¿¸Çµå¸¦ »ý¼ºÇÕ´Ï´Ù.
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ helper billboardï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     void BuildOverlayBillboardDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // È­¸é ¿À¹ö·¹ÀÌ ÅØ½ºÆ®¿Í editor helper world text¿ë µå·Î¿ì Ä¿¸Çµå¸¦ »ý¼ºÇÕ´Ï´Ù.
+    // È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®ï¿½ï¿½ editor helper world textï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµå¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     void BuildOverlayTextDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ¿ùµå ÅØ½ºÆ® ÇÁ·Ï½Ã¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½Ï½Ã¸ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
     void BuildWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
     void BuildOverlayWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // µ¥Ä® ÇÁ·Ï½Ã¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯ÇÕ´Ï´Ù.
+    // ï¿½ï¿½Ä® ï¿½ï¿½ï¿½Ï½Ã¸ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµï¿½ï¿½ ï¿½ï¿½È¯ï¿½Õ´Ï´ï¿½.
     void BuildDecalDrawCommand(const FPrimitiveSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 }

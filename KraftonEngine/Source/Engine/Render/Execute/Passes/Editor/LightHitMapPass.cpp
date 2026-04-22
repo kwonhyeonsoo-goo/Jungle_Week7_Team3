@@ -14,10 +14,10 @@ void FLightHitMapPass::PrepareInputs(FRenderPipelineContext& Context)
     CopyViewportColorToSceneColor(Context);
     BindSceneColorInput(Context, true);
 
-    // LightCulling °ü·Ã µ¥ÀÌÅÍ ¹ÙÀÌµù
+    // LightCulling ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
     if (Context.LightCulling)
     {
-        // µð¹ö±× ¿ë È÷Æ®¸Ê SRV Ãß°¡
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ SRV ï¿½ß°ï¿½
         ID3D11ShaderResourceView* HipMapSRV = Context.LightCulling->GetDebugHitMapSRV();
         Context.Context->PSSetShaderResources(8, 1, &HipMapSRV);
     }

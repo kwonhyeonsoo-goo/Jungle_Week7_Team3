@@ -19,10 +19,10 @@
 //
 // void FObjViewerRenderPipeline::Execute(float DeltaTime, FRenderer& Renderer)
 //{
-//	// ¿ÀÇÁ½ºÅ©¸° RT¿¡ 3D ¾À ·»´õ
+//	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ RTï¿½ï¿½ 3D ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 //	RenderPreviewViewport(Renderer);
 //
-//	// ½º¿ÒÃ¼ÀÎ ¹é¹öÆÛ ¡æ ImGui ÇÕ¼º ¡æ Present
+//	// ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ImGui ï¿½Õ¼ï¿½ ï¿½ï¿½ Present
 //	Renderer.BeginFrame();
 //	Engine->RenderUI(DeltaTime);
 //	Renderer.EndFrame();
@@ -41,7 +41,7 @@
 //
 //	ID3D11DeviceContext* Ctx = Renderer.GetFD3DDevice().GetDeviceContext();
 //
-//	// Áö¿¬ ¸®»çÀÌÁî Àû¿ë + ¿ÀÇÁ½ºÅ©¸° RT ¹ÙÀÎµù
+//	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ RT ï¿½ï¿½ï¿½Îµï¿½
 //	if (VP->ApplyPendingResize())
 //	{
 //		Camera->OnResize(static_cast<int32>(VP->GetWidth()), static_cast<int32>(VP->GetHeight()));
@@ -49,7 +49,7 @@
 //	const float ClearColor[4] = { 0.15f, 0.15f, 0.15f, 1.0f };
 //	VP->BeginRender(Ctx, ClearColor);
 //
-//	// Frame ¼³Á¤
+//	// Frame ï¿½ï¿½ï¿½ï¿½
 //	Frame.ClearViewportResources();
 //
 //	UWorld* World = Engine->GetWorld();
@@ -78,7 +78,7 @@
 //		Renderer.ReleaseViewModeTextures();
 //	}
 //
-//	// BeginCollect ¡æ ¿ùµå ¼öÁý ¡æ µ¿Àû Ä¿¸Çµå ¡æ Scene pipeline ½ÇÇà
+//	// BeginCollect ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½Çµï¿½ ï¿½ï¿½ Scene pipeline ï¿½ï¿½ï¿½ï¿½
 //	Renderer.BeginCollect(Frame, Scene.GetPrimitiveProxyCount());
 //	Collector.CollectWorld(World, Frame, Renderer);
 //	Renderer.BuildDynamicCommands(Frame, &Scene);

@@ -65,7 +65,7 @@ void FBillboardSceneProxy::UpdateMesh()
     UBillboardComponent* Comp = GetBillboardComponent();
     UMaterial* Mat = Comp ? Comp->GetMaterial() : nullptr;
 
-    // Billboard´Â ViewMode Opaque°¡ ¾Æ´Ñ Àü¿ë textured-quad °æ·Î¸¦ »ç¿ëÇÕ´Ï´Ù.
+    // Billboardï¿½ï¿½ ViewMode Opaqueï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½ï¿½ textured-quad ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
     MeshBuffer = &FMeshBufferManager::Get().GetMeshBuffer(EMeshShape::TexturedQuad);
     Shader = FShaderManager::Get().GetShader(EShaderType::Billboard);
     Pass = ERenderPass::AlphaBlend;
@@ -93,7 +93,7 @@ void FBillboardSceneProxy::UpdateMesh()
 }
 
 // ============================================================
-// UpdatePerViewport ? ºäÆ÷Æ® Ä«¸Þ¶ó ±â¹Ý ºôº¸µå Çà·Ä °»½Å
+// UpdatePerViewport ? ï¿½ï¿½ï¿½ï¿½Æ® Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 // ============================================================
 void FBillboardSceneProxy::UpdatePerViewport(const FSceneView& SceneView)
 {

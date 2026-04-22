@@ -20,6 +20,6 @@ private:
     ID3D11DepthStencilState* GizmoInside = nullptr;
     ID3D11DepthStencilState* GizmoOutside = nullptr;
 
-    // 무효 값으�?초기????�?Set() ?�출??반드??GPU???�달?�도�?보장
+    // 무효 값으�?초기????�?Set() ?�출??반드??GPU???�달?�도�?보장
     EDepthStencilState CurrentState = static_cast<EDepthStencilState>(-1);
 };

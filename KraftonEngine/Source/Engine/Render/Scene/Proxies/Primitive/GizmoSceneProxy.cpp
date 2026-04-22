@@ -24,7 +24,7 @@ UGizmoComponent* FGizmoSceneProxy::GetGizmoComponent() const
 }
 
 // ============================================================
-// UpdateMesh ???�재 Gizmo 모드??맞는 메시 버퍼 + ?�이??캐싱
+// UpdateMesh ???�재 Gizmo 모드??맞는 메시 버퍼 + ?�이??캐싱
 // ============================================================
 void FGizmoSceneProxy::UpdateMesh()
 {
@@ -34,7 +34,7 @@ void FGizmoSceneProxy::UpdateMesh()
 }
 
 // ============================================================
-// UpdatePerViewport ??�??�레??뷰포?�별 ?��???+ ExtraCB 갱신
+// UpdatePerViewport ??�??�레??뷰포?�별 ?��???+ ExtraCB 갱신
 // ============================================================
 void FGizmoSceneProxy::UpdatePerViewport(const FSceneView& SceneView)
 {
@@ -47,12 +47,12 @@ void FGizmoSceneProxy::UpdatePerViewport(const FSceneView& SceneView)
     }
     bVisible = true;
 
-    // 모드 변�???메시가 바뀌�?�?�??�레??갱신
+    // 모드 변�???메시가 바뀌�?�?�??�레??갱신
     MeshBuffer = Gizmo->GetMeshBuffer();
     Shader = FShaderManager::Get().GetShader(EShaderType::Gizmo);
 
 
-    // Per-viewport ?��???계산
+    // Per-viewport ?��???계산
     const FVector CameraPos = SceneView.View.GetInverseFast().GetLocation();
     float PerViewScale = Gizmo->ComputeScreenSpaceScale(
         CameraPos, SceneView.bIsOrtho, SceneView.OrthoWidth);

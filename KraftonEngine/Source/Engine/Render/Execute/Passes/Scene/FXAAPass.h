@@ -3,14 +3,14 @@
 struct FRenderPipelineContext;
 class FPrimitiveSceneProxy;
 /*
-    ÃÖÁ¾ È­¸é¿¡ FXAA¸¦ Àû¿ëÇÏ´Â fullscreen ÈÄÃ³¸® ÆÐ½ºÀÔ´Ï´Ù.
+    ï¿½ï¿½ï¿½ï¿½ È­ï¿½é¿¡ FXAAï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ fullscreen ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½Ð½ï¿½ï¿½Ô´Ï´ï¿½.
 */
 class FFXAAPass : public FPostProcessPassBase
 {
 public:
     void PrepareInputs(FRenderPipelineContext& Context) override;
     void BuildDrawCommands(FRenderPipelineContext& Context) override;
-    // FXAA´Â fullscreen passÀÌ¹Ç·Î ÇÁ·Ï½Ã ÀÔ·ÂÀ» »ç¿ëÇÏÁö ¾Ê´Â´Ù.
+    // FXAAï¿½ï¿½ fullscreen passï¿½Ì¹Ç·ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
     void BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy) override { (void)Context; (void)Proxy; }
     void SubmitDrawCommands(FRenderPipelineContext& Context) override;
 };

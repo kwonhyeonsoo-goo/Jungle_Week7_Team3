@@ -28,7 +28,7 @@ void FFrameRenderResources::Create(ID3D11Device* InDevice)
         InDevice->CreateSamplerState(&desc, &LinearClampSampler);
     }
 
-    // s1: LinearWrap (메시 ?�스�? ?�칼)
+    // s1: LinearWrap (메시 ?�스�? ?�칼)
     {
         D3D11_SAMPLER_DESC desc = {};
         desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -41,7 +41,7 @@ void FFrameRenderResources::Create(ID3D11Device* InDevice)
         InDevice->CreateSamplerState(&desc, &LinearWrapSampler);
     }
 
-    // s2: PointClamp (?�트, 깊이/?�텐???��? ?�기)
+    // s2: PointClamp (?�트, 깊이/?�텐???��? ?�기)
     {
         D3D11_SAMPLER_DESC desc = {};
         desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -134,8 +134,8 @@ void FFrameRenderResources::UpdateLocalLights(ID3D11Device* Device, ID3D11Device
         HRESULT hr = Device->CreateBuffer(&Desc, nullptr, &LocalLightBuffer);
         if (FAILED(hr) || LocalLightBuffer == nullptr)
         {
-            // ?�러 처리 (로그 출력, assert ??
-            MessageBox(nullptr, TEXT("LocalLightBuffer ?�성 ?�패"), TEXT("Error"), MB_OK | MB_ICONERROR);
+            // ?�러 처리 (로그 출력, assert ??
+            MessageBox(nullptr, TEXT("LocalLightBuffer ?�성 ?�패"), TEXT("Error"), MB_OK | MB_ICONERROR);
             return;
         }
         D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
@@ -146,7 +146,7 @@ void FFrameRenderResources::UpdateLocalLights(ID3D11Device* Device, ID3D11Device
         hr = Device->CreateShaderResourceView(LocalLightBuffer, &SRVDesc, &LocalLightSRV);
         if (FAILED(hr))
         {
-            MessageBox(nullptr, TEXT("LocalLightSRV ?�성 ?�패"), TEXT("Error"), MB_OK | MB_ICONERROR);
+            MessageBox(nullptr, TEXT("LocalLightSRV ?�성 ?�패"), TEXT("Error"), MB_OK | MB_ICONERROR);
         }
         LocalLightCapacity = NewCapacity;
     }

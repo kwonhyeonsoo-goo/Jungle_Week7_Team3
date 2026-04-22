@@ -6,8 +6,8 @@
 #include "Render/Submission/Command/DrawCommandList.h"
 
 /*
-    È­¸é ÀüÃ¼¸¦ 1¹ø ±×¸®´Â fullscreen ÆÐ½ºÀÇ °øÅë º£ÀÌ½º Å¬·¡½ºÀÔ´Ï´Ù.
-    Lighting, Fog, FXAA, Outline °°Àº ÈÄÃ³¸® °è¿­ ÆÐ½º°¡ ÀÌ Å¬·¡½º¸¦ »ç¿ëÇÕ´Ï´Ù.
+    È­ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ 1ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ fullscreen ï¿½Ð½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+    Lighting, Fog, FXAA, Outline ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½è¿­ ï¿½Ð½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 */
 class FFullscreenPassBase : public FRenderPass
 {

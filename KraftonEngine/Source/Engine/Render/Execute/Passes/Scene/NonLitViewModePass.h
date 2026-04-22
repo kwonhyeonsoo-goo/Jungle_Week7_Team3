@@ -6,14 +6,14 @@ class FPrimitiveSceneProxy;
 struct FRenderPipelineContext;
 
 /*
-    SceneDepth/Normal °°Àº Æ¯¼ö ºä ¸ðµå °á°ú¸¦ ÃÖÁ¾ È­¸éÀ¸·Î Ç®¾î³»´Â ÆÐ½ºÀÔ´Ï´Ù.
+    SceneDepth/Normal ï¿½ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç®ï¿½î³»ï¿½ï¿½ ï¿½Ð½ï¿½ï¿½Ô´Ï´ï¿½.
 */
 class FNonLitViewModePass : public FPostProcessPassBase
 {
 public:
     void PrepareInputs(FRenderPipelineContext& Context) override;
     void BuildDrawCommands(FRenderPipelineContext& Context) override;
-    // ViewMode post-process´Â fullscreen path¸¸ »ç¿ëÇÑ´Ù.
+    // ViewMode post-processï¿½ï¿½ fullscreen pathï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
     void BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy) override { (void)Context; (void)Proxy; }
     void SubmitDrawCommands(FRenderPipelineContext& Context) override;
 };

@@ -31,8 +31,8 @@ class FOctree;
 class FWorldPrimitivePickingBVH;
 
 /*
-    ·»´õ¸µ ÀüÃ¼¸¦ ÃÑ°ýÇÏ´Â ÃÖ»óÀ§ ¿ÀÄÉ½ºÆ®·¹ÀÌÅÍÀÔ´Ï´Ù.
-    ÇÁ·¹ÀÓ °ø¿ë ÀÚ¿ø ÁØºñ, µå·Î¿ì ´ë»ó ¼öÁý, Ä¿¸Çµå »ý¼º, ÆÄÀÌÇÁ¶óÀÎ ½ÇÇà¸¸ ´ã´çÇÕ´Ï´Ù.
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ñ°ï¿½ï¿½Ï´ï¿½ ï¿½Ö»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½Øºï¿½, ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, Ä¿ï¿½Çµï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½à¸¸ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 */
 class FRenderer
 {
@@ -50,7 +50,7 @@ public:
 
     void BeginCollect(const FSceneView& SceneView, uint32 MaxProxyCount = 0);
 
-    // ¼öÁý ´Ü°è facade
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½ facade
     void CollectWorld(UWorld* World, FRenderCollectContext& CollectContext);
     void CollectGrid(float GridSpacing, int32 GridHalfLineCount, FScene& Scene);
     void CollectOverlayText(const FOverlayStatSystem& OverlaySystem, const UEditorEngine& Editor, FScene& Scene);
@@ -64,7 +64,7 @@ public:
     const TArray<class FPrimitiveSceneProxy*>& GetLastVisiblePrimitiveProxies() const { return DrawCollector.GetLastVisiblePrimitiveProxies(); }
     const FCollectedLights& GetCollectedLights() const { return DrawCollector.GetCollectedLights(); }
 
-    // ¼öÁýµÈ °á°ú¸¦ µå·Î¿ì Ä¿¸Çµå·Î º¯È¯
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ Ä¿ï¿½Çµï¿½ï¿½ ï¿½ï¿½È¯
     void BuildDrawCommands(FRenderPipelineContext& PipelineContext);
 
     void BeginFrame(const FSceneView& SceneView, const FViewportRenderTargets* Targets = nullptr);

@@ -1,6 +1,6 @@
 #pragma once
 
-// Render/Execute¿¡¼­ Á¶¸³µÇ´Â ÆÄÀÌÇÁ¶óÀÎ ³ëµå Á¾·ùÀÔ´Ï´Ù.
+// Render/Executeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.
 enum class ERenderPipelineType
 {
     DefaultRootPipeline,

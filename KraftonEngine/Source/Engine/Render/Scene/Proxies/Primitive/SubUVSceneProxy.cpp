@@ -30,7 +30,7 @@ void FSubUVSceneProxy::UpdateMesh()
     Shader = FShaderManager::Get().GetShader(EShaderType::SubUV);
     Pass = ERenderPass::AlphaBlend;
 
-    // ExtraCB bind (UV region, b2 slot) ? ½ÇÁ¦ GPU ¹öÆÛ´Â Renderer¿¡¼­ lazy »ý¼º
+    // ExtraCB bind (UV region, b2 slot) ? ï¿½ï¿½ï¿½ï¿½ GPU ï¿½ï¿½ï¿½Û´ï¿½ Rendererï¿½ï¿½ï¿½ï¿½ lazy ï¿½ï¿½ï¿½ï¿½
     ExtraCB.Bind<FSubUVRegionConstants>(&UVRegionCB, ECBSlot::PerShader0);
 
     // Set DiffuseSRV from particle resource

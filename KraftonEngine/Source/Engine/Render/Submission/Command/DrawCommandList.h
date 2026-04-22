@@ -7,12 +7,12 @@
 #include "Render/RHI/D3D11/Buffers/Buffers.h"
 
 /*
-    FDrawSubmitStateCache ? Submit ·çÇÁ¿¡¼­ Áßº¹ GPU »óÅÂ ÀüÈ¯À» ¹æÁöÇÕ´Ï´Ù.
-    ÀÌÀü Ä¿¸Çµå¿Í µ¿ÀÏÇÑ »óÅÂ´Â skipÇÏ¿© DeviceContext È£ÃâÀ» ÃÖ¼ÒÈ­ÇÕ´Ï´Ù.
+    FDrawSubmitStateCache ? Submit ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ßºï¿½ GPU ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+    ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½Çµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â´ï¿½ skipï¿½Ï¿ï¿½ DeviceContext È£ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½È­ï¿½Õ´Ï´ï¿½.
 */
 struct FDrawSubmitStateCache
 {
-    // Ã¹ Ä¿¸Çµå¿¡¼­ ¸ðµç GPU »óÅÂ¸¦ ¹«Á¶°Ç ¼¼ÆÃ (¼¾Æ¼³Ú ºÒÇÊ¿ä)
+    // Ã¹ Ä¿ï¿½Çµå¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ GPU ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½)
     bool bForceAll = true;
 
     FShader*                  Shader         = nullptr;
@@ -22,8 +22,8 @@ struct FDrawSubmitStateCache
     D3D11_PRIMITIVE_TOPOLOGY  Topology       = {};
     uint8                     StencilRef     = 0;
     FMeshBuffer*              MeshBuffer     = nullptr;
-    ID3D11Buffer*             RawVB          = nullptr; // µ¿Àû Áö¿À¸ÞÆ®¸® VB ÃßÀû
-    ID3D11Buffer*             RawIB          = nullptr; // µ¿Àû Áö¿À¸ÞÆ®¸® IB ÃßÀû
+    ID3D11Buffer*             RawVB          = nullptr; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ VB ï¿½ï¿½ï¿½ï¿½
+    ID3D11Buffer*             RawIB          = nullptr; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ IB ï¿½ï¿½ï¿½ï¿½
     FConstantBuffer*          PerObjectCB    = nullptr;
     FConstantBuffer*          PerShaderCB[2] = {};
     FConstantBuffer*          LightCB        = nullptr;
@@ -32,19 +32,19 @@ struct FDrawSubmitStateCache
     ID3D11ShaderResourceView* SpecularSRV    = nullptr;
     ID3D11ShaderResourceView* LocalLightSRV  = nullptr;
 
-    // Render target ÃßÀû (CopyResource ÈÄ DSV º¹¿ø µî)
+    // Render target ï¿½ï¿½ï¿½ï¿½ (CopyResource ï¿½ï¿½ DSV ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½)
     ID3D11RenderTargetView* RTV = nullptr;
     ID3D11DepthStencilView* DSV = nullptr;
 
     void Reset();
 
-    // ÇÁ·¹ÀÓ ³¡ Á¤¸® ? material/system SRV ¾ð¹ÙÀÎµù
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ? material/system SRV ï¿½ï¿½ï¿½ï¿½Îµï¿½
     void Cleanup(ID3D11DeviceContext* Ctx);
 };
 
 /*
-    FDrawCommandList ? ÇÁ·¹ÀÓ ´ÜÀ§ Ä¿¸Çµå ¹öÆÛ.
-    DrawCollector°¡ Ä¿¸Çµå¸¦ Ãß°¡ÇÏ°í, Sort() ÈÄ Submit()À¸·Î GPU¿¡ Á¦ÃâÇÕ´Ï´Ù.
+    FDrawCommandList ? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½Çµï¿½ ï¿½ï¿½ï¿½ï¿½.
+    DrawCollectorï¿½ï¿½ Ä¿ï¿½Çµå¸¦ ï¿½ß°ï¿½ï¿½Ï°ï¿½, Sort() ï¿½ï¿½ Submit()ï¿½ï¿½ï¿½ï¿½ GPUï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 */
 class FDrawCommandList
 {

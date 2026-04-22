@@ -6,7 +6,7 @@ struct FRenderPipelineContext;
 class FPrimitiveSceneProxy;
 
 /*
-    ÃÖÁ¾ viewport °á°ú¸¦ swapchain backbuffer·Î º¹»çÇÏ´Â ÇÁ·¹ÀÓ Á¾·á ÆÐ½ºÀÔ´Ï´Ù.
+    ï¿½ï¿½ï¿½ï¿½ viewport ï¿½ï¿½ï¿½ï¿½ï¿½ swapchain backbufferï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð½ï¿½ï¿½Ô´Ï´ï¿½.
 */
 class FPresentPass : public FRenderPass
 {
