@@ -25,7 +25,7 @@ void FRenderPipelineRegistry::Initialize()
     FRenderPipelineDesc DefaultRootPipeline = { ERenderPipelineType::DefaultRootPipeline, { PipelineNode(ERenderPipelineType::ScenePipeline) } };
     Pipelines.emplace((int32)DefaultRootPipeline.Type, DefaultRootPipeline);
 
-    FRenderPipelineDesc EditorRootPipeline = { ERenderPipelineType::EditorRootPipeline, { PipelineNode(ERenderPipelineType::ScenePipeline), PipelineNode(ERenderPipelineType::OverlayPipeline), PipelineNode(ERenderPipelineType::PresentPipeline) } };
+    FRenderPipelineDesc EditorRootPipeline = { ERenderPipelineType::EditorRootPipeline, { PipelineNode(ERenderPipelineType::ScenePipeline), PipelineNode(ERenderPipelineType::OverlayPipeline) } };
     Pipelines.emplace((int32)EditorRootPipeline.Type, EditorRootPipeline);
 
     // ---------- Scene View Modes ----------
