@@ -1,10 +1,12 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Core/CoreTypes.h"
-#include "Render/Scene/DebugDraw/DebugDrawQueue.h"
+#include "Core/EngineTypes.h"
 
 class FPrimitiveSceneProxy;
 
+// FSceneOverlayText는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FSceneOverlayText
 {
     FString  Text;
@@ -12,6 +14,7 @@ struct FSceneOverlayText
     float    Scale = 1.0f;
 };
 
+// FSceneDebugAABB는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FSceneDebugAABB
 {
     FVector Min;
@@ -19,6 +22,7 @@ struct FSceneDebugAABB
     FColor  Color;
 };
 
+// FSceneDebugLine는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FSceneDebugLine
 {
     FVector Start;
@@ -26,6 +30,7 @@ struct FSceneDebugLine
     FColor  Color;
 };
 
+// FSceneGridParams는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FSceneGridParams
 {
     float Spacing       = 0.0f;
@@ -43,32 +48,33 @@ struct FCollectedOverlayData
     {
         Debug.AABBs.clear();
         Debug.Lines.clear();
-        Debug.Queue = {};
         Guides.Grid = {};
         EditorHelpers.Billboards.clear();
         EditorHelpers.Texts.clear();
     }
 
-    bool HasGrid() const { return Guides.Grid.bEnabled; }
-    float GetGridSpacing() const { return Guides.Grid.Spacing; }
-    int32 GetGridHalfLineCount() const { return Guides.Grid.HalfLineCount; }
-    const TArray<FSceneDebugAABB>& GetDebugAABBs() const { return Debug.AABBs; }
-    const TArray<FSceneDebugLine>& GetDebugLines() const { return Debug.Lines; }
+    bool                                 HasGrid() const { return Guides.Grid.bEnabled; }
+    float                                GetGridSpacing() const { return Guides.Grid.Spacing; }
+    int32                                GetGridHalfLineCount() const { return Guides.Grid.HalfLineCount; }
+    const TArray<FSceneDebugAABB>&       GetDebugAABBs() const { return Debug.AABBs; }
+    const TArray<FSceneDebugLine>&       GetDebugLines() const { return Debug.Lines; }
     const TArray<FPrimitiveSceneProxy*>& GetEditorHelperBillboards() const { return EditorHelpers.Billboards; }
     const TArray<FPrimitiveSceneProxy*>& GetEditorHelperTexts() const { return EditorHelpers.Texts; }
 
+    // FDebugPayload는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
     struct FDebugPayload
     {
         TArray<FSceneDebugAABB> AABBs;
         TArray<FSceneDebugLine> Lines;
-        FDebugDrawQueue         Queue;
     } Debug;
 
+    // FGuidePayload는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
     struct FGuidePayload
     {
         FSceneGridParams Grid;
     } Guides;
 
+    // FEditorHelperPayload는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
     struct FEditorHelperPayload
     {
         TArray<FPrimitiveSceneProxy*> Billboards;

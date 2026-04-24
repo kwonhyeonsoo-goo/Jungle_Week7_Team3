@@ -1,4 +1,5 @@
-#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+﻿// 렌더 영역의 세부 동작을 구현합니다.
+#include "Render/Execute/Registry/RenderPassTypes.h"
 #include "Render/Execute/Passes/Scene/AdditiveDecalPass.h"
 #include "Render/Execute/Context/RenderPipelineContext.h"
 #include "Render/Submission/Command/DrawCommandList.h"
@@ -17,7 +18,7 @@ void FAdditiveDecalPass::PrepareTargets(FRenderPipelineContext& Context)
 
 void FAdditiveDecalPass::BuildDrawCommands(FRenderPipelineContext& Context, const FPrimitiveSceneProxy& Proxy)
 {
-    DrawCommandBuilder::BuildMeshDrawCommand(Proxy, ERenderPass::AdditiveDecal, Context, *Context.DrawCommandList);
+    DrawCommandBuild::BuildMeshDrawCommand(Proxy, ERenderPass::AdditiveDecal, Context, *Context.DrawCommandList);
 }
 
 void FAdditiveDecalPass::SubmitDrawCommands(FRenderPipelineContext& Context)

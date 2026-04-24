@@ -1,3 +1,4 @@
+﻿// 머티리얼 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Core/Singleton.h"
@@ -5,7 +6,6 @@
 #include "Render/RHI/D3D11/Common/D3D11API.h"
 #include "SimpleJSON/json.hpp"
 #include "Materials/MaterialSemantics.h"
-#include "Render/Execute/Context/PipelineStateTypes.h"
 
 #include <filesystem>
 #include <memory>
@@ -15,12 +15,14 @@ class FMaterialTemplate;
 class UMaterial;
 struct FMaterialConstantBuffer;
 
+// FMaterialAssetListItem는 머티리얼 파라미터와 렌더 리소스를 다룹니다.
 struct FMaterialAssetListItem
 {
     FString DisplayName;
     FString FullPath;
 };
 
+// FMaterialFileDependency는 머티리얼 파라미터와 렌더 리소스를 다룹니다.
 struct FMaterialFileDependency
 {
     FString FullPath;
@@ -29,11 +31,13 @@ struct FMaterialFileDependency
     uint64 DependencyHash = 0;
 };
 
+// FTemplateCacheEntry는 머티리얼 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FTemplateCacheEntry
 {
     FMaterialTemplate* Template = nullptr;
 };
 
+// FMaterialCacheEntry는 머티리얼 파라미터와 렌더 리소스를 다룹니다.
 struct FMaterialCacheEntry
 {
     UMaterial* Material = nullptr;
@@ -41,6 +45,7 @@ struct FMaterialCacheEntry
     std::vector<FMaterialFileDependency> TextureFiles;
 };
 
+// FMaterialManager는 관련 객체의 생성, 조회, 수명 관리를 담당합니다.
 class FMaterialManager : public TSingleton<FMaterialManager>
 {
     friend class TSingleton<FMaterialManager>;
@@ -79,16 +84,6 @@ private:
 
     void ApplyParameters(UMaterial* Material, json::JSON& JsonData);
     void ApplyTextures(UMaterial* Material, json::JSON& JsonData, const FString& MatFilePath);
-
-    EBlendState StringToBlendState(const FString& Str) const;
-    EDepthStencilState StringToDepthStencilState(const FString& Str) const;
-    ERasterizerState StringToRasterizerState(const FString& Str) const;
-
-    void SaveToJSON(json::JSON& JsonData, const FString& MatFilePath);
-    bool NormalizeMaterialJson(json::JSON& JsonData, const FString& MaterialPath);
-
-    bool InjectDefaultParameters(json::JSON& JsonData, FMaterialTemplate* Template, UMaterial* Material);
-    bool PurgeStaleParameters(json::JSON& JsonData, FMaterialTemplate* Template);
 
     std::filesystem::path ResolveFullPath(const FString& FilePath) const;
     FString NormalizeCacheKey(const FString& FilePath) const;

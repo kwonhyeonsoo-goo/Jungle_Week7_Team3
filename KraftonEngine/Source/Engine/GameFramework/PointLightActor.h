@@ -1,3 +1,4 @@
+﻿// 게임 프레임워크 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "GameFramework/AActor.h"
@@ -6,16 +7,17 @@
 class UPointLightComponent;
 class UBillboardComponent;
 
+// APointLightActor는 월드에 배치되는 게임 오브젝트를 표현합니다.
 class APointLightActor : public AActor
 {
 public:
-	DECLARE_CLASS(APointLightActor, AActor)
-	APointLightActor();
+    DECLARE_CLASS(APointLightActor, AActor)
+    APointLightActor();
 
-	void InitDefaultComponents();
+    void InitDefaultComponents();
 
 private:
     UPointLightComponent* PointLightComponent = nullptr;
-	UBillboardComponent* BillboardComponent = nullptr;
-	FString PointLightIconPath = FPaths::EditorRelativePath("Icons/Materials/PointLightIcon.json");
+    UBillboardComponent* BillboardComponent = nullptr;
+    FString PointLightIconPath = FPaths::EditorRelativePath("Icons/Materials/PointLightIcon.json");
 };

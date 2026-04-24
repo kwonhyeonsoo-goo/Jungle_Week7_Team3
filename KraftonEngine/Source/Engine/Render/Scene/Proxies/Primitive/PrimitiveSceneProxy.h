@@ -1,89 +1,76 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
+#include "Core/EngineTypes.h"
 #include "Core/CoreTypes.h"
-#include "Render/Scene/Proxies/SceneProxy.h"
-#include "Render/Resources/RenderResources.h"
+#include "Render/Execute/Registry/RenderPassTypes.h"
 #include "Render/RHI/D3D11/Common/D3D11API.h"
+#include "Render/Resources/Buffers/ConstantBufferData.h"
+#include "Render/Resources/Bindings/ConstantBufferBinding.h"
+#include "Render/Scene/Proxies/Primitive/MeshSectionRenderData.h"
+#include "Render/Scene/Proxies/SceneProxy.h"
+#include "Render/Resources/State/RenderStateTypes.h"
 
 class UPrimitiveComponent;
-class FShader;
+class FGraphicsProgram;
 class FMeshBuffer;
 class FScene;
 struct FSceneView;
 
-// ============================================================
-// FPrimitiveSceneProxy ? UPrimitiveComponent�� ���� ������ �̷� (�⺻ Ŭ����)
-// ============================================================
-// ������Ʈ ��� �� CreateSceneProxy()�� 1ȸ ����.
-// ���� DirtyFlags�� ���� �ʵ常 ���� �Լ��� ���� ����.
-// Renderer�� �� ������ �� ���Ͻø� ���� ��ȸ�Ͽ� draw call ����.
+// FPrimitiveSceneProxy는 게임 객체를 렌더러가 사용할 제출 데이터로 변환합니다.
 class FPrimitiveSceneProxy : public FSceneProxy
 {
 public:
     FPrimitiveSceneProxy(UPrimitiveComponent* InComponent);
     virtual ~FPrimitiveSceneProxy() = default;
 
-    // --- ���� ���� �������̽� (����Ŭ������ �������̵�) ---
     virtual void UpdateTransform();
     virtual void UpdateMaterial();
     virtual void UpdateVisibility();
     virtual void UpdateMesh();
 
-    // --- ���� ������Ʈ ---
-    UPrimitiveComponent* Owner = nullptr; // ���� ������Ʈ (��������)
+    UPrimitiveComponent* Owner = nullptr;
 
     // --- LOD ---
-    FVector CachedWorldPos; // Transform ���� �� ĳ�� ? LOD �Ÿ� ����
-    uint32 CurrentLOD = 0;
+    FVector      CachedWorldPos;
+    uint32       CurrentLOD = 0;
     virtual void UpdateLOD(uint32 /*LODLevel*/) {}
 
-    // --- Per-viewport ���� (bPerViewportUpdate=true ���Ͻø�) ---
-    // �� ������, �� ����Ʈ�� ī�޶� �����ͷ� ���Ͻ� ���¸� ����
     virtual void UpdatePerViewport(const FSceneView& SceneView) {}
 
-    // ���õ� ���Ͻ��� ���� ���� ������Ʈ���� ����� �ð�ȭ ����
     void CollectSelectedVisuals(FScene& Scene) const;
 
-    // --- ���ü������� ---
-    bool bVisible = true;
-    bool bSelected = false;
+    bool bVisible         = true;
+    bool bSelected        = false;
     bool bSupportsOutline = true;
-    bool bNeverCull = false; // true�� frustum culling ��󿡼� ���� (Gizmo �� ������ ���Ͻ�)
-    bool bShowAABB = true;   // ���� �� AABB ����� ���� ǥ�� ���� (Billboard/SubUV ���� false)
+    bool bNeverCull       = false;
+    bool bShowAABB        = true;
 
-    // --- ���� �н� ---
     ERenderPass Pass = ERenderPass::Opaque;
 
-    // ��Ƽ���� ��� ���� ���� (���� ���ǿ� ������ ���� �� ���)
-    EBlendState Blend = EBlendState::Opaque;
+    EBlendState        Blend        = EBlendState::Opaque;
     EDepthStencilState DepthStencil = EDepthStencilState::Default;
-    ERasterizerState Rasterizer = ERasterizerState::SolidBackCull;
+    ERasterizerState   Rasterizer   = ERasterizerState::SolidBackCull;
 
-    // --- ĳ�̵� ���� ������ (��� �� �ʱ�ȭ, dirty �ø� ����) ---
-    FShader* Shader = nullptr;
-    FMeshBuffer* MeshBuffer = nullptr;
-    FPerObjectConstants PerObjectConstants = {};
-    FBoundingBox CachedBounds;
-    mutable bool bPerObjectCBDirty = true;
+    FGraphicsProgram* Shader             = nullptr;
+    FMeshBuffer*      MeshBuffer         = nullptr;
+    FPerObjectCBData  PerObjectConstants = {};
+    FBoundingBox      CachedBounds;
+    mutable bool      bPerObjectCBDirty = true;
 
-    // ���Ǻ� ��ο� ���� (�޽�/��Ƽ���� ���� �ø� �籸��)
     TArray<FMeshSectionRenderData> SectionRenderData;
 
-    // Ư�� CB (Gizmo, SubUV ��)
-    FConstantBufferBinding ExtraCB;
+    FCBBindingEntry ExtraCB;
 
-    // �ؽ�ó/��Ƽ���� ���ε� (Billboard/SubUV/������ primitive ��������)
-    ID3D11ShaderResourceView* DiffuseSRV = nullptr;
-    ID3D11ShaderResourceView* NormalSRV = nullptr;
-    ID3D11ShaderResourceView* SpecularSRV = nullptr;
-    FConstantBuffer* MaterialCB[2] = {};
+    ID3D11ShaderResourceView* DiffuseSRV    = nullptr;
+    ID3D11ShaderResourceView* NormalSRV     = nullptr;
+    ID3D11ShaderResourceView* SpecularSRV   = nullptr;
+    FConstantBuffer*          MaterialCB[2] = {};
 
-    // ����Ʈ�� ������ �ʿ��� ���Ͻ� (Gizmo, Billboard ��)
-    bool bPerViewportUpdate = false;
-    bool bFontBatched = false; // true�� FFontGeometry ��Ī ��� ��� (TextRenderProxy)
-    bool bAllowViewModeShaderOverride = false; // true�� ViewMode Opaque/Decal/Lighting ���̴��� ��ü ����
+    bool bPerViewportUpdate           = false;
+    bool bFontBatched                 = false;
+    bool bAllowViewModeShaderOverride = false;
 
-    // ū �������� visible proxy ��� �� LOD ������ ������ �л��Ѵ�.
     uint32 LastLODUpdateFrame = UINT32_MAX;
 
     void MarkPerObjectCBDirty() const { bPerObjectCBDirty = true; }

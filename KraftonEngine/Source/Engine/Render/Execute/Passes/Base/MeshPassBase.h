@@ -1,14 +1,12 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
-#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+#include "Render/Execute/Registry/RenderPassTypes.h"
 #include "Render/Execute/Passes/Base/RenderPass.h"
 #include "Render/Execute/Context/RenderPipelineContext.h"
 #include "Render/Submission/Command/DrawCommandList.h"
 
-/*
-    ���Ͻ� ���� ��ο츦 ó���ϴ� �޽� ��� �н��� ���� ���̽� Ŭ�����Դϴ�.
-    Opaque, Decal, Gizmo ���� �޽� �н��� ������ ���� �帧�� �����մϴ�.
-*/
+// FMeshPassBase는 메시 데이터와 렌더 제출 정보를 다룹니다.
 class FMeshPassBase : public FRenderPass
 {
 public:
@@ -65,7 +63,7 @@ protected:
         }
 
         uint32 Start = 0;
-        uint32 End = 0;
+        uint32 End   = 0;
         Context.DrawCommandList->GetPassRange(Pass, Start, End);
         if (Start < End)
         {

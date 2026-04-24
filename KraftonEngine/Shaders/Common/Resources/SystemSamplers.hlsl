@@ -1,13 +1,28 @@
+
+/*
+    SystemSamplers.hlsl는 공용 GPU 리소스 슬롯 선언을 제공합니다.
+
+    바인딩 컨벤션
+    - b0: Frame 상수 버퍼
+    - b1: PerObject/Material 상수 버퍼
+    - b2: Pass/Shader 상수 버퍼
+    - b3: Material 또는 보조 상수 버퍼
+    - b4: Light 상수 버퍼
+    - t0~t5: 패스/머티리얼 SRV
+    - t6: LocalLights structured buffer
+    - t10: SceneDepth, t11: SceneColor, t13: Stencil
+    - s0: LinearClamp, s1: LinearWrap, s2: PointClamp
+    - u#: Compute/후처리용 UAV
+    - 이 파일에서 직접 선언한 슬롯: s0, s1, s2
+*/
+
 #ifndef SYSTEM_SAMPLERS_HLSL
 #define SYSTEM_SAMPLERS_HLSL
 
-// ── System Samplers ──
-// Renderer가 프레임 시작 시 s0-s2에 영구 바인딩하는 공용 샘플러.
-// 슬롯 번호는 C++ ESamplerSlot (RenderConstants.h)과 1:1 대응.
-// s3-s4는 셰이더별 커스텀 용도로 자유 사용.
 
-SamplerState LinearClampSampler : register(s0);  // PostProcess, UI, 기본
-SamplerState LinearWrapSampler  : register(s1);  // 메시 텍스처, 데칼
-SamplerState PointClampSampler  : register(s2);  // 폰트, 깊이/스텐실 정밀 읽기
+SamplerState LinearClampSampler : register(s0);
+SamplerState LinearWrapSampler  : register(s1);
+SamplerState PointClampSampler  : register(s2);
 
 #endif // SYSTEM_SAMPLERS_HLSL
+

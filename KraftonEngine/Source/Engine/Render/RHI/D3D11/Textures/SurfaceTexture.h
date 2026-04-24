@@ -1,3 +1,4 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Render/RHI/D3D11/Common/D3D11API.h"
@@ -8,8 +9,8 @@
 */
 struct FSurfaceTexture
 {
-    ID3D11Texture2D* Texture = nullptr;
-    ID3D11RenderTargetView* RTV = nullptr;
-    ID3D11ShaderResourceView* SRV = nullptr;
-    DXGI_FORMAT Format = DXGI_FORMAT_UNKNOWN;
+    ID3D11Texture2D*          Texture = nullptr;
+    ID3D11RenderTargetView*   RTV     = nullptr;
+    ID3D11ShaderResourceView* SRV     = nullptr;
+    DXGI_FORMAT               Format  = DXGI_FORMAT_UNKNOWN;
 };

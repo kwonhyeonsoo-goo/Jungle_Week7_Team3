@@ -1,5 +1,6 @@
-#include "Render/Execute/Context/PipelineStateTypes.h"
-#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+﻿// 렌더 영역의 세부 동작을 구현합니다.
+#include "Render/Resources/State/RenderStateTypes.h"
+#include "Render/Execute/Registry/RenderPassTypes.h"
 #include "Render/Scene/Proxies/Primitive/DecalSceneProxy.h"
 
 #include "Component/DecalComponent.h"
@@ -10,9 +11,10 @@
 
 namespace
 {
+// FDecalConstants는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FDecalConstants
 {
-    FMatrix WorldToDecal;
+    FMatrix  WorldToDecal;
     FVector4 Color;
 };
 } // namespace
@@ -53,9 +55,9 @@ void FDecalSceneProxy::UpdateDecalConstants()
         return;
     }
 
-    auto& CB = ExtraCB.Bind<FDecalConstants>(DecalCB, ECBSlot::PerShader0);
+    auto& CB        = ExtraCB.Bind<FDecalConstants>(DecalCB, ECBSlot::PerShader0);
     CB.WorldToDecal = DecalComp->GetWorldMatrix().GetInverse();
-    CB.Color = DecalComp->GetColor();
+    CB.Color        = DecalComp->GetColor();
 }
 
 void FDecalSceneProxy::UpdateTransform()
@@ -73,7 +75,7 @@ void FDecalSceneProxy::UpdateMaterial()
     }
 
     DecalMaterial = DecalComp->GetMaterial(0);
-    DiffuseSRV = nullptr;
+    DiffuseSRV    = nullptr;
 
     if (DecalMaterial)
     {
@@ -94,10 +96,10 @@ void FDecalSceneProxy::UpdateMesh()
     MeshBuffer = nullptr;
     SectionRenderData.clear();
 
-    Shader = nullptr;
-    Pass = ERenderPass::Decal;
-    Blend = EBlendState::Opaque;
-    DepthStencil = EDepthStencilState::NoDepth;
-    Rasterizer = ERasterizerState::SolidNoCull;
+    Shader           = nullptr;
+    Pass             = ERenderPass::Decal;
+    Blend            = EBlendState::Opaque;
+    DepthStencil     = EDepthStencilState::NoDepth;
+    Rasterizer       = ERasterizerState::SolidNoCull;
     bSupportsOutline = false;
 }

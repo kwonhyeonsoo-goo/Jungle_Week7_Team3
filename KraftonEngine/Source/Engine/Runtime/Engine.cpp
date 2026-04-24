@@ -1,3 +1,4 @@
+﻿// 런타임 영역의 세부 동작을 구현합니다.
 #include "Render/Execute/Context/Scene/ViewTypes.h"
 #include "Engine/Runtime/Engine.h"
 
@@ -38,7 +39,6 @@ void UEngine::Init(FWindowsWindow* InWindow)
 {
     Window = InWindow;
 
-    // �̱��� �ʱ�ȭ ���� ����
     FNamePool::Get();
     FObjectFactory::Get();
 
@@ -97,7 +97,6 @@ void UEngine::Render(float DeltaTime)
         Renderer.ReleaseViewModeSurfaces();
 
         Scene = &World->GetScene();
-        Scene->ClearFrameData();
 
         Renderer.BeginCollect(SceneView, Scene->GetPrimitiveProxyCount());
 
@@ -108,7 +107,7 @@ void UEngine::Render(float DeltaTime)
         CollectContext.ActiveViewMode = SceneView.ViewMode;
 
         Renderer.CollectWorld(World, CollectContext);
-        Renderer.CollectDebugDraw(SceneView, *Scene);
+        Renderer.CollectDebugRender(*Scene);
     }
     else
     {
@@ -117,7 +116,7 @@ void UEngine::Render(float DeltaTime)
     }
 
     {
-        FRenderPipelineContext PipelineContext = Renderer.CreatePipelineContext(SceneView, &RenderTargets, Scene, Scene ? &Renderer.GetLastVisiblePrimitiveProxies() : nullptr);
+        FRenderPipelineContext PipelineContext = Renderer.CreatePipelineContext(SceneView, &RenderTargets, Scene);
         Renderer.BuildDrawCommands(PipelineContext);
         Renderer.RunRootPipeline(ERenderPipelineType::DefaultRootPipeline, PipelineContext);
     }
@@ -137,8 +136,6 @@ void UEngine::WorldTick(float DeltaTime)
 {
     SCOPE_STAT_CAT("UEngine::WorldTick", "1_WorldTick");
 
-    // PIE Ȱ�� �� Editor ����� sleep (UE ���۰� ����).
-    // culling/octree/visibility ������ �ǳʶپ� 50k+ ȯ�濡�� ��� 2�踦 ����.
     bool bHasPIEWorld = false;
     for (const FWorldContext& Ctx : WorldList)
     {
@@ -149,17 +146,12 @@ void UEngine::WorldTick(float DeltaTime)
         }
     }
 
-    // ���� Ÿ�Ժ� Tick �����:
-    // - Editor: bTickInEditor ���͸� TickManager ���
-    // - PIE/Game: BeginPlay ���� bNeedsTick ���͸� TickManager ���
-    // - ��Ÿ:   �ð� ���Ÿ� ����
     for (FWorldContext& Ctx : WorldList)
     {
         UWorld* World = Ctx.World;
         if (!World)
             continue;
 
-        // PIE Ȱ�� �� Editor ����� ������ skip
         if (bHasPIEWorld && Ctx.WorldType == EWorldType::Editor)
         {
             continue;
@@ -167,7 +159,6 @@ void UEngine::WorldTick(float DeltaTime)
 
         const ELevelTick TickType = ToLevelTickType(Ctx.WorldType);
 
-        // ���� ���� ������Ʈ (FlushPrimitive / VisibleProxies / DebugDraw /s TickManager)
         World->Tick(DeltaTime, TickType);
     }
 }

@@ -1,8 +1,9 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Core/CoreTypes.h"
 
-#include "Render/Execute/Passes/Base/PassRenderState.h"
+#include "Render/Execute/Registry/RenderPassPresets.h"
 #include "Render/Execute/Passes/Base/RenderPass.h"
 
 class FDepthPrePass;
@@ -22,10 +23,7 @@ class FGizmoPass;
 class FOverlayBillboardPass;
 class FOverlayTextPass;
 
-/*
-    ������Ʈ������ �����ϴ� �н� ��� �����Դϴ�.
-    ���� ��ο� Ŀ�ǵ��� ERenderPass�ʹ� ������, ���������� �׷��� ��带 �ĺ��� �� ����մϴ�.
-*/
+// ERenderPassNodeType는 렌더 처리에서 사용할 선택지를 정의합니다.
 enum class ERenderPassNodeType
 {
     GridPass,
@@ -46,12 +44,10 @@ enum class ERenderPassNodeType
     OverlayBillboardPass,
     GizmoPass,
     OverlayTextPass,
-	LightHitMapPass,
+    LightHitMapPass,
 };
 
-/*
-    �н� ��� Ÿ�԰� ���� �н� ��ü, �н��� �⺻ ���� ǥ�� �Բ� �����ϴ� ������Ʈ���Դϴ�.
-*/
+// FRenderPassRegistry는 실행 시 필요한 타입과 규칙의 매핑을 보관합니다.
 class FRenderPassRegistry
 {
 public:
@@ -61,11 +57,12 @@ public:
     void Initialize();
     void Release();
 
-    FRenderPass* FindPass(ERenderPassNodeType Type) const;
-    const FPassRenderStateDesc& GetPassStateDesc(ERenderPass Pass) const;
-    const FPassRenderStateDesc* GetPassStateDescs() const;
+    FRenderPass*                 FindPass(ERenderPassNodeType Type) const;
+    const FRenderPassPreset&     GetRenderPassPreset(ERenderPass Pass) const;
+    const FRenderPassDrawPreset& GetRenderPassDrawPreset(ERenderPass Pass) const;
+    const FRenderPassPreset*     GetRenderPassPresets() const;
 
 private:
     TMap<int32, FRenderPass*> Passes;
-    FPassRenderStateDesc PassStateDescs[(uint32)ERenderPass::MAX] = {};
+    FRenderPassPreset         RenderPassPresets[(uint32)ERenderPass::MAX] = {};
 };

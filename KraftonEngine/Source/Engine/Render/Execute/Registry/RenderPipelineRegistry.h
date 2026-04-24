@@ -1,3 +1,4 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Core/CoreTypes.h"
@@ -5,37 +6,28 @@
 #include "Render/Execute/Registry/RenderPassRegistry.h"
 #include "Render/Execute/Registry/RenderPipelineType.h"
 
-/*
-    ?�이?�라??그래?�에???�식 ?�드가 ???�른 ?�이?�라?�인지, ?�일 ?�스?��? 구분?�니??
-*/
+// ERenderNodeKind는 렌더 처리에서 사용할 선택지를 정의합니다.
 enum class ERenderNodeKind
 {
     Pipeline,
     Pass,
 };
 
-/*
-    ?�이?�라??그래?�의 ?�식 ?�드 1개�? ?�현?�니??
-*/
+// FRenderNodeRef는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FRenderNodeRef
 {
     ERenderNodeKind Kind;
-    int32 TypeValue;
+    int32           TypeValue;
 };
 
-/*
-    ?�나???�더 ?�이?�라?�과 �??�식 ?�드 목록???�의?�니??
-*/
+// FRenderPipelineDesc는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
 struct FRenderPipelineDesc
 {
-    ERenderPipelineType Type;
+    ERenderPipelineType    Type;
     TArray<FRenderNodeRef> Children;
 };
 
-/*
-    루트/?�브 ?�이?�라??구성???�록???�는 ?��??�트리입?�다.
-    Renderer?????��??�트리�? ?�해 Scene, OverlayPipeline 같�? ?�이?�라???�서�?조회?�니??
-*/
+// FRenderPipelineRegistry는 실행 시 필요한 타입과 규칙의 매핑을 보관합니다.
 class FRenderPipelineRegistry
 {
 public:

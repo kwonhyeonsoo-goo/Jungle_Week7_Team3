@@ -1,8 +1,8 @@
+﻿// 머티리얼 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Object/ObjectFactory.h"
 #include "Render/RHI/D3D11/Common/D3D11API.h"
-#include "Render/Execute/Context/PipelineStateTypes.h"
 #include "MaterialCore.h"
 
 #include <memory>
@@ -10,6 +10,7 @@
 class UTexture2D;
 class FArchive;
 
+// UMaterialInterface는 머티리얼 파라미터와 렌더 리소스를 다룹니다.
 class UMaterialInterface : public UObject
 {
 public:
@@ -26,16 +27,13 @@ public:
     virtual bool GetMatrixParameter(const FString& ParamName, FMatrix& Value) const = 0;
 };
 
+// UMaterial는 머티리얼 파라미터와 렌더 리소스를 다룹니다.
 class UMaterial : public UMaterialInterface
 {
 private:
     FString PathFileName;
     uint32 MaterialInstanceID = 0;
     FMaterialTemplate* Template = nullptr;
-
-    EBlendState BlendState = EBlendState::Opaque;
-    EDepthStencilState DepthStencilState = EDepthStencilState::Default;
-    ERasterizerState RasterizerState = ERasterizerState::SolidBackCull;
 
     TMap<FString, std::unique_ptr<FMaterialConstantBuffer>> ConstantBufferMap;
     TMap<FString, UTexture2D*> TextureParameters;
@@ -53,9 +51,6 @@ public:
     void Create(
         const FString& InPathFileName,
         FMaterialTemplate* InTemplate,
-        EBlendState InBlend,
-        EDepthStencilState InDepth,
-        ERasterizerState InRaster,
         TMap<FString, std::unique_ptr<FMaterialConstantBuffer>>&& InBuffers);
 
     const uint8* GetRawPtr(const FString& BufferName, uint32 Offset) const;
@@ -73,10 +68,6 @@ public:
     UTexture2D* GetDiffuseTexture() const;
     UTexture2D* GetNormalTexture() const;
     UTexture2D* GetSpecularTexture() const;
-
-    EBlendState GetBlendState() const { return BlendState; }
-    EDepthStencilState GetDepthStencilState() const { return DepthStencilState; }
-    ERasterizerState GetRasterizerState() const { return RasterizerState; }
 
     const FString& GetTexturePathFileName(const FString& TextureName) const;
     const FString& GetAssetPathFileName() const { return PathFileName; }
@@ -96,6 +87,7 @@ public:
     }
 };
 
+// UMaterialInstanceDynamic는 머티리얼 파라미터와 렌더 리소스를 다룹니다.
 class UMaterialInstanceDynamic : public UMaterial
 {
 public:

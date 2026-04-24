@@ -1,3 +1,4 @@
+﻿// 컴포넌트 영역의 세부 동작을 구현합니다.
 #include "HeightFogComponent.h"
 #include "Object/ObjectFactory.h"
 #include "GameFramework/AActor.h"
@@ -42,16 +43,16 @@ void UHeightFogComponent::PushToScene()
     if (!World)
         return;
 
-    FFogParams Params;
-    Params.Density = FogDensity;
-    Params.HeightFalloff = FogHeightFalloff;
-    Params.StartDistance = StartDistance;
-    Params.CutoffDistance = FogCutoffDistance;
-    Params.MaxOpacity = FogMaxOpacity;
-    Params.FogBaseHeight = GetWorldLocation().Z;
-    Params.InscatteringColor = FogInscatteringColor;
+    FFogSceneData FogData;
+    FogData.Density           = FogDensity;
+    FogData.HeightFalloff     = FogHeightFalloff;
+    FogData.StartDistance     = StartDistance;
+    FogData.CutoffDistance    = FogCutoffDistance;
+    FogData.MaxOpacity        = FogMaxOpacity;
+    FogData.FogBaseHeight     = GetWorldLocation().Z;
+    FogData.InscatteringColor = FogInscatteringColor;
 
-    World->GetScene().AddFog(this, Params);
+    World->GetScene().AddFog(this, FogData);
 }
 
 void UHeightFogComponent::GetEditableProperties(TArray<FPropertyDescriptor>& OutProps)

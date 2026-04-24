@@ -1,3 +1,4 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Core/CoreTypes.h"
@@ -16,7 +17,7 @@ struct FCharacterInfo
     float Height;
 };
 
-// FFontBatch — 월드/스크린 텍스트 배치를 만들고 업로드한다.
+// FFontBatch는 렌더 영역의 핵심 동작을 담당합니다.
 class FFontBatch
 {
 public:
@@ -74,7 +75,7 @@ public:
     uint32 GetWorldQuadCount() const { return static_cast<uint32>(WorldBuffer.Vertices.size() / 4); }
     uint32 GetOverlayWorldQuadCount() const { return static_cast<uint32>(OverlayWorldBuffer.Vertices.size() / 4); }
     uint32 GetScreenQuadCount() const { return static_cast<uint32>(ScreenBuffer.Vertices.size() / 4); }
-    void GetCharUV(uint32 Codepoint, FVector2& OutUVMin, FVector2& OutUVMax) const;
+    void   GetCharUV(uint32 Codepoint, FVector2& OutUVMin, FVector2& OutUVMax) const;
 
 private:
     void BuildCharInfoMap(uint32 Columns, uint32 Rows);

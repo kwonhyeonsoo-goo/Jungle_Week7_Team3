@@ -1,17 +1,18 @@
-//#pragma once
+// ObjViewer 영역의 비활성화된 예제 타입을 보관합니다.
+// #pragma once
 //
-//#include "Engine/Runtime/Engine.h"
-//#include "Mesh/ObjImporter.h"
-//#include "ObjViewer/ObjViewerPanel.h"
-//#include "ObjViewer/ObjViewerViewportClient.h"
+// #include "Engine/Runtime/Engine.h"
+// #include "Mesh/ObjImporter.h"
+// #include "ObjViewer/ObjViewerPanel.h"
+// #include "ObjViewer/ObjViewerViewportClient.h"
 //
-//#include <memory>
+// #include <memory>
 //
-//class FObjViewerRenderPipeline;
+// class FObjViewerRenderPipeline;
 //
-//class UObjViewerEngine : public UEngine
+// class UObjViewerEngine : public UEngine
 //{
-//public:
+// public:
 //	DECLARE_CLASS(UObjViewerEngine, UEngine)
 //
 //	UObjViewerEngine() = default;
@@ -33,8 +34,8 @@
 //	FObjViewerViewportClient* GetViewportClient() { return &ViewportClient; }
 //	void RenderUI(float DeltaTime);
 //
-//private:
+// private:
 //	FObjViewerPanel Panel;
 //	FObjViewerViewportClient ViewportClient;
 //	std::unique_ptr<FObjViewerRenderPipeline> RenderPipeline;
-//};
+// };

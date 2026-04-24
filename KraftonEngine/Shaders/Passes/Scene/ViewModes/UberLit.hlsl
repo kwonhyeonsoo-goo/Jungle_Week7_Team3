@@ -1,6 +1,24 @@
-#include "../../../Common/Types/CommonTypes.hlsli"
-#include "../../../Common/Types/SurfaceData.hlsli"
-#include "../../../Common/Types/LightingCommon.hlsli"
+
+/*
+    UberLit.hlsl는 에디터 뷰 모드용 셰이딩 분기를 처리합니다.
+
+    바인딩 컨벤션
+    - b0: Frame 상수 버퍼
+    - b1: PerObject/Material 상수 버퍼
+    - b2: Pass/Shader 상수 버퍼
+    - b3: Material 또는 보조 상수 버퍼
+    - b4: Light 상수 버퍼
+    - t0~t5: 패스/머티리얼 SRV
+    - t6: LocalLights structured buffer
+    - t10: SceneDepth, t11: SceneColor, t13: Stencil
+    - s0: LinearClamp, s1: LinearWrap, s2: PointClamp
+    - u#: Compute/후처리용 UAV
+    - 이 파일에서 직접 선언한 슬롯: t0, t1, t2, t3, t4, t5, u1
+*/
+
+#include "../../../Common/Surface/CommonTypes.hlsli"
+#include "../../../Common/Surface/SurfaceData.hlsli"
+#include "../../../Common/Lighting/LightingCommon.hlsli"
 
 Texture2D g_BaseColorTex : register(t0);
 Texture2D g_Surface1Tex : register(t1);
@@ -33,11 +51,13 @@ float4 ResolveSurface2(float2 UV)
     return ResolveSurfaceValue(Surface2, ModifiedSurface2);
 }
 
+// 정점 입력을 화면 공간 출력으로 변환하는 버텍스 셰이더입니다.
 PS_Input_UV VS_Fullscreen(uint VertexID : SV_VertexID)
 {
     return FullscreenTriangleVS(VertexID);
 }
 
+// 래스터화된 픽셀의 최종 색상 또는 표면 데이터를 계산합니다.
 float4 PS_UberLit(PS_Input_UV Input) : SV_TARGET0
 {
     float2 UV = Input.uv;
@@ -59,8 +79,8 @@ float4 PS_UberLit(PS_Input_UV Input) : SV_TARGET0
     
     // Local Lights (Point, Spot)
     uint2 PixelCoord = uint2(Input.position.xy);
-    uint2 TileCoord = PixelCoord / TileSize; // �??�분�??�눔
-    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x; // ???�에 존재?�는 ?�????
+    uint2 TileCoord = PixelCoord / TileSize;
+    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x;
     uint FlatTileIndex = TileCoord.x + TileCoord.y * TilesX;
     
     int BucketsPerTile = MAX_LIGHTS_PER_TILE / 32;
@@ -100,8 +120,8 @@ float4 PS_UberLit(PS_Input_UV Input) : SV_TARGET0
 
     // Local Lights (Point, Spot)
     uint2 PixelCoord = uint2(Input.position.xy);
-    uint2 TileCoord = PixelCoord / TileSize; // �??�분�??�눔
-    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x; // ???�에 존재?�는 ?�????
+    uint2 TileCoord = PixelCoord / TileSize;
+    uint TilesX = (ScreenSize.x + TileSize.x - 1) / TileSize.x;
     uint FlatTileIndex = TileCoord.x + TileCoord.y * TilesX;
     
     int BucketsPerTile = MAX_LIGHTS_PER_TILE / 32;
@@ -148,3 +168,4 @@ float4 PS_UberLit(PS_Input_UV Input) : SV_TARGET0
 
     return FinalColor;
 }
+

@@ -1,6 +1,24 @@
-#include "../../Common/Types/CommonTypes.hlsli"
-#include "../../Common/Types/SurfaceData.hlsli"
-#include "../../Common/Types/LightingCommon.hlsli"
+
+/*
+    OpaquePass.hlsl는 장면 렌더링 패스의 셰이더입니다.
+
+    바인딩 컨벤션
+    - b0: Frame 상수 버퍼
+    - b1: PerObject/Material 상수 버퍼
+    - b2: Pass/Shader 상수 버퍼
+    - b3: Material 또는 보조 상수 버퍼
+    - b4: Light 상수 버퍼
+    - t0~t5: 패스/머티리얼 SRV
+    - t6: LocalLights structured buffer
+    - t10: SceneDepth, t11: SceneColor, t13: Stencil
+    - s0: LinearClamp, s1: LinearWrap, s2: PointClamp
+    - u#: Compute/후처리용 UAV
+    - 이 파일에서 직접 선언한 슬롯: t0, t1, t2
+*/
+
+#include "../../Common/Surface/CommonTypes.hlsli"
+#include "../../Common/Surface/SurfaceData.hlsli"
+#include "../../Common/Lighting/LightingCommon.hlsli"
 
 Texture2D g_txColor : register(t0);
 
@@ -37,12 +55,12 @@ float4 ResolveOpaqueColor(FOpaqueVSOutput Input)
     return BaseSample * GetStaticMeshSectionColorOrWhite();
 }
 
+// 정점 입력을 화면 공간 출력으로 변환하는 버텍스 셰이더입니다.
 FOpaqueVSOutput VS_Opaque(VS_Input_PNCT_T Input)
 {
     FOpaqueVSOutput Output;
     Output.position = ApplyMVP(Input.position);
     
-    // ?�드 ?��? �??�젠??변??(?�규???�함)
     float3 VSNormal = normalize(mul(Input.normal, (float3x3) NormalMatrix));
     Output.worldNormal = VSNormal;
     Output.worldTangent.xyz = normalize(mul(Input.tangent.xyz, (float3x3) NormalMatrix));
@@ -50,8 +68,6 @@ FOpaqueVSOutput VS_Opaque(VS_Input_PNCT_T Input)
     Output.color = Input.color;
     Output.texcoord = Input.texcoord;
 
-    // Gouraud Shading???�점 ?�이??계산???�해 ?�드 ?��???계산
-    // float4(pos, 1.0f)�?w=1??명시?�야 Model ?�렬???�동 ?�분???�용??(??그럴 ??w=0 ?�며 ?�아�?
     float3 WorldPos = mul(float4(Input.position, 1.0f), Model).xyz;
     float3 GouraudLighting = ComputeGouraudLightingColor(VSNormal, WorldPos);
     Output.gouraud = float4(GouraudLighting, 1.0f);
@@ -59,20 +75,22 @@ FOpaqueVSOutput VS_Opaque(VS_Input_PNCT_T Input)
     return Output;
 }
 
+// 래스터화된 픽셀의 최종 색상 또는 표면 데이터를 계산합니다.
 float4 PS_Opaque_Unlit(FOpaqueVSOutput Input) : SV_TARGET0
 {
     return EncodeBaseColor(ResolveOpaqueColor(Input));
 }
 
+// 래스터화된 픽셀의 최종 색상 또는 표면 데이터를 계산합니다.
 FOpaqueOutput2 PS_Opaque_Gouraud(FOpaqueVSOutput Input)
 {
     FOpaqueOutput2 Output;
     Output.BaseColor = EncodeBaseColor(ResolveOpaqueColor(Input));
-    // ?�점?�서 계산???�이??값을 그�?�?G-Buffer(Surface1)??기록
     Output.Surface1 = Input.gouraud;
     return Output;
 }
 
+// 래스터화된 픽셀의 최종 색상 또는 표면 데이터를 계산합니다.
 FOpaqueOutput2 PS_Opaque_Lambert(FOpaqueVSOutput Input)
 {
     FOpaqueOutput2 Output;
@@ -81,13 +99,13 @@ FOpaqueOutput2 PS_Opaque_Lambert(FOpaqueVSOutput Input)
     return Output;
 }
 
+// 래스터화된 픽셀의 최종 색상 또는 표면 데이터를 계산합니다.
 FOpaqueOutput3 PS_Opaque_BlinnPhong(FOpaqueVSOutput Input)
 {
     FOpaqueOutput3 Output;
     Output.BaseColor = EncodeBaseColor(ResolveOpaqueColor(Input));
     Output.Surface1 = EncodeNormal(ResolveOpaqueNormal(Input));
     
-    // SpecularStrength�?0.3?�로 ??��???�이?�이?��? ?�얗�??�버리???�상??방�?
     float Shininess = MaterialParam.x > 0.0f ? MaterialParam.x : 32.0f;
     float SpecularStrength = MaterialParam.y > 0.0f ? MaterialParam.y : 0.3f;
     if (StaticMeshHasSpecularTexture())
@@ -97,3 +115,4 @@ FOpaqueOutput3 PS_Opaque_BlinnPhong(FOpaqueVSOutput Input)
     Output.Surface2 = EncodeMaterialParam(float4(Shininess, SpecularStrength, 0.0f, 1.0f));
     return Output;
 }
+

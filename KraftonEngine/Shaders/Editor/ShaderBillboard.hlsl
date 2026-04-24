@@ -1,9 +1,25 @@
+
+/*
+    ShaderBillboard.hlsl는 에디터 오버레이와 보조 렌더링을 처리합니다.
+
+    바인딩 컨벤션
+    - b0: Frame 상수 버퍼
+    - b1: PerObject/Material 상수 버퍼
+    - b2: Pass/Shader 상수 버퍼
+    - b3: Material 또는 보조 상수 버퍼
+    - b4: Light 상수 버퍼
+    - t0~t5: 패스/머티리얼 SRV
+    - t6: LocalLights structured buffer
+    - t10: SceneDepth, t11: SceneColor, t13: Stencil
+    - s0: LinearClamp, s1: LinearWrap, s2: PointClamp
+    - u#: Compute/후처리용 UAV
+    - 이 파일에서 직접 선언한 슬롯: t0
+*/
+
 #include "../Common/Utils/Functions.hlsl"
 #include "../Common/Geometry/VertexLayouts.hlsl"
 #include "../Common/Resources/SystemSamplers.hlsl"
 
-// 컬러 PNG/TGA 텍스처를 단일 quad에 그리는 빌보드 전용 셰이더.
-// SubUV 와 다르게 R 채널이 아닌 알파 채널만으로 컷오프 판정한다.
 Texture2D BillboardTex : register(t0);
 
 PS_Input_Tex VS(VS_Input_PNCT input)
@@ -18,9 +34,9 @@ float4 PS(PS_Input_Tex input) : SV_TARGET
 {
     float4 col = BillboardTex.Sample(LinearClampSampler, input.texcoord);
 
-    // 알파 컷오프 (straight alpha PNG의 보간 헤일로 차단)
     if (!bIsWireframe && col.a < 0.05f)
         discard;
 
     return float4(ApplyWireframe(col.rgb), bIsWireframe ? 1.0f : col.a);
 }
+

@@ -1,25 +1,23 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Core/CoreTypes.h"
-#include "Render/Scene/DirtyFlag.h"
+#include "Render/Scene/SceneProxyDirtyFlag.h"
 
-/*
-    FSceneProxy는 Scene이 공통으로 관리하는 모든 프록시의 베이스 타입입니다.
-    슬롯 인덱스, dirty 상태, selection 인덱스처럼 Scene registry 관점의 공통 상태를 보관합니다.
-*/
+// FSceneProxy는 게임 객체를 렌더러가 사용할 제출 데이터로 변환합니다.
 class FSceneProxy
 {
 public:
     virtual ~FSceneProxy() = default;
 
-    void MarkDirty(EDirtyFlag Flag) { DirtyFlags |= Flag; }
-    void ClearDirty(EDirtyFlag Flag) { DirtyFlags &= ~Flag; }
-    bool IsDirty(EDirtyFlag Flag) const { return HasFlag(DirtyFlags, Flag); }
-    bool IsAnyDirty() const { return DirtyFlags != EDirtyFlag::None; }
+    void MarkDirty(ESceneProxyDirtyFlag Flag) { DirtyFlags |= Flag; }
+    void ClearDirty(ESceneProxyDirtyFlag Flag) { DirtyFlags &= ~Flag; }
+    bool IsDirty(ESceneProxyDirtyFlag Flag) const { return HasFlag(DirtyFlags, Flag); }
+    bool IsAnyDirty() const { return DirtyFlags != ESceneProxyDirtyFlag::None; }
 
-    uint32 ProxyId = UINT32_MAX;
+    uint32 ProxyId           = UINT32_MAX;
     uint32 SelectedListIndex = UINT32_MAX;
 
-    EDirtyFlag DirtyFlags = EDirtyFlag::All;
-    bool bQueuedForDirtyUpdate = false;
+    ESceneProxyDirtyFlag DirtyFlags            = ESceneProxyDirtyFlag::All;
+    bool                 bQueuedForDirtyUpdate = false;
 };

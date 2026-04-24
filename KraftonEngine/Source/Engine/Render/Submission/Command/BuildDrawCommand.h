@@ -1,6 +1,7 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
-#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+#include "Render/Execute/Registry/RenderPassTypes.h"
 #include "Render/Execute/Registry/ViewModePassRegistry.h"
 
 class FPrimitiveSceneProxy;
@@ -8,27 +9,20 @@ class FTextRenderSceneProxy;
 class FDrawCommandList;
 struct FRenderPipelineContext;
 
-namespace DrawCommandBuilder
+namespace DrawCommandBuild
 {
-    // �Ϲ� �޽� ���Ͻø� ��ο� Ŀ�ǵ�� ��ȯ�մϴ�.
-    void BuildMeshDrawCommand(const FPrimitiveSceneProxy& Proxy, ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList);
+void BuildMeshDrawCommand(const FPrimitiveSceneProxy& Proxy, ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // Ǯ��ũ�� �н��� ��ο� Ŀ�ǵ带 �����մϴ�.
-    void BuildFullscreenDrawCommand(ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList, EViewModePostProcessVariant PostProcessVariant = EViewModePostProcessVariant::None);
+void BuildFullscreenDrawCommand(ERenderPass Pass, FRenderPipelineContext& Context, FDrawCommandList& OutList, EViewModePostProcessVariant PostProcessVariant = EViewModePostProcessVariant::None);
 
-    // ����� ���� ��ġ�� ��ο� Ŀ�ǵ�� ��ȯ�մϴ�.
-    void BuildLineDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
+void BuildLineDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ������ helper billboard�� �������� ��ο� Ŀ�ǵ带 �����մϴ�.
-    void BuildOverlayBillboardDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
+void BuildOverlayBillboardDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ȭ�� �������� �ؽ�Ʈ�� editor helper world text�� ��ο� Ŀ�ǵ带 �����մϴ�.
-    void BuildOverlayTextDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
+void BuildOverlayTextDrawCommand(FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ���� �ؽ�Ʈ ���Ͻø� ��ο� Ŀ�ǵ�� ��ȯ�մϴ�.
-    void BuildWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
-    void BuildOverlayWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
+void BuildWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
+void BuildOverlayWorldTextDrawCommand(const FTextRenderSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
 
-    // ��Į ���Ͻø� ��ο� Ŀ�ǵ�� ��ȯ�մϴ�.
-    void BuildDecalDrawCommand(const FPrimitiveSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
-}
+void BuildDecalDrawCommand(const FPrimitiveSceneProxy& Proxy, FRenderPipelineContext& Context, FDrawCommandList& OutList);
+} // namespace DrawCommandBuild

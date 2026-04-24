@@ -1,3 +1,4 @@
+﻿// 입력 영역의 세부 동작을 구현합니다.
 #include "Engine/Input/InputSystem.h"
 #include <cmath>
 
@@ -59,11 +60,12 @@ void InputSystem::Tick()
     if (!bLeftDragging && IsDraggingLeft())
     {
         FilterDragThreshold(bLeftDragCandidate, bLeftDragging, bLeftDragJustStarted,
-            LeftMouseDownPos, LeftDragStartPos);
+                            LeftMouseDownPos, LeftDragStartPos);
     }
     else if (GetKeyUp(VK_LBUTTON))
     {
-        if (bLeftDragging) bLeftDragJustEnded = true;
+        if (bLeftDragging)
+            bLeftDragJustEnded = true;
         bLeftDragging = false;
         bLeftDragCandidate = false;
     }
@@ -72,11 +74,12 @@ void InputSystem::Tick()
     if (!bRightDragging && IsDraggingRight())
     {
         FilterDragThreshold(bRightDragCandidate, bRightDragging, bRightDragJustStarted,
-            RightMouseDownPos, RightDragStartPos);
+                            RightMouseDownPos, RightDragStartPos);
     }
     else if (GetKeyUp(VK_RBUTTON))
     {
-        if (bRightDragging) bRightDragJustEnded = true;
+        if (bRightDragging)
+            bRightDragJustEnded = true;
         bRightDragging = false;
         bRightDragCandidate = false;
     }

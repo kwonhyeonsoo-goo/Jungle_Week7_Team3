@@ -1,3 +1,4 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
 #include "Render/Execute/Context/Scene/SceneView.h"
@@ -6,18 +7,14 @@ class FScene;
 class FViewModePassRegistry;
 struct FCollectedPrimitives;
 
-/*
-    ���� �ܰ迡���� �ʿ��� ���� �����Դϴ�.
-    �÷��Ͱ� ���������� ���� ���� ��ü�� �������� �ʵ���,
-    ���� ��/��/���� ��å�� ���� ��� ����Ҹ� �����մϴ�.
-*/
+// FRenderCollectContext는 실행 중 공유되는 상태와 참조를 묶어 전달합니다.
 struct FRenderCollectContext
 {
     const FSceneView* SceneView = nullptr;
-    FScene* Scene = nullptr;
+    FScene*           Scene     = nullptr;
 
     const FViewModePassRegistry* ViewModePassRegistry = nullptr;
-    EViewMode ActiveViewMode = {};
+    EViewMode                    ActiveViewMode       = {};
 
     FCollectedPrimitives* CollectedPrimitives = nullptr;
 };

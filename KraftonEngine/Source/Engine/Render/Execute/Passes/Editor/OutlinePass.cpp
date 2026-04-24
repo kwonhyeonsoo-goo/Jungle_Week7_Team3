@@ -1,15 +1,16 @@
+﻿// 렌더 영역의 세부 동작을 구현합니다.
 #include "Render/Execute/Passes/Editor/OutlinePass.h"
 #include "Render/Execute/Context/RenderPipelineContext.h"
 #include "Render/Execute/Context/Scene/SceneView.h"
-#include "Render/Resources/RenderResources.h"
 #include "Render/Submission/Command/DrawCommand.h"
 #include "Render/Submission/Command/DrawCommandList.h"
 #include "Render/Submission/Command/BuildDrawCommand.h"
-#include "Render/Resources/Buffers/ConstantBufferPool.h"
+#include "Render/Resources/Bindings/RenderCBKeys.h"
+#include "Render/Resources/Buffers/ConstantBufferCache.h"
+#include "Render/Resources/Buffers/ConstantBufferData.h"
 #include "Render/Scene/Proxies/Primitive/PrimitiveSceneProxy.h"
 #include "Render/Execute/Context/Viewport/ViewportRenderTargets.h"
 #include "Render/Execute/Registry/ViewModePassRegistry.h"
-#include "Render/Resources/Bindings/RenderCBKeys.h"
 
 void FOutlinePass::PrepareInputs(FRenderPipelineContext& Context)
 {
@@ -28,18 +29,18 @@ void FOutlinePass::PrepareInputs(FRenderPipelineContext& Context)
 
 void FOutlinePass::BuildDrawCommands(FRenderPipelineContext& Context)
 {
-    DrawCommandBuilder::BuildFullscreenDrawCommand(ERenderPass::PostProcess, Context, *Context.DrawCommandList, EViewModePostProcessVariant::Outline);
+    DrawCommandBuild::BuildFullscreenDrawCommand(ERenderPass::PostProcess, Context, *Context.DrawCommandList, EViewModePostProcessVariant::Outline);
 
     if (!Context.DrawCommandList || Context.DrawCommandList->GetCommands().empty())
     {
         return;
     }
 
-    FOutlinePostProcessConstants Constants = {};
-    Constants.OutlineColor = FVector4(1.0f, 0.5f, 0.0f, 1.0f);
-    Constants.OutlineThickness = 2.5f;
+    FOutlinePostProcessCBData Constants = {};
+    Constants.OutlineColor              = FVector4(1.0f, 0.5f, 0.0f, 1.0f);
+    Constants.OutlineThickness          = 2.5f;
 
-    FConstantBuffer* OutlineCB = FConstantBufferPool::Get().GetBuffer(ERenderCBKey::Outline, sizeof(FOutlinePostProcessConstants));
+    FConstantBuffer* OutlineCB = FConstantBufferCache::Get().GetBuffer(ERenderCBKey::Outline, sizeof(FOutlinePostProcessCBData));
     if (!OutlineCB)
     {
         return;

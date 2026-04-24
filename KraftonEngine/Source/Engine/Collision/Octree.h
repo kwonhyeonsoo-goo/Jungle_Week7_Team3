@@ -1,3 +1,4 @@
+﻿// 충돌/피킹 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 #include "Engine/Core/CoreTypes.h"
 #include "Engine/Math/Vector.h"
@@ -7,12 +8,13 @@
 
 class FPrimitiveSceneProxy;
 
-constexpr int32 MAX_DEPTH   = 6;
-constexpr int32 MAX_SIZE    = 20;
+constexpr int32 MAX_DEPTH = 6;
+constexpr int32 MAX_SIZE = 20;
 constexpr float LooseFactor = 1.3f;
 
 class FFrustum;
 
+// FOctree 클래스이다.
 class FOctree
 {
 public:
@@ -29,8 +31,8 @@ public:
     void TryMergeUpward();
     void TryMergeRecursive();
 
-    bool        HasPrimitive(const UPrimitiveComponent* p);
-    void        GetAllPrimitives(TArray<UPrimitiveComponent*>& OutPremitive);
+    bool HasPrimitive(const UPrimitiveComponent* p);
+    void GetAllPrimitives(TArray<UPrimitiveComponent*>& OutPremitive);
     inline bool IsLeaf() const { return Children.empty(); }
 
     const FBoundingBox& GetCellBounds() const { return CellBounds; }
@@ -61,14 +63,14 @@ private:
     void CollectAll(TArray<UPrimitiveComponent*>& OutPrimitives) const;
     void CollectAllProxies(TArray<FPrimitiveSceneProxy*>& OutProxies) const;
     // Recursive frustum query with containment propagation
-    void         QueryFrustumInternal(const FConvexVolume& ConvexVolume, TArray<UPrimitiveComponent*>& OutPrimitives, bool bParentContained) const;
-    void         QueryFrustumProxiesInternal(const FConvexVolume& ConvexVolume, TArray<FPrimitiveSceneProxy*>& OutProxies, bool bParentContained) const;
+    void QueryFrustumInternal(const FConvexVolume& ConvexVolume, TArray<UPrimitiveComponent*>& OutPrimitives, bool bParentContained) const;
+    void QueryFrustumProxiesInternal(const FConvexVolume& ConvexVolume, TArray<FPrimitiveSceneProxy*>& OutProxies, bool bParentContained) const;
     FBoundingBox CellBounds;
     FBoundingBox LooseBounds;
 
-    TArray<FOctree*>             Children;
+    TArray<FOctree*> Children;
     TArray<UPrimitiveComponent*> PrimitiveList;
 
-    uint32   Depth;
+    uint32 Depth;
     FOctree* Parent = nullptr;
 };

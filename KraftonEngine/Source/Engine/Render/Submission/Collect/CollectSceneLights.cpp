@@ -1,8 +1,10 @@
+﻿// 렌더 영역의 세부 동작을 구현합니다.
 #include "Render/Submission/Collect/DrawCollector.h"
 
 #include "GameFramework/AActor.h"
 #include "GameFramework/World.h"
 #include "Render/Scene/Proxies/Light/LightSceneProxy.h"
+#include "Render/Resources/Buffers/LightBufferTypes.h"
 #include "Component/LightComponent.h"
 #include "Render/Scene/Scene.h"
 #include "Render/Execute/Context/Scene/SceneView.h"

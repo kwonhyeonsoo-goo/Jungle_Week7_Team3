@@ -1,7 +1,8 @@
-#include "Render/Resources/Buffers/ConstantBufferLayouts.h"
-#include "Render/Execute/Context/PipelineStateTypes.h"
-#include "Render/Scene/Proxies/Primitive/PrimitiveShapeTypes.h"
-#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+﻿// 렌더 영역의 세부 동작을 구현합니다.
+#include "Render/Resources/Buffers/ConstantBufferData.h"
+#include "Render/Resources/State/RenderStateTypes.h"
+#include "Render/Resources/Meshes/PrimitiveMeshTypes.h"
+#include "Render/Execute/Registry/RenderPassTypes.h"
 #include "Render/Scene/Proxies/Primitive/BillboardSceneProxy.h"
 #include "Component/BillboardComponent.h"
 #include "Render/Resources/Shaders/ShaderManager.h"
@@ -10,6 +11,7 @@
 #include "GameFramework/AActor.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialSemantics.h"
+#include "Render/Resources/Bindings/RenderBindingSlots.h"
 #include "Texture/Texture2D.h"
 #include <algorithm>
 
@@ -19,8 +21,8 @@
 FBillboardSceneProxy::FBillboardSceneProxy(UBillboardComponent* InComponent)
     : FPrimitiveSceneProxy(InComponent)
 {
-    bPerViewportUpdate = true;
-    bShowAABB = false;
+    bPerViewportUpdate           = true;
+    bShowAABB                    = false;
     bAllowViewModeShaderOverride = false;
 }
 
@@ -58,30 +60,28 @@ ID3D11ShaderResourceView* ResolveBillboardTextureSRV(UMaterial* Material)
 #include "Editor/UI/EditorConsolePanel.h"
 
 // ============================================================
-// UpdateMesh ? TexturedQuad + Material shader/states
 // ============================================================
 void FBillboardSceneProxy::UpdateMesh()
 {
     UBillboardComponent* Comp = GetBillboardComponent();
-    UMaterial* Mat = Comp ? Comp->GetMaterial() : nullptr;
+    UMaterial*           Mat  = Comp ? Comp->GetMaterial() : nullptr;
 
-    // Billboard�� ViewMode Opaque�� �ƴ� ���� textured-quad ��θ� ����մϴ�.
-    MeshBuffer = &FMeshBufferManager::Get().GetMeshBuffer(EMeshShape::TexturedQuad);
-    Shader = FShaderManager::Get().GetShader(EShaderType::Billboard);
-    Pass = ERenderPass::AlphaBlend;
-    Blend = EBlendState::AlphaBlend;
+    MeshBuffer   = &FMeshBufferManager::Get().GetMeshBuffer(EMeshShape::TexturedQuad);
+    Shader       = FShaderManager::Get().GetShader(EShaderType::Billboard);
+    Pass         = ERenderPass::AlphaBlend;
+    Blend        = EBlendState::AlphaBlend;
     DepthStencil = EDepthStencilState::DepthReadOnly;
-    Rasterizer = ERasterizerState::SolidNoCull;
+    Rasterizer   = ERasterizerState::SolidNoCull;
 
-    DiffuseSRV = nullptr;
-    NormalSRV = nullptr;
-    SpecularSRV = nullptr;
+    DiffuseSRV    = nullptr;
+    NormalSRV     = nullptr;
+    SpecularSRV   = nullptr;
     MaterialCB[0] = nullptr;
     MaterialCB[1] = nullptr;
 
     if (Mat)
     {
-        DiffuseSRV = ResolveBillboardTextureSRV(Mat);
+        DiffuseSRV    = ResolveBillboardTextureSRV(Mat);
         MaterialCB[0] = Mat->GetGPUBufferBySlot(ECBSlot::PerShader0);
         MaterialCB[1] = Mat->GetGPUBufferBySlot(ECBSlot::PerShader1);
     }
@@ -93,19 +93,18 @@ void FBillboardSceneProxy::UpdateMesh()
 }
 
 // ============================================================
-// UpdatePerViewport ? ����Ʈ ī�޶� ��� ����� ��� ����
 // ============================================================
 void FBillboardSceneProxy::UpdatePerViewport(const FSceneView& SceneView)
 {
     UBillboardComponent* Comp = GetBillboardComponent();
-    bVisible = Comp->ShouldRenderInCurrentWorld();
+    bVisible                  = Comp->ShouldRenderInCurrentWorld();
     if (!bVisible)
         return;
 
     UMaterial* Mat = Comp->GetMaterial();
     if (Mat)
     {
-        DiffuseSRV = ResolveBillboardTextureSRV(Mat);
+        DiffuseSRV    = ResolveBillboardTextureSRV(Mat);
         MaterialCB[0] = Mat->GetGPUBufferBySlot(ECBSlot::PerShader0);
         MaterialCB[1] = Mat->GetGPUBufferBySlot(ECBSlot::PerShader1);
     }
@@ -123,6 +122,6 @@ void FBillboardSceneProxy::UpdatePerViewport(const FSceneView& SceneView)
         WorldMatrix = FMatrix::MakeScaleMatrix(SpriteScale) * Comp->GetRelativeMatrix() * FMatrix::MakeTranslationMatrix(Comp->GetWorldLocation());
     }
 
-    PerObjectConstants = FPerObjectConstants::FromWorldMatrix(WorldMatrix);
+    PerObjectConstants = FPerObjectCBData::FromWorldMatrix(WorldMatrix);
     MarkPerObjectCBDirty();
 }

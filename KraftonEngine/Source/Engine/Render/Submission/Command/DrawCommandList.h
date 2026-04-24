@@ -1,29 +1,26 @@
+﻿// 렌더 영역에서 공유되는 타입과 인터페이스를 정의합니다.
 #pragma once
 
-#include "Render/Execute/Context/PipelineStateTypes.h"
-#include "Render/Execute/Passes/Base/RenderPassTypes.h"
+#include "Render/Resources/State/RenderStateTypes.h"
+#include "Render/Execute/Registry/RenderPassTypes.h"
 #include "DrawCommand.h"
 #include "Render/RHI/D3D11/Device/D3DDevice.h"
 #include "Render/RHI/D3D11/Buffers/Buffers.h"
 
-/*
-    FDrawSubmitStateCache ? Submit �������� �ߺ� GPU ���� ��ȯ�� �����մϴ�.
-    ���� Ŀ�ǵ�� ������ ���´� skip�Ͽ� DeviceContext ȣ���� �ּ�ȭ�մϴ�.
-*/
-struct FDrawSubmitStateCache
+// FDrawBindStateCache는 렌더 처리에 필요한 데이터를 묶는 구조체입니다.
+struct FDrawBindStateCache
 {
-    // ù Ŀ�ǵ忡�� ��� GPU ���¸� ������ ���� (��Ƽ�� ���ʿ�)
     bool bForceAll = true;
 
-    FShader*                  Shader         = nullptr;
+    FGraphicsProgram*         Shader         = nullptr;
     EDepthStencilState        DepthStencil   = {};
     EBlendState               Blend          = {};
     ERasterizerState          Rasterizer     = {};
     D3D11_PRIMITIVE_TOPOLOGY  Topology       = {};
     uint8                     StencilRef     = 0;
     FMeshBuffer*              MeshBuffer     = nullptr;
-    ID3D11Buffer*             RawVB          = nullptr; // ���� ������Ʈ�� VB ����
-    ID3D11Buffer*             RawIB          = nullptr; // ���� ������Ʈ�� IB ����
+    ID3D11Buffer*             RawVB          = nullptr;
+    ID3D11Buffer*             RawIB          = nullptr;
     FConstantBuffer*          PerObjectCB    = nullptr;
     FConstantBuffer*          PerShaderCB[2] = {};
     FConstantBuffer*          LightCB        = nullptr;
@@ -32,20 +29,15 @@ struct FDrawSubmitStateCache
     ID3D11ShaderResourceView* SpecularSRV    = nullptr;
     ID3D11ShaderResourceView* LocalLightSRV  = nullptr;
 
-    // Render target ���� (CopyResource �� DSV ���� ��)
     ID3D11RenderTargetView* RTV = nullptr;
     ID3D11DepthStencilView* DSV = nullptr;
 
     void Reset();
 
-    // ������ �� ���� ? material/system SRV ����ε�
     void Cleanup(ID3D11DeviceContext* Ctx);
 };
 
-/*
-    FDrawCommandList ? ������ ���� Ŀ�ǵ� ����.
-    DrawCollector�� Ŀ�ǵ带 �߰��ϰ�, Sort() �� Submit()���� GPU�� �����մϴ�.
-*/
+// FDrawCommandList는 렌더 영역의 핵심 동작을 담당합니다.
 class FDrawCommandList
 {
 public:
@@ -54,7 +46,7 @@ public:
     void          GetPassRange(ERenderPass Pass, uint32& OutStart, uint32& OutEnd) const;
     void          Submit(FD3DDevice& Device, ID3D11DeviceContext* Ctx);
     void          SubmitRange(uint32 StartIdx, uint32 EndIdx, FD3DDevice& Device, ID3D11DeviceContext* Ctx);
-    void          SubmitRange(uint32 StartIdx, uint32 EndIdx, FD3DDevice& Device, ID3D11DeviceContext* Ctx, FDrawSubmitStateCache& Cache);
+    void          SubmitRange(uint32 StartIdx, uint32 EndIdx, FD3DDevice& Device, ID3D11DeviceContext* Ctx, FDrawBindStateCache& Cache);
     void          Reset();
 
     bool   IsEmpty() const { return Commands.empty(); }
@@ -65,7 +57,7 @@ public:
     const TArray<FDrawCommand>& GetCommands() const { return Commands; }
 
 private:
-    void SubmitCommand(const FDrawCommand& Cmd, FD3DDevice& Device, ID3D11DeviceContext* Ctx, FDrawSubmitStateCache& Cache);
+    void SubmitCommand(const FDrawCommand& Cmd, FD3DDevice& Device, ID3D11DeviceContext* Ctx, FDrawBindStateCache& Cache);
 
     TArray<FDrawCommand> Commands;
     uint32               PassOffsets[(uint32)ERenderPass::MAX + 1] = {};

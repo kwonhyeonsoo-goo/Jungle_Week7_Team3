@@ -1,7 +1,10 @@
+﻿// 렌더 영역의 세부 동작을 구현합니다.
 #include "Render/Execute/Registry/RenderPipelineRegistry.h"
 
 namespace
 {
+// ========== Node Helpers ==========
+
 FRenderNodeRef PipelineNode(ERenderPipelineType Type)
 {
     return { ERenderNodeKind::Pipeline, (int32)Type };
@@ -11,66 +14,125 @@ FRenderNodeRef PassNode(ERenderPassNodeType Type)
 {
     return { ERenderNodeKind::Pass, (int32)Type };
 }
+
 } // namespace
+
+// ========== Lifecycle ==========
 
 void FRenderPipelineRegistry::Initialize()
 {
     Release();
 
-    FRenderPipelineDesc DefaultRootPipeline = { ERenderPipelineType::DefaultRootPipeline, { PipelineNode(ERenderPipelineType::ScenePipeline) } };
-    Pipelines.emplace((int32)DefaultRootPipeline.Type, DefaultRootPipeline);
+    auto AddPipeline =
+        [this](ERenderPipelineType Type, std::initializer_list<FRenderNodeRef> Nodes)
+    {
+        FRenderPipelineDesc Desc = {
+            Type,
+            { Nodes.begin(),
+              Nodes.end() }
+        };
 
-    FRenderPipelineDesc EditorRootPipeline = { ERenderPipelineType::EditorRootPipeline, {
-        PipelineNode(ERenderPipelineType::ScenePipeline),
-        PipelineNode(ERenderPipelineType::OverlayPipeline)
-    } };
-    Pipelines.emplace((int32)EditorRootPipeline.Type, EditorRootPipeline);
+        Pipelines.emplace((int32)Desc.Type, Desc);
+    };
 
-    FRenderPipelineDesc Scene = { ERenderPipelineType::ScenePipeline, {
-        PipelineNode(ERenderPipelineType::LitPipeline),
-        PipelineNode(ERenderPipelineType::PostProcessPipeline)
-    } };
-    Pipelines.emplace((int32)Scene.Type, Scene);
+    // ---------- Roots ----------
+    AddPipeline(
+        ERenderPipelineType::DefaultRootPipeline,
+        {
+            PipelineNode(ERenderPipelineType::ScenePipeline),
+        });
 
-    FRenderPipelineDesc LitPipeline = { ERenderPipelineType::LitPipeline, {
-        PassNode(ERenderPassNodeType::DepthPrePass),
-        PassNode(ERenderPassNodeType::LightCullingPass),
-        PassNode(ERenderPassNodeType::OpaquePass),
-        PassNode(ERenderPassNodeType::DecalPass),
-        PassNode(ERenderPassNodeType::LightingPass)
-    } };
-    Pipelines.emplace((int32)LitPipeline.Type, LitPipeline);
+    AddPipeline(
+        ERenderPipelineType::EditorRootPipeline,
+        {
+            PipelineNode(ERenderPipelineType::ScenePipeline),
+            PipelineNode(ERenderPipelineType::OverlayPipeline),
+        });
 
-    FRenderPipelineDesc PostProcessPipeline = { ERenderPipelineType::PostProcessPipeline, {
-        PassNode(ERenderPassNodeType::NonLitViewModePass),
-        PassNode(ERenderPassNodeType::HeightFogPass),
-        PassNode(ERenderPassNodeType::FXAAPass)
+    // ---------- Scene View Modes ----------
+    AddPipeline(
+        ERenderPipelineType::ScenePipeline,
+        {
+            PipelineNode(ERenderPipelineType::LitPipeline),
+            PipelineNode(ERenderPipelineType::UnlitPipeline),
+            PipelineNode(ERenderPipelineType::WorldNormalPipeline),
+            PipelineNode(ERenderPipelineType::SceneDepthPipeline),
+            PipelineNode(ERenderPipelineType::PostProcessPipeline),
+        });
 
-    } };
-    Pipelines.emplace((int32)PostProcessPipeline.Type, PostProcessPipeline);
+    AddPipeline(
+        ERenderPipelineType::LitPipeline,
+        {
+            PassNode(ERenderPassNodeType::DepthPrePass),
+            PassNode(ERenderPassNodeType::LightCullingPass),
+            PassNode(ERenderPassNodeType::OpaquePass),
+            PassNode(ERenderPassNodeType::DecalPass),
+            PassNode(ERenderPassNodeType::LightingPass),
+        });
 
-    FRenderPipelineDesc OverlayPipeline = { ERenderPipelineType::OverlayPipeline, {
-        PassNode(ERenderPassNodeType::LightHitMapPass),
-        PassNode(ERenderPassNodeType::DebugLinePass),
-        PipelineNode(ERenderPipelineType::Outline),
-        PassNode(ERenderPassNodeType::OverlayBillboardPass),
-        PassNode(ERenderPassNodeType::GizmoPass),
-        PassNode(ERenderPassNodeType::OverlayTextPass),
-		PipelineNode(ERenderPipelineType::Outline),
-    } };
-    Pipelines.emplace((int32)OverlayPipeline.Type, OverlayPipeline);
+    AddPipeline(
+        ERenderPipelineType::UnlitPipeline,
+        {
+            PassNode(ERenderPassNodeType::DepthPrePass),
+            PassNode(ERenderPassNodeType::OpaquePass),
+            PassNode(ERenderPassNodeType::DecalPass),
+        });
 
-    FRenderPipelineDesc Outline = { ERenderPipelineType::Outline, {
-        PassNode(ERenderPassNodeType::SelectionMaskPass),
-        PassNode(ERenderPassNodeType::OutlinePass)
-    } };
-    Pipelines.emplace((int32)Outline.Type, Outline);
+    AddPipeline(
+        ERenderPipelineType::WorldNormalPipeline,
+        {
+            PassNode(ERenderPassNodeType::DepthPrePass),
+            PassNode(ERenderPassNodeType::OpaquePass),
+            PassNode(ERenderPassNodeType::DecalPass),
+            PassNode(ERenderPassNodeType::NonLitViewModePass),
+        });
+
+    AddPipeline(
+        ERenderPipelineType::SceneDepthPipeline,
+        {
+            PassNode(ERenderPassNodeType::DepthPrePass),
+            PassNode(ERenderPassNodeType::NonLitViewModePass),
+        });
+
+    // ---------- Post, Overlay, Present ----------
+    AddPipeline(
+        ERenderPipelineType::PostProcessPipeline,
+        {
+            PassNode(ERenderPassNodeType::HeightFogPass),
+            PassNode(ERenderPassNodeType::FXAAPass),
+        });
+
+    AddPipeline(
+        ERenderPipelineType::OverlayPipeline,
+        {
+            PassNode(ERenderPassNodeType::LightHitMapPass),
+            PassNode(ERenderPassNodeType::DebugLinePass),
+            PipelineNode(ERenderPipelineType::Outline),
+            PassNode(ERenderPassNodeType::OverlayBillboardPass),
+            PassNode(ERenderPassNodeType::GizmoPass),
+            PassNode(ERenderPassNodeType::OverlayTextPass),
+        });
+
+    AddPipeline(
+        ERenderPipelineType::PresentPipeline,
+        {
+            PassNode(ERenderPassNodeType::PresentPass),
+        });
+
+    AddPipeline(
+        ERenderPipelineType::Outline,
+        {
+            PassNode(ERenderPassNodeType::SelectionMaskPass),
+            PassNode(ERenderPassNodeType::OutlinePass),
+        });
 }
 
 void FRenderPipelineRegistry::Release()
 {
     Pipelines.clear();
 }
+
+// ========== Lookup ==========
 
 const FRenderPipelineDesc* FRenderPipelineRegistry::FindPipeline(ERenderPipelineType Type) const
 {
