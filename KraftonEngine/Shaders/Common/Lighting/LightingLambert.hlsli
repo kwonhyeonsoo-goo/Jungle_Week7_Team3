@@ -1,4 +1,4 @@
-﻿
+
 /*
     LightingLambert.hlsli는 조명 계산에 쓰는 공용 함수를 제공합니다.
 

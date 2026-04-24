@@ -1,4 +1,4 @@
-﻿
+
 /*
     DepthOnlyPass.hlsl는 장면 렌더링 패스의 셰이더입니다.
 

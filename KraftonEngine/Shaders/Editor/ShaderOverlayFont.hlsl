@@ -1,4 +1,4 @@
-﻿
+
 /*
     ShaderOverlayFont.hlsl는 에디터 오버레이와 보조 렌더링을 처리합니다.
 

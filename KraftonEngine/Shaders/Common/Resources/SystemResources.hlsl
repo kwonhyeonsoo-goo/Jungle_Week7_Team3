@@ -1,4 +1,4 @@
-﻿
+
 /*
     SystemResources.hlsl는 공용 GPU 리소스 슬롯 선언을 제공합니다.
 

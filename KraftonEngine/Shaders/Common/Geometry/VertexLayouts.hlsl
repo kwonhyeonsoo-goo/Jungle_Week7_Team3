@@ -1,4 +1,4 @@
-﻿
+
 /*
     VertexLayouts.hlsl는 정점 입력/출력 레이아웃을 정의합니다.
 

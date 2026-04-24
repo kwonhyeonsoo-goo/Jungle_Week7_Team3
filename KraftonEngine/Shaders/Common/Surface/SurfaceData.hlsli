@@ -1,4 +1,4 @@
-﻿
+
 /*
     SurfaceData.hlsli는 셰이딩 표면 데이터 타입을 정의합니다.
 

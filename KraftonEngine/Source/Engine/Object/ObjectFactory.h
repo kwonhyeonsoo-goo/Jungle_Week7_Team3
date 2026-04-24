@@ -8,7 +8,7 @@
 #define REGISTER_FACTORY(TypeName)                                                                                   \
     namespace                                                                                                        \
     {                                                                                                                \
-    // TypeName는 오브젝트 처리에 필요한 데이터를 묶는 구조체입니다.
+    /* TypeName registers a factory for this UObject-derived type. */                                         \
     struct TypeName##_RegisterFactory                                                                                \
     {                                                                                                                \
         TypeName##_RegisterFactory()                                                                                 \

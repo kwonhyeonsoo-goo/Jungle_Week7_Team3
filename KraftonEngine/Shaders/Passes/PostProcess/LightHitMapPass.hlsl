@@ -1,4 +1,4 @@
-﻿
+
 /*
     LightHitMapPass.hlsl는 후처리 렌더 패스의 셰이더입니다.
 
